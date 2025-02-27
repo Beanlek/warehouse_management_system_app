@@ -11,6 +11,50 @@ Future<void> launchURL() async {
     }
 }
 
+const String ALLOT_PLAN = 'allot_plan';
+const String ALLOT_BALANCE = 'allot_balance';
+const String ALLOT_ADDITIONAL = 'allot_additional';
+const String ADHOC_REQUEST = 'adhoc_request';
+const String ADHOC_RETURN = 'adhoc_return';
+const String WAREHOUSE_STOCKTAKE = 'warehouse_stocktake';
+const String SALES_ORDER = 'sales_order';
+const String VAN_STOCKTAKE = 'van_stocktake';
+const String MARKET_RETURN = 'market_return';
+const String RETURN_ORDER = 'return_order';
+const String TRANSFER_IN = 'transfer_in';
+const String TRANSFER_OUT = 'transfer_out';
+
+String titleCheck(String _recordType) {
+      switch (_recordType) {
+        case ALLOT_PLAN:
+          return 'Allotment Plan';
+        case ALLOT_BALANCE:
+          return 'Allotment Balance';
+        case ALLOT_ADDITIONAL:
+          return 'Allotment Additional';
+        case ADHOC_REQUEST:
+          return 'Adhoc Request';
+        case ADHOC_RETURN:
+          return 'Adhoc Return';
+        case WAREHOUSE_STOCKTAKE:
+          return 'Warehouse Stocktake';
+        case SALES_ORDER:
+          return 'Sales Order';
+        case VAN_STOCKTAKE:
+          return 'Van Stock Take';
+        case MARKET_RETURN:
+          return 'Market Return';
+        case RETURN_ORDER:
+          return 'MR Return Order';
+        case TRANSFER_IN:
+          return 'Transfer In';
+        case TRANSFER_OUT:
+          return 'Transfer Out';
+        default:
+          return 'NNN';
+      }
+    }
+
 extension StringExtension on String {
     String capitalize() {
       return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
@@ -32,7 +76,7 @@ extension StringExtension on String {
 
 void printLongString(String text) {
   final RegExp pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-  pattern.allMatches(text).forEach((RegExpMatch match) =>   print(match.group(0)));
+  pattern.allMatches(text).forEach((RegExpMatch match) =>   debugPrint(match.group(0)));
 }
 
 Widget ERROR_OVERLAY() {

@@ -12,7 +12,7 @@ import 'package:warehouse/page_stock_take/component/components.dart';
 import 'package:warehouse/page_stock_take/widget/dialog_widget.dart';
 
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
 
 class WarehousePage extends StatefulWidget {
@@ -122,7 +122,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                   _filterSelected = value!;
                   subCategorySelection[index] = _filterSelected;
                   _filterContainerItems();
-                  print('_filterSelected = $_filterSelected');
+                  debugPrint('_filterSelected = $_filterSelected');
                 });
               },
             )
@@ -169,13 +169,13 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
     bool _selectionExist = false;
 
     for (var i = 0; i < _length; i++) {
-      print('subCategorySelection[$i] : ${subCategorySelection[i]}');
+      debugPrint('subCategorySelection[$i] : ${subCategorySelection[i]}');
       if (subCategorySelection[i] == false) {
         final int _widgetLength = filterSelection.length;
 
         for (var j = 0; j < _widgetLength; j++) {
           final String _subCategory = filterSelection[j]['sub_category'];
-          print('filterSelection[$j] : ${filterSelection[j]}');
+          debugPrint('filterSelection[$j] : ${filterSelection[j]}');
 
           if (_subCategory == subCategoryFilters[i]) {
             setState(() {
@@ -231,7 +231,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                   IconButton(
                     onPressed: () {
                       setState(() {
-                        print('x pressed');
+                        debugPrint('x pressed');
                         filterSelection.removeWhere((item) => item['sub_category'] == subCategoryFilters[i]);
                         subCategorySelection[i] = false;
                       });
@@ -532,8 +532,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                       const SizedBox(
                         height: 16,
                       ),
-
-                      // TODO filter conditions button
+                      
                       Padding( padding: const EdgeInsets.symmetric(horizontal:  24.0), child: StatefulBuilder(
                         builder: (context, thisSetState) {
 
@@ -978,20 +977,20 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
         body: jsonEncode(payload),
       );
 
-      print(jsonEncode(payload));
+      debugPrint(jsonEncode(payload));
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         setState(() {
           refID = responseData['transaction_id'] as String;
-          print(refID);
+          debugPrint(refID);
         });
-        print('Initialize successfully.');
+        debugPrint('Initialize successfully.');
       } else {
         throw Exception('Failed to save stocktake. Status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -1040,8 +1039,8 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
         },
         body: jsonEncode(payload),
       );
-      print(apiUrl);
-      print("payload debug:\n\n${jsonEncode(payloadDebug)}\n\n");
+      debugPrint(apiUrl);
+      debugPrint("payload debug:\n\n${jsonEncode(payloadDebug)}\n\n");
 
       if (response.statusCode == 200) {
         FloatingSnackBar(message: 'Successfully acknowledged into WMS log', context: context);
@@ -1061,15 +1060,15 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
         //     );
         //   },
         // );
-        print('Data acknowledged successfully. ${response.statusCode}');
+        debugPrint('Data acknowledged successfully. ${response.statusCode}');
       } else {
-        print(token);
+        debugPrint(token);
         throw Exception(
           'Failed to acknowledge data. Status code: ${response.statusCode}',
         );
       }
     } catch (error) {
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -1082,9 +1081,9 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
       }
       item.putIfAbsent('is_expanded', () => false);
 
-      // print("item['name'] : ${item['name']}");
-      // print("item['short_code'] : ${item['short_code']}");
-      print('run this');
+      // debugPrint("item['name'] : ${item['name']}");
+      // debugPrint("item['short_code'] : ${item['short_code']}");
+      debugPrint('run this');
 
       String category = item['category'] ?? 'Uncategorized';
       String shortCode = item['short_code'];
@@ -1123,8 +1122,8 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                       // final List<String> short_code = shortCodeGroup.keys.toList();
                     
                       // printLongString('shortCodeGroup : $shortCodeGroup');
-                      // print('shortCodeGroup allKeys : ${short_code}');
-                      // print('shortCodeGroup.length : ${shortCodeGroup.length}');
+                      // debugPrint('shortCodeGroup allKeys : ${short_code}');
+                      // debugPrint('shortCodeGroup.length : ${shortCodeGroup.length}');
                     
                       return ExpansionTile(
                         shape: RoundedRectangleBorder(),
@@ -1178,7 +1177,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
 
   Widget _buildInventoryGroup(String shortCode, List<Map<String, dynamic>> items) {
 
-    // print('buildInventoryGroup items[0][is_expanded] : ${items[0]['is_expanded']}');
+    // debugPrint('buildInventoryGroup items[0][is_expanded] : ${items[0]['is_expanded']}');
     bool _expanded = items[0]['is_expanded'];
 
     return Card(
@@ -1215,7 +1214,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
             onTap: () {
               setState(() {
                 _expanded = !_expanded;
-                print('_expanded : $_expanded');
+                debugPrint('_expanded : $_expanded');
               });
 
               items[0]['is_expanded'] = _expanded;
@@ -1325,7 +1324,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: TextFormField(
-                              // TODO quantity identifier
+                              
                               initialValue: item['quantity'][conditionsIndex].toString(),
                               keyboardType: TextInputType.number,
                               style: TextStyle(color: biruImran),
@@ -1333,7 +1332,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                                 setState(() {
                                   item['quantity'][conditionsIndex] = int.parse(value);
                                 });
-                                print(item['quantity']);
+                                debugPrint(item['quantity']);
                               },
                               decoration: InputDecoration(
                                 labelText: 'Quantity',
@@ -1528,7 +1527,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
 //                                 setState(() {
 //                                   item['quantity'][0] = int.parse(value);
 //                                 });
-//                                 print(item['quantity']);
+//                                 debugPrint(item['quantity']);
 //                                 if (widget.onChanged != null) {
 //                                   widget.onChanged!();
 //                                 }

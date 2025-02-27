@@ -14,7 +14,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/recon_details.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class StockReconViewListing extends StatefulWidget {
   const StockReconViewListing({super.key});
@@ -93,7 +93,7 @@ class _StockReconViewListingState extends State<StockReconViewListing> {
     
 
     final newUri = uri.replace(queryParameters: params);
-    print(newUri);
+    debugPrint(newUri.toString());
 
     final request = http.Request(
       'GET',
@@ -130,12 +130,12 @@ class _StockReconViewListingState extends State<StockReconViewListing> {
           recons = List<Map<String, dynamic>>.from(rows).toList();
         });
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${stringResponse}');
+      debugPrint('Error Body: ${stringResponse}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',

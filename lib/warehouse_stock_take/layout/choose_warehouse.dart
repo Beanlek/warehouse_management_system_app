@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/warehouse_stock_take/widget/dialog_Widget.dart';
 
 class WarehouseStockTake extends StatefulWidget {
@@ -42,12 +42,12 @@ class _WarehouseStockTakeState extends State<WarehouseStockTake> {
       fetchAPI(_token);
     } else {
       // Handle the scenario when the token is not available
-      print('Token not available');
+      debugPrint('Token not available');
     }
   }
 
   Future<void> fetchAPI(String? token) async {
-    print('fetch API');
+    debugPrint('fetch API');
     final String? domainName = await TokenUtil.getDomainName();
 
     String url = '$domainName/api/dataLookup/sites/list';
@@ -65,13 +65,13 @@ class _WarehouseStockTakeState extends State<WarehouseStockTake> {
           sitesWarehouse = List<Map<String, dynamic>>.from(sites);
         });
 
-        print('fetch API completed');
+        debugPrint('fetch API completed');
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print('Failed to fetch API. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
+      debugPrint('Error Body: ${response.body}');
       Navigator.pushNamed(context, AppRoutes.login);
     }
   }
@@ -112,14 +112,14 @@ class _WarehouseStockTakeState extends State<WarehouseStockTake> {
           }
         });
         // Handle the response data as needed
-        print(status);
+        debugPrint(status);
       } else {
-        print('Failed to call API. Status code: ${response.statusCode}');
-        print('Error Body: ${response.body}');
+        debugPrint('Failed to call API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${response.body}');
       }
     } else {
       // Handle token not available scenario
-      print('Token not available');
+      debugPrint('Token not available');
     }
   }
 

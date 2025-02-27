@@ -3,7 +3,7 @@
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class VanWidget extends StatefulWidget {
   final String token;

@@ -19,7 +19,7 @@ import 'package:warehouse/page_sales_order/widget/dialog_widget.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
 
 class SalesOrderDetail extends StatefulWidget {
@@ -94,7 +94,7 @@ class _SalesOrderDetailState extends State<SalesOrderDetail> {
       return;
     }
 
-    // print('fetch Unacknowledged API');
+    // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
     String url = '$domainName/api/sale/order/list/all?limit_rows=1';
@@ -103,11 +103,11 @@ class _SalesOrderDetailState extends State<SalesOrderDetail> {
     final response =
         await http.get(uri, headers: {'Authorization': 'Bearer $token'});
 
-    print(response.statusCode);
+    debugPrint(response.statusCode.toString());
 
     if (response.statusCode != 200) {
-      print('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+      debugPrint('Error Body: ${response.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',
@@ -130,8 +130,8 @@ class _SalesOrderDetailState extends State<SalesOrderDetail> {
     String url = '${domainName}${_subDirectory}';
     final uri = Uri.parse(url);
 
-    print('_postAWB widget.salesOrderId : ${widget.salesOrderId}');
-    print('_postAWB _response : ${_response}');
+    debugPrint('_postAWB widget.salesOrderId : ${widget.salesOrderId}');
+    debugPrint('_postAWB _response : ${_response}');
 
     final Map<String, dynamic> payload = {
       'pso_id': widget.salesOrderId,
@@ -171,8 +171,8 @@ class _SalesOrderDetailState extends State<SalesOrderDetail> {
 
     else {
       errmsg = response.body;
-      print('Failed to complete process. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Failed to complete process. Status code: ${response.statusCode}');
+      debugPrint('Error Body: ${response.body}');
       return false;
     }
   }

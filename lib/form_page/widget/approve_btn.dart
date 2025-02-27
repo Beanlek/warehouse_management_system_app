@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/form_page/widget/camera_config.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class ApproveButton extends StatelessWidget {
   final String refID;
@@ -76,14 +76,14 @@ class ApproveButton extends StatelessWidget {
           // Handle response
           if (response.statusCode == 200) {
             // Data sent successfully
-            print('Data sent successfully!');
+            debugPrint('Data sent successfully!');
           } else {
             // Failed to send data
-            print('Failed to send data. Error: ${response.statusCode}');
+            debugPrint('Failed to send data. Error: ${response.statusCode}');
           }
         } catch (error) {
           // Handle error
-          print('Error sending data: $error');
+          debugPrint('Error sending data: $error');
         }
       },
       child: const Text(

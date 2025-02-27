@@ -17,7 +17,7 @@ import 'package:easy_stepper/easy_stepper.dart';
 import 'package:warehouse/QR_code/layout/qr_code_allotment.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van%20allotment/widget/dialog_widget.dart';
 
 class AllotmentDetailView extends StatefulWidget {
@@ -59,19 +59,22 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
   
   int activeStep = 0;
   XFile? _capturedImage;
+  String? token;
 
   @override
   void initState() {
     super.initState();
-    print('TYPE : ${widget.allotmentType}');
+    debugPrint('TYPE : ${widget.allotmentType}');
 
-    widget.allotmentType == 'Adhoc Return' ?
-    fetchAdhocReturnDetails(widget.allotmentId).then((value) => setState(() {
-      _launchLoading = false;
-    })) :
-    fetchAllotmentDetails(widget.allotmentId).then((value) => setState(() { print(details.length);
-      _launchLoading = false;
-    }));
+    getToken().whenComplete(() {
+      widget.allotmentType == ADHOC_RETURN ?
+      fetchAdhocReturnDetails(widget.allotmentId).then((value) => setState(() {
+        _launchLoading = false;
+      })) :
+      fetchAllotmentDetails(widget.allotmentId).then((value) => setState(() { debugPrint(details.length.toString());
+        _launchLoading = false;
+      }));
+    });
   }
 
   @override
@@ -80,13 +83,9 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
     super.dispose();
   }
 
-  // Future<void> _loadData() async{
-  //   await Future.delayed(
-  //     const Duration(seconds: 1)
-  //   ).then((value) => setState(() {
-  //     _launchLoading = false;
-  //   }));
-  // }
+  Future<void> getToken() async {
+    token = await TokenUtil.getToken();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +96,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
         child: AppBar(
           centerTitle: true,
           title: Text(
-            '${widget.allotmentType} Lists',
+            '${titleCheck(widget.allotmentType)} Lists',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24.0,
@@ -109,13 +108,6 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
         ),
       ),
       
-      
-      // body:widget.allotmentType == 'Adhoc Return' ?
-      // Center(child: Text('This is Adhoc Return', style: TextStyle(
-      //           fontSize: 12.0,
-      //           fontWeight: FontWeight.normal,
-      //           color: biruImran,
-      //         ))) :
       body:
       WillPopScope(
         onWillPop: () async {
@@ -168,7 +160,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                         ),
                         children: [
                           TextSpan(
-                            text: '> ${widget.allotmentType} ',
+                            text: '> ${titleCheck(widget.allotmentType)} ',
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 if (widget.status == 'acknowledged') {
@@ -217,8 +209,10 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                widget.allotmentType == 'Adhoc Return' ?
+                                widget.allotmentType == ADHOC_RETURN ?
                                   'Adhoc Return Details' :
+                                widget.allotmentType == ADHOC_REQUEST ?
+                                  'Adhoc Request Details' :
                                   'Allotment Details',
                                 style: TextStyle(
                                   fontSize: 28.0,
@@ -237,7 +231,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                 onPressed: () {
                                   setState(() {
                                     _showAllotmentDetails = !_showAllotmentDetails;
-                                    // print(_showActionSummary);
+                                    // debugPrint(_showActionSummary);
                                   });
                                 },
                               ),
@@ -278,7 +272,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                widget.allotmentType == 'Adhoc Return' ?
+                                widget.allotmentType == ADHOC_RETURN ?
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -339,7 +333,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                 ),
                                 
                                 
-                                widget.allotmentType == 'Adhoc Return' ?
+                                widget.allotmentType == ADHOC_RETURN ?
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -400,12 +394,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                               ],
                             ),
                           ),
-                          // widget.allotmentType == 'Adhoc Return' ?
-                          // Center(child: Text('This is Adhoc Return', style: TextStyle(
-                          //           fontSize: 12.0,
-                          //           fontWeight: FontWeight.normal,
-                          //           color: biruImran,
-                          //         ))) :
+
                           const SizedBox(height: 24),
                           widget.status == 'acknowledged' ?
                           SizedBox() :
@@ -456,7 +445,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                             ],
                             onStepReached: (index) {
                               if (index == 1 && allItemsChecked == false) {
-                                print('no');
+                                debugPrint('no');
                                 FloatingSnackBar(
                                   message:'Please tick all the following SKUs. Any problem please forward to management.',
                                   context: context,
@@ -490,7 +479,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                               controller: _pageController,
                               onPageChanged: (index) {
                                 setState(() {
-                                  print('index');
+                                  debugPrint('index');
                                   activeStep = index;
                                 });
                               },
@@ -602,32 +591,228 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                   
                                     if (_confirmAcknowledge) {
                                       String comment = _commentController.text.trim();
-                                  
-                                      bool tempRefresh = false;
-                                      tempRefresh = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => QRScannerPageAllotment(
-                                              refID: choosedAllotment['id'] ?? adhocDetails['id'],
-                                              vanID: choosedAllotment['van_id'] ?? adhocDetails['van_id'],
-                                              comment: comment,
-                                              imageFile: _capturedImage!,
+
+                                      switch (widget.allotmentType) {
+                                        case ADHOC_RETURN:
+
+                                          final String refID = adhocDetails['id'];
+                                          
+                                          final List<Map<String, dynamic>> dataArr = details;
+
+                                          if (token == null) {
+                                            Navigator.pushNamed(context, AppRoutes.login);
+                                            FloatingSnackBar(
+                                                message: 'Token Expired. Please login back to the system.',
+                                                context: context);
+                                            return;
+                                          }
+
+                                          String _subDirectory = '/api/acknowledgment/wms/submit/acknowledge';
+                                          File dataImage;
+                                          
+                                          final String? _domainName = await TokenUtil.getDomainName();
+                                          String domainName = _domainName!;
+
+                                          String url = '$domainName$_subDirectory';
+                                          final uri = Uri.parse(url);
+                                          
+                                          dataImage = File(_capturedImage!.path);
+
+                                          final List<int> imageBytes = dataImage.readAsBytesSync();
+                                          final String imageBase64 = base64Encode(imageBytes);
+
+                                          Map<String, dynamic> payload = {};
+
+                                          final List<Map<String, dynamic>> customizedDataArr = [];
+
+                                          for (final skuData in dataArr) {
+                                            final Map<String, dynamic> customizedSkuData = {
+                                              'sku_id': skuData['sku_id'],
+                                              'uom_id': skuData['uom_id'],
+                                              'init_qty': skuData['requested_qty'],
+                                              'updated_qty': skuData['quantity'][0],
+                                            };
+                                            customizedDataArr.add(customizedSkuData);
+                                          }
+
+                                          payload = {
+                                            'id': refID,
+                                            'skus': customizedDataArr,
+                                            'comment': comment,
+                                            'image': [
+                                              {'image': 'data:image/png;base64,${imageBase64}'}
+                                            ],
+                                          };
+
+                                          try {
+                                            final response = await http.post(
+                                              uri,
+                                              headers: <String, String>{
+                                                'Content-Type': 'application/json',
+                                                'Authorization': 'Bearer $token',
+                                              },
+                                              body: jsonEncode(payload),
+                                            );
+
+                                            debugPrint('response.statusCode : ${response.statusCode}');
+
+                                            if (response.statusCode == 500) {
+                                              final json = jsonDecode(response.body);
+                                              final errMsg = json['errMsg'];
+
+                                              FloatingSnackBar(
+                                                  message: '${refID} encounter an error. $errMsg',
+                                                  context: context);
+                                            }
+
+                                            else if (response.statusCode == 302) {
+
+                                              FloatingSnackBar(
+                                                  message: 'Error ${response.statusCode}. Please contact system admin.',
+                                                  context: context);
+
+                                            }
+
+                                            else if (response.statusCode == 200) {
+                                              debugPrint('at 200 : ${response.statusCode}');
+                                              Navigator.pop(context, true);
+                                              FloatingSnackBar(
+                                                message: 'Adhoc ${refID} acknowledged.',
+                                                context: context,
+                                              );
+                                            } else {
+                                              debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+                                              debugPrint('Error Body: ${response.body}');
+                                              Navigator.pushNamed(context, AppRoutes.login);
+
+                                              FloatingSnackBar(
+                                                  message: 'Token Expired. Please login back to the system.',
+                                                  context: context);
+                                            }
+                                          } catch (error) {
+                                            FloatingSnackBar(
+                                                  // message: '${widget.returnedOrderId} encounter an error. $json',
+                                                  message: 'Error ${error}. Please contact system admin.',
+                                                  context: context);
+                                          }
+                                          break;
+                                        case ADHOC_REQUEST:
+                                        
+                                          final String refID = adhocDetails['id'];
+
+                                          if (token == null) {
+                                            Navigator.pushNamed(context, AppRoutes.login);
+                                            FloatingSnackBar(
+                                                message: 'Token Expired. Please login back to the system.',
+                                                context: context);
+                                            return;
+                                          }
+
+                                          String _subDirectory = '/api/wms/android_acknowledge';
+                                          File dataImage;
+                                          
+                                          final String? _domainName = await TokenUtil.getDomainName();
+                                          String domainName = _domainName!;
+
+                                          String url = '$domainName$_subDirectory/${refID}';
+                                          final uri = Uri.parse(url);
+                                          
+                                          dataImage = File(_capturedImage!.path);
+
+                                          final List<int> imageBytes = dataImage.readAsBytesSync();
+                                          final String imageBase64 = base64Encode(imageBytes);
+
+                                          Map<String, dynamic> payload = {};
+
+                                          payload = {
+                                            'comment': comment,
+                                            'image': [
+                                              {'image': 'data:image/png;base64,${imageBase64}'}
+                                            ],
+                                          };
+                                        
+
+                                          try {
+                                            final response = await http.post(
+                                              uri,
+                                              headers: <String, String>{
+                                                'Content-Type': 'application/json',
+                                                'Authorization': 'Bearer $token',
+                                              },
+                                              body: jsonEncode(payload),
+                                            );
+
+                                            print('response.statusCode : ${response.statusCode}');
+
+                                            if (response.statusCode == 500) {
+                                              final json = jsonDecode(response.body);
+                                              final errMsg = json['errMsg'];
+
+                                              FloatingSnackBar(
+                                                  message: '${refID} encounter an error. $errMsg',
+                                                  context: context);
+
+                                              // Navigator.of(context).pop();
+                                            }
+
+                                            else if (response.statusCode == 302) {
+
+                                              // final errBody = jsonDecode(response.body);
+
+                                              FloatingSnackBar(
+                                                  // message: '${widget.returnedOrderId} encounter an error. $json',
+                                                  message: 'Error ${response.statusCode}. Please contact system admin.',
+                                                  context: context);
+
+                                            }
+
+                                            else if (response.statusCode == 200) {
+                                              print('at 200 : ${response.statusCode}');
+                                              Navigator.pop(context, true);
+                                              FloatingSnackBar(
+                                                message: 'Adhoc ${refID} acknowledged.',
+                                                context: context,
+                                              );
+                                            } else {
+                                              print('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+                                              print('Error Body: ${response.body}');
+                                              Navigator.pushNamed(context, AppRoutes.login);
+
+                                              FloatingSnackBar(
+                                                  message: 'Token Expired. Please login back to the system.',
+                                                  context: context);
+                                            }
+                                          } catch (error) {
+                                            FloatingSnackBar(
                                               
-                                              isAdhocReturn: widget.allotmentType == 'Adhoc Return' ?
-                                               true :
-                                               false,
-                          
-                                              dataArr: widget.allotmentType == 'Adhoc Return' ?
-                                               details :
-                                               [],
-                                            ),
-                                          ),
-                                      );
-                                      if (tempRefresh) {
-                                        setState(() {
-                                          Navigator.pop(context, true);
-                                          tempRefresh = false;
-                                        });
+                                                  message: 'Error ${error}. Please contact system admin.',
+                                                  context: context);
+                                          }
+
+                                          break;
+                                        default:
+                                          bool tempRefresh = false;
+                                          tempRefresh = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => QRScannerPageAllotment(
+                                                  refID: choosedAllotment['id'] ?? adhocDetails['id'],
+                                                  vanID: choosedAllotment['van_id'] ?? adhocDetails['van_id'],
+                                                  comment: comment,
+                                                  imageFile: _capturedImage!,
+                                                  
+                                                  isAdhocReturn: false,
+                              
+                                                  dataArr: [],
+                                                ),
+                                              ),
+                                          );
+                                          if (tempRefresh) {
+                                            setState(() {
+                                              Navigator.pop(context, true);
+                                              tempRefresh = false;
+                                            });
+                                          }
                                       }
                                     }
                                   
@@ -1000,7 +1185,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                             onChanged: (value) {
                               setState(() {
                                 _thisDetails['quantity'][0] = int.parse(value);
-                                print(_thisDetails['quantity'][0]);
+                                debugPrint(_thisDetails['quantity'][0]);
                               });
                             },
                           ) : 
@@ -1084,7 +1269,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
     String allotmentUrl =
         '$domainName/api/van/stock/reduce/adhoc/o/';
     final allotmentUri = Uri.parse('$allotmentUrl$allotmentId');
-    print('allotmentId : $allotmentId');
+    debugPrint('allotmentId : $allotmentId');
 
     final allotmentResponse = await http.get(allotmentUri, headers: {'Authorization': 'Bearer $token'});
 
@@ -1103,14 +1288,14 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
           allItemsChecked = _areAllItemsChecked();
         });
 
-        print('Fetch Allotment API completed');
+        debugPrint('Fetch Allotment API completed');
       } catch (e) {
-        print('Failed to parse Allotment JSON: $e');
+        debugPrint('Failed to parse Allotment JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Allotment API. Status code: ${allotmentResponse.statusCode}');
-      print('Allotment Error Body: ${allotmentResponse.body}');
+      debugPrint('Allotment Error Body: ${allotmentResponse.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',
@@ -1146,9 +1331,9 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
           allItemsChecked = _areAllItemsChecked();
         });
 
-        print('Fetch Allotment API completed');
+        debugPrint('Fetch Allotment API completed');
       } catch (e) {
-        print('Failed to parse Allotment JSON: $e');
+        debugPrint('Failed to parse Allotment JSON: $e');
       }
     }
     else if(allotmentResponse.statusCode == 404) {
@@ -1161,8 +1346,8 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
       Navigator.of(context).pop();
     }
     else {
-      print('Failed to fetch Allotment API. Status code: ${allotmentResponse.statusCode}');
-      print('Allotment Error Body: ${allotmentResponse.body}');
+      debugPrint('Failed to fetch Allotment API. Status code: ${allotmentResponse.statusCode}');
+      debugPrint('Allotment Error Body: ${allotmentResponse.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',

@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import 'package:warehouse/utils/color.dart'; // Import your TokenUtil class here
+import 'package:warehouse/utils/utils.dart'; // Import your TokenUtil class here
 
 class AppBarWidget extends StatelessWidget {
   const AppBarWidget({

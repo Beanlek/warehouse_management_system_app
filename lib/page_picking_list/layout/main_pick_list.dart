@@ -16,7 +16,7 @@ import 'package:warehouse/page_picking_list/layout/detail_pick_list.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class PickListView extends StatefulWidget {
   const PickListView({super.key});
@@ -82,25 +82,25 @@ class _PickListViewState extends State<PickListView> {
     String url = '$domainName$_subDirectory?limit_rows=20&page=${_currentPage + 1}';
 
     if (selectedFilter != 'All') {
-      // print('selectedFilter != \'All\' selectedFilter: $selectedFilter');
-      // print('selectedFilter != \'All\' _currentPage: $_currentPage');
+      // debugPrint('selectedFilter != \'All\' selectedFilter: $selectedFilter');
+      // debugPrint('selectedFilter != \'All\' _currentPage: $_currentPage');
 
       String _thisFilter = selectedFilter;
       // if (selectedFilter == 'Sent-for-picking') {
       //   _thisFilter = selectedFilter.replaceAll(RegExp(r'[^\w\s]+'), '%20');
-      //   print('_thisFilter: $_thisFilter');
+      //   debugPrint('_thisFilter: $_thisFilter');
       // }
       url = '$domainName$_subDirectory?limit_rows=20&page=${_currentPage + 1}&status=${_thisFilter.toLowerCase()}';
     }
-    // print('selectedFilter: $selectedFilter');
-    // print('_currentPage: $_currentPage');
+    // debugPrint('selectedFilter: $selectedFilter');
+    // debugPrint('_currentPage: $_currentPage');
     final uri = Uri.parse(url);
 
     final response =
         await http.get(uri, headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
-      print('response.statusCode: ${response.statusCode}');
+      debugPrint('response.statusCode: ${response.statusCode}');
       try {
         final json = jsonDecode(response.body);
         final List<dynamic> rows = json[_mainBody]['rows'];
@@ -114,21 +114,21 @@ class _PickListViewState extends State<PickListView> {
         if (_numPages < (count / 20)) {
           _numPages++;
         }
-        print('response.statusCode == 200 count: $count');
-        print('response.statusCode == 200 _numPages: $_numPages');
+        debugPrint('response.statusCode == 200 count: $count');
+        debugPrint('response.statusCode == 200 _numPages: $_numPages');
 
         setState(() {
-          // print('salesOrder init');
+          // debugPrint('salesOrder init');
           pickLists = List<Map<String, dynamic>>.from(rows).toList();
-          // print('salesOrder: $salesOrder');
+          // debugPrint('salesOrder: $salesOrder');
         });
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Error Body: ${response.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',

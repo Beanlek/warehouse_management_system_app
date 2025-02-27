@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:floating_snackbar/floating_snackbar.dart';
@@ -47,7 +47,7 @@ class _VanStockTakeChooseWarehouseState
   }
 
   Future<void> fetchAPI(String? token) async {
-    print('fetch API');
+    debugPrint('fetch API');
     final String? domainName = await TokenUtil.getDomainName();
 
     String url = '$domainName/api/dataLookup/sites/list';
@@ -65,13 +65,13 @@ class _VanStockTakeChooseWarehouseState
           sitesWarehouse = List<Map<String, dynamic>>.from(sites);
         });
 
-        print('fetch API completed');
+        debugPrint('fetch API completed');
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print('Failed to fetch API. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
+      debugPrint('Error Body: ${response.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',

@@ -9,7 +9,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:vibration/vibration.dart';
 import 'package:warehouse/form_page/layout/form_page_adhoc_return.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class QRScannerPageAdhocReturn extends StatefulWidget {
   final String vanID;
@@ -238,7 +238,7 @@ class _QRScannerPageAdhocReturnState extends State<QRScannerPageAdhocReturn> {
     controller.scannedDataStream.listen((scanData) {
       snackbarShown = false; // Reset the snackbarShown variable for each scan
       _processQRCode(scanData, widget.vanID);
-      print(scanData);
+      debugPrint(scanData.toString());
     });
   }
 
@@ -281,7 +281,7 @@ class _QRScannerPageAdhocReturnState extends State<QRScannerPageAdhocReturn> {
       try {
         allotmentDateTime = DateTime.parse(allotmentDate).add(Duration(hours: int.parse('8')));
       } catch (e) {
-        print('Error parsing allotment date: $e');
+        debugPrint('Error parsing allotment date: $e');
       }
 
       // Convert generated time to DateTime
@@ -290,7 +290,7 @@ class _QRScannerPageAdhocReturnState extends State<QRScannerPageAdhocReturn> {
         generatedDateTime =
             DateTime.fromMillisecondsSinceEpoch(int.parse(generatedTime));
       } catch (e) {
-        print('Error parsing generated time: $e');
+        debugPrint('Error parsing generated time: $e');
       }
 
       if (allotmentDateTime == null || generatedDateTime == null) {

@@ -23,7 +23,7 @@ class _APIViewState extends State<APIView> {
   Widget build(BuildContext context) {
     final token = Provider.of<AuthProvider>(context).token;
 
-    print('Token: $token'); // Print the token to the console
+    debugPrint('Token: $token'); // Print the token to the console
 
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +71,7 @@ class _APIViewState extends State<APIView> {
   Future<void> fetchAPI(String? token) async {
     if (token == null) {
       // Handle case where token is not available
-      print('Token is not available. Redirecting to login screen.');
+      debugPrint('Token is not available. Redirecting to login screen.');
       Navigator.pushNamed(context, AppRoutes.login);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -81,7 +81,7 @@ class _APIViewState extends State<APIView> {
       return;
     }
 
-    print('fetch API');
+    debugPrint('fetch API');
     final String? domainName = await TokenUtil.getDomainName();
 
     String url =
@@ -100,9 +100,9 @@ class _APIViewState extends State<APIView> {
         details = List<Map<String, dynamic>>.from(detailsData);
       });
 
-      print('fetch API completed');
+      debugPrint('fetch API completed');
     } else {
-      print('Failed to fetch API. Status code: ${response.statusCode}');
+      debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
     }
   }
 }

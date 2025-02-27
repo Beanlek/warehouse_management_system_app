@@ -10,7 +10,7 @@ import 'package:warehouse/page_stock_take/layout/warehouse_page.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
 
 class StockTake extends StatefulWidget {
@@ -50,12 +50,12 @@ class _StockTakeState extends State<StockTake> {
       setState(() {
         _showErrorOverlay = true;
       });
-      print('Token not available');
+      debugPrint('Token not available');
     }
   }
 
   Future<void> fetchAPI(String? token) async {
-    print('fetchAPI initiated');
+    debugPrint('fetchAPI initiated');
     final String? domainName = await TokenUtil.getDomainName();
 
     String url = '$domainName/api/dataLookup/sites/list';
@@ -72,19 +72,19 @@ class _StockTakeState extends State<StockTake> {
           sitesWarehouse = List<Map<String, dynamic>>.from(sites);
         });
 
-        print('fetch API completed');
+        debugPrint('fetch API completed');
       } catch (e) {
         setState(() {
           _showErrorOverlay = true;
         });
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
       setState(() {
         _showErrorOverlay = true;
       });
-      print('Failed to fetch API. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
+      debugPrint('Error Body: ${response.body}');
       Navigator.pushNamed(context, AppRoutes.login);
     }
   }
@@ -129,14 +129,14 @@ class _StockTakeState extends State<StockTake> {
           }
         });
         // Handle the response data as needed
-        print(status);
+        debugPrint(status);
       } else {
-        print('Failed to call API. Status code: ${response.statusCode}');
-        print('Error Body: ${response.body}');
+        debugPrint('Failed to call API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${response.body}');
       }
     } else {
       // Handle token not available scenario
-      print('Token not available');
+      debugPrint('Token not available');
     }
   }
 

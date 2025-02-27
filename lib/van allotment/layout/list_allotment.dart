@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:warehouse/utils/color.dart'; 
+import 'package:warehouse/utils/utils.dart'; 
 
 class ListAllotmentView extends StatefulWidget {
   const ListAllotmentView({super.key});

@@ -83,7 +83,7 @@
 
 //   Future<void> fetchAPI(String? token) async {
 //     if (token == null) {
-//       print('Token is not available. Redirecting to login screen.');
+//       debugPrint('Token is not available. Redirecting to login screen.');
 //       Navigator.pushNamed(context, AppRoutes.login);
 
 //       FloatingSnackBar(
@@ -92,7 +92,7 @@
 //       return;
 //     }
 
-//     print('fetch API');
+//     debugPrint('fetch API');
 //     const url =
 //         'https://tnvsales.amastsales-sandbox.com/api/wms/android-list?limit_rows=60';
 //     final uri = Uri.parse(url);
@@ -119,13 +119,13 @@
 //           await fetchAllotmentDetails(allotment['id'], token);
 //         }
 
-//         print('fetch API completed');
+//         debugPrint('fetch API completed');
 //       } catch (e) {
-//         print('Failed to parse JSON: $e');
+//         debugPrint('Failed to parse JSON: $e');
 //       }
 //     } else {
-//       print('Failed to fetch API. Status code: ${response.statusCode}');
-//       print('Error Body: ${response.body}');
+//       debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
+//       debugPrint('Error Body: ${response.body}');
 //       Navigator.pushNamed(context, AppRoutes.login);
 
 //       FloatingSnackBar(
@@ -147,7 +147,7 @@
 //         final allotmentDetail = secondApiData['allotment'];
 
 //         // Process the data from the second API as needed
-//         print('Second API Data fetch completed');
+//         debugPrint('Second API Data fetch completed');
 
 //         // Extracting van_id and updating the allotments list
 //         final vanId = allotmentDetail['van_id'];
@@ -160,19 +160,19 @@
 //         }
 //       } else {
 //         // Handle the error
-//         print(
+//         debugPrint(
 //             'Failed to fetch another API. Status code: ${apiResponse.statusCode}');
-//         print('Error Body: ${apiResponse.body}');
+//         debugPrint('Error Body: ${apiResponse.body}');
 //       }
 //     } catch (e) {
 //       // Handle exceptions
-//       print('Error during second API call: $e');
+//       debugPrint('Error during second API call: $e');
 //     }
 //   }
 
 //   Future<void> fetchUnacknowledgedAPI(String? token) async {
 //     if (token == null) {
-//       print('Token is not available. Redirecting to login screen.');
+//       debugPrint('Token is not available. Redirecting to login screen.');
 //       Navigator.pushNamed(context, AppRoutes.login);
 //       FloatingSnackBar(
 //           message: 'Token Expired. Please login back to the system.',
@@ -180,7 +180,7 @@
 //       return;
 //     }
 
-//     print('fetch Unacknowledged API');
+//     debugPrint('fetch Unacknowledged API');
 //     const url =
 //         'https://tnvsales.amastsales-sandbox.com/api/wms/android-list?status=unacknowledged';
 //     final uri = Uri.parse(url);
@@ -208,14 +208,14 @@
 //           await fetchAllotmentDetails(allotment['id'], token);
 //         }
 
-//         print('fetch Unacknowledged API completed');
+//         debugPrint('fetch Unacknowledged API completed');
 //       } catch (e) {
-//         print('Failed to parse JSON: $e');
+//         debugPrint('Failed to parse JSON: $e');
 //       }
 //     } else {
-//       print(
+//       debugPrint(
 //           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-//       print('Error Body: ${response.body}');
+//       debugPrint('Error Body: ${response.body}');
 //       Navigator.pushNamed(context, AppRoutes.login);
 //       FloatingSnackBar(
 //           message: 'Token Expired. Please login back to the system.',

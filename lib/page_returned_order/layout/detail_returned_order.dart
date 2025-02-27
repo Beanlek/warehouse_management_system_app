@@ -14,7 +14,7 @@ import 'package:warehouse/page_returned_order/widget/dialog_Widget.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class ReturnedOrderDetail extends StatefulWidget {
   const ReturnedOrderDetail(
@@ -92,7 +92,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
 
     String _subDirectory = '/api/wms/android/pre_sales_order/o';
 
-    // print('fetch Unacknowledged API');
+    // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
 
@@ -124,7 +124,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
     }
 
     else if (response.statusCode == 200) {
-      print('response.statusCode: ${response.statusCode}');
+      debugPrint('response.statusCode: ${response.statusCode}');
       try {
         final json = jsonDecode(stringResponse);
         wms_status = json['data']['wms_status'];
@@ -138,23 +138,23 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
         }
         statusReconfirm = json['data']['status'];
         final skus = json['data']['skus'];
-        // print('all 3 data: $wms_status,$statusReconfirm\n$skus');
+        // debugPrint('all 3 data: $wms_status,$statusReconfirm\n$skus');
 
         setState(() {
           SKUs = List<Map<String, dynamic>>.from(skus).toList();
           for (var i = 0; i < SKUs.length; i++) {
             SKUs[i]['updated_qty'] = 0;
           }
-          print('SKUs : $SKUs');
+          debugPrint('SKUs : $SKUs');
           setSKUDataRow();
         });
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${stringResponse}');
+      debugPrint('Error Body: ${stringResponse}');
       Navigator.pushNamed(context, AppRoutes.login);
 
       FloatingSnackBar(
@@ -182,7 +182,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
 
-    print('sendReceived widget.returnedOrderId : ${widget.returnedOrderId}');
+    debugPrint('sendReceived widget.returnedOrderId : ${widget.returnedOrderId}');
 
     String url = '$domainName$_subDirectory/${widget.returnedOrderId}';
     final uri = Uri.parse(url);
@@ -206,7 +206,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
       // imageName : "data:${imageName}/png;base64,null"
     });
     
-    print('SKU1s : $SKUs');
+    debugPrint('SKU1s : $SKUs');
     for (var i = 0; i < SKUs.length; i++) {
       newSKUs.add(SKUs[i]);
       newSKUs[i].remove('quantity');
@@ -215,15 +215,15 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
       // newSKUs[i]['uom_id'] = "'${newSKUs[i]['uom_id']}'";
     }
 
-    // print('SKU2s : $SKUs');
-    // print('newSKUs : $newSKUs');
+    // debugPrint('SKU2s : $SKUs');
+    // debugPrint('newSKUs : $newSKUs');
 
     dataReceive = {
       'skus' : newSKUs,
       'image' : newImages
     };
 
-    print('dataReceive : ${jsonEncode(dataReceive)}');
+    debugPrint('dataReceive : ${jsonEncode(dataReceive)}');
     // printLongString('dataReceive : \n$dataReceive');
 
     final response = await http.post(
@@ -236,7 +236,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
       body: jsonEncode(dataReceive)
     );
 
-    print('response.statusCode : ${response.statusCode}');
+    debugPrint('response.statusCode : ${response.statusCode}');
 
     if (response.statusCode == 500) {
       final json = jsonDecode(response.body);
@@ -271,8 +271,8 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
     }
     
     else {
-      print('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${response.body}');
+      debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+      debugPrint('Error Body: ${response.body}');
       Navigator.pushNamed(context, AppRoutes.login);
 
       FloatingSnackBar(
@@ -327,7 +327,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
             keyboardType: TextInputType.number,
             onChanged: (value) {
               int _valueParsed = int.parse(value);
-              print('value : $value');
+              debugPrint('value : $value');
               if (_valueParsed > orderQty) {
                 setState(() {
                   _showOverStocked = true;
@@ -468,9 +468,9 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      // print(_showSKUDetails);
+                                      // debugPrint(_showSKUDetails);
                                       _showSKUDetails = !_showSKUDetails;
-                                      // print(_showActionSummary);
+                                      // debugPrint(_showActionSummary);
                                     });
                                   },
                                 ),
@@ -834,7 +834,7 @@ class _ReturnedOrderDetailState extends State<ReturnedOrderDetail> {
                                 );
                             
                                 setState(() {
-                                  print('_isRetake : $_isRetake');
+                                  debugPrint('_isRetake : $_isRetake');
                                   _isRetake ?
                                     _capturedImage = null : 
                                     null;

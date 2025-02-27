@@ -15,7 +15,7 @@ import 'package:easy_stepper/easy_stepper.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van%20allotment/widget/dialog_widget.dart';
 
 class TransferOutDetailView extends StatefulWidget {
@@ -118,7 +118,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
       };
       customizedDataArr.add(customizedSkuData);
 
-      print(customizedSkuData);
+      debugPrint(customizedSkuData.toString());
     }
 
     payload = {
@@ -138,12 +138,12 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
         body: jsonEncode(payload),
       );
 
-      print('response.statusCode : ${response.statusCode}');
+      debugPrint('response.statusCode : ${response.statusCode}');
 
       if (response.statusCode == 500) {
         final json = jsonDecode(response.body);
         final errMsg = json['errMsg'];
-        print('errMsg: $errMsg');
+        debugPrint('errMsg: $errMsg');
 
         FloatingSnackBar(
           message: '${reference_id} encounter an error. $errMsg',
@@ -160,15 +160,15 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
       }
       
       else if (response.statusCode == 200) {
-        print('at 200 : ${response.statusCode}');
+        debugPrint('at 200 : ${response.statusCode}');
         Navigator.pop(context, true);
         FloatingSnackBar(
           message: '${reference_id} is acknowledged.',
           context: context,
         );
       } else {
-        print('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-        print('Error Body: ${response.body}');
+        debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${response.body}');
         Navigator.pushNamed(context, AppRoutes.login);
 
         FloatingSnackBar(
@@ -176,7 +176,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
             context: context);
       }
     } catch (error) {
-      print('Error ${error}. Please contact system admin.');
+      debugPrint('Error ${error}. Please contact system admin.');
       FloatingSnackBar(
             message: 'Error ${error}. Please contact system admin.',
             context: context);
@@ -323,7 +323,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
                                 onPressed: () {
                                   setState(() {
                                     _showTransferInDetails = !_showTransferInDetails;
-                                    // print(_showActionSummary);
+                                    // debugPrint(_showActionSummary);
                                   });
                                 },
                               ),
@@ -506,7 +506,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
                               controller: _pageController,
                               onPageChanged: (index) {
                                 setState(() {
-                                  print('index');
+                                  debugPrint('index');
                                   activeStep = index;
                                 });
                               },
@@ -609,7 +609,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
                                     );
                                   
                                     if (_confirmAcknowledge) {
-                                      print("choosedTransferIn['reference_id']: ${choosedTransferIn['reference_id']}");
+                                      debugPrint("choosedTransferIn['reference_id']: ${choosedTransferIn['reference_id']}");
                                       
                                       await acknowledge(reference_id: choosedTransferIn['reference_id']);
                                     }
@@ -938,7 +938,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
                             onChanged: (value) {
                               setState(() {
                                 _thisDetails['quantity'][1] = int.parse(value);
-                                print(_thisDetails['quantity'][1]);
+                                debugPrint(_thisDetails['quantity'][1]);
                               });
                             },
                           ) : 
@@ -984,7 +984,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
         final marketReturnJson = jsonDecode(marketReturnResponse.body);
         final marketReturnData = marketReturnJson['data'];
         final detailsData = marketReturnData['skus'];
-        print('detailsData: $detailsData');
+        debugPrint('detailsData: $detailsData');
 
         setState(() {
           choosedTransferIn = marketReturnData;
@@ -995,13 +995,13 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
           //   Navigator.of(context).pop();
           // }
           details = List<Map<String, dynamic>>.from(detailsData);
-          print('details: $details');
+          debugPrint('details: $details');
           // allItemsChecked = _areAllItemsChecked();
         });
 
-        print('Fetch MarketReturn API completed');
+        debugPrint('Fetch MarketReturn API completed');
       } catch (e) {
-        print('Failed to parse MarketReturn JSON: $e');
+        debugPrint('Failed to parse MarketReturn JSON: $e');
       }
     }
     else if(marketReturnResponse.statusCode == 404) {
@@ -1014,8 +1014,8 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
       Navigator.of(context).pop();
     }
     else {
-      print('Failed to fetch MarketReturn API. Status code: ${marketReturnResponse.statusCode}');
-      print('MarketReturn Error Body: ${marketReturnResponse.body}');
+      debugPrint('Failed to fetch MarketReturn API. Status code: ${marketReturnResponse.statusCode}');
+      debugPrint('MarketReturn Error Body: ${marketReturnResponse.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',

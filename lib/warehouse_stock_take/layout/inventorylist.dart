@@ -6,7 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
 
@@ -218,21 +218,21 @@ class _InventoryListState extends State<InventoryList> {
         body: jsonEncode(payload),
       );
 
-      print(jsonEncode(payload));
+      debugPrint(jsonEncode(payload));
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         setState(() {
           refID = responseData['transaction_id'] as String;
-          print(refID);
+          debugPrint(refID);
         });
-        print('Initialize successfully.');
+        debugPrint('Initialize successfully.');
       } else {
         throw Exception(
             'Failed to save stocktake. Status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -268,8 +268,8 @@ class _InventoryListState extends State<InventoryList> {
         },
         body: jsonEncode(payload),
       );
-      print(apiUrl);
-      print(jsonEncode(payload));
+      debugPrint(apiUrl);
+      debugPrint(jsonEncode(payload));
 
       if (response.statusCode == 200) {
         showDialog(
@@ -286,15 +286,15 @@ class _InventoryListState extends State<InventoryList> {
             );
           },
         );
-        print('Data acknowledged successfully. ${response.statusCode}');
+        debugPrint('Data acknowledged successfully. ${response.statusCode}');
       } else {
-        print(token);
+        debugPrint(token);
         throw Exception(
           'Failed to acknowledge data. Status code: ${response.statusCode}',
         );
       }
     } catch (error) {
-      print('Error: $error');
+      debugPrint('Error: $error');
     }
   }
 
@@ -567,7 +567,7 @@ class _InventoryGroupState extends State<InventoryGroup> {
                               setState(() {
                                 item['quantity'][0] = int.parse(value);
                               });
-                              print(item['quantity']);
+                              debugPrint(item['quantity']);
                               if (widget.onChanged != null) {
                                 widget.onChanged!();
                               }

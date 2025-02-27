@@ -20,7 +20,7 @@ import 'package:warehouse/page_picking_list/layout/pdf_screen.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class PickListDetail extends StatefulWidget {
   const PickListDetail(

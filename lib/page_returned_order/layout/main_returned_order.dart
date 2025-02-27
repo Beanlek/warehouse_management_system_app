@@ -16,7 +16,7 @@ import 'package:warehouse/page_returned_order/widget/dialog_Widget.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class ReturnedOrderView extends StatefulWidget {
   const ReturnedOrderView({super.key});
@@ -73,7 +73,7 @@ class _ReturnedOrderViewState extends State<ReturnedOrderView> {
     String _mainBody = 'pre_sales_order_return';
     String _subDirectory = '/api/sale/order/return/list';
 
-    // print('fetch Unacknowledged API');
+    // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
 
@@ -89,11 +89,11 @@ class _ReturnedOrderViewState extends State<ReturnedOrderView> {
     //   params['status'] = selectedFilter.toLowerCase();
     // }
 
-    print('selectedFilter: $selectedFilter');
-    print('_currentPage: $_currentPage');
+    debugPrint('selectedFilter: $selectedFilter');
+    debugPrint('_currentPage: $_currentPage');
 
     final newUri = uri.replace(queryParameters: params);
-    print(newUri);
+    debugPrint(newUri.toString());
 
     final request = http.Request(
       'GET',
@@ -111,7 +111,7 @@ class _ReturnedOrderViewState extends State<ReturnedOrderView> {
     String stringResponse = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-      print('response.statusCode: ${response.statusCode}');
+      debugPrint('response.statusCode: ${response.statusCode}');
       try {
         final json = jsonDecode(stringResponse);
         final List<dynamic> rows = json[_mainBody]['rows'];
@@ -125,19 +125,19 @@ class _ReturnedOrderViewState extends State<ReturnedOrderView> {
         if (_numPages < (count / 20)) {
           _numPages++;
         }
-        print('response.statusCode == 200 count: $count');
-        print('response.statusCode == 200 _numPages: $_numPages');
+        debugPrint('response.statusCode == 200 count: $count');
+        debugPrint('response.statusCode == 200 _numPages: $_numPages');
 
         setState(() {
           returnedOrder = List<Map<String, dynamic>>.from(rows).toList();
         });
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${stringResponse}');
+      debugPrint('Error Body: ${stringResponse}');
       Navigator.pushNamed(context, AppRoutes.login);
 
       FloatingSnackBar(
@@ -406,11 +406,11 @@ class _ReturnedOrderViewState extends State<ReturnedOrderView> {
           returnedOrderId.contains(searchText);
     }).toList();
 
-    // print(filteredSalesOrder);
-    // print(salesOrder);
+    // debugPrint(filteredSalesOrder);
+    // debugPrint(salesOrder);
 
     // if (_filter != 'all') {
-    //   print('_filter : $_filter');
+    //   debugPrint('_filter : $_filter');
     //   filteredSalesOrder = filteredSalesOrder.where(
     //     (_salesOrder) {
     //       final String salesOrderStatus = _salesOrder['status'];

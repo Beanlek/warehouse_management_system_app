@@ -5,7 +5,7 @@ import 'package:nb_utils/nb_utils.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class EnvSettings extends StatefulWidget {
   const EnvSettings({super.key});
@@ -26,9 +26,9 @@ class _EnvSettingsState extends State<EnvSettings> {
     _getDomainName();
 
     if (_successGetDomainName == true) {
-      print('_isPROD : $_isPROD');
-      print('_env : $_env');
-      print('_domainName : $_domainName');
+      debugPrint('_isPROD : $_isPROD');
+      debugPrint('_env : $_env');
+      debugPrint('_domainName : $_domainName');
       return;
     } else {
       _env = 'PROD';
@@ -39,10 +39,10 @@ class _EnvSettingsState extends State<EnvSettings> {
 
   Future<void> _getDomainName() async {
     final String? thisDomainName = await TokenUtil.getDomainName();
-    print('loading _getDomainName thisDomainName: $thisDomainName');
+    debugPrint('loading _getDomainName thisDomainName: $thisDomainName');
 
     if (thisDomainName == null) {
-      print('_getDomainName return: false');
+      debugPrint('_getDomainName return: false');
       setState(() {
         _successGetDomainName = false;
       });
@@ -54,28 +54,28 @@ class _EnvSettingsState extends State<EnvSettings> {
       _env = 'DEV';
       _isPROD = false;
 
-      print(
+      debugPrint(
           '_getDomainName _domainName: $_domainName (_env: $_env, _isPROD: $_isPROD)');
     } else if (thisDomainName == 'https://pnvsales.amastsales.com') {
       _domainName = thisDomainName;
       _env = 'PROD';
       _isPROD = true;
 
-      print(
+      debugPrint(
           '_getDomainName _domainName: $_domainName (_env: $_env, _isPROD: $_isPROD)');
     } else {
-      print('_getDomainName return: false');
+      debugPrint('_getDomainName return: false');
       setState(() {
         _successGetDomainName = false;
       });
       // return false;
     }
 
-    print('_getDomainName return: true');
+    debugPrint('_getDomainName return: true');
     setState(() {
       _successGetDomainName = true;
     });
-    print('_successGetDomainName: $_successGetDomainName');
+    debugPrint('_successGetDomainName: $_successGetDomainName');
     // return true;
   }
 
@@ -117,15 +117,15 @@ class _EnvSettingsState extends State<EnvSettings> {
                             value: _isPROD!,
                             onChanged: (value) {
                               setState(() {
-                                print('switch value: $value ($_isPROD)');
-                                print(
+                                debugPrint('switch value: $value ($_isPROD)');
+                                debugPrint(
                                     'switch _domainName before: $_domainName ($_isPROD)');
                                 _isPROD = value;
                                 _env = _isPROD! ? 'PROD' : 'DEV';
                                 _domainName = _isPROD!
                                     ? 'https://pnvsales.amastsales.com'
                                     : 'https://tnvsales.amastsales-sandbox.com';
-                                print(
+                                debugPrint(
                                     'switch _domainName after: $_domainName ($_isPROD)');
                               });
                             },
@@ -183,7 +183,7 @@ class _EnvSettingsState extends State<EnvSettings> {
                         onPressed: () async {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('domainName', _domainName!);
-                          print(
+                          debugPrint(
                               'env_settings.dart domainName changed: $_domainName');
                           // setState(() async {
                           //   await prefs.setString('domainName', _domainName!);

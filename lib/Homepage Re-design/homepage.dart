@@ -27,7 +27,7 @@ import 'package:warehouse/page_transfer_out/layout/transfer_out_list.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/list_recon.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van%20allotment/allotment_additional_list.dart';
 import 'package:warehouse/van%20allotment/allotment_balance_list.dart';
 import 'package:warehouse/van%20allotment/allotment_plan_list.dart';
@@ -43,7 +43,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
 
   @override
   void initState() {
-    print('homepage initstate');
+    debugPrint('homepage initstate');
     Completer<bool> _completer = Completer<bool>();
     bool _tokenStatus = false;
 
@@ -60,10 +60,10 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
           setState(() {
             _tokenStatus = value;
           });
-          print('initstate _tokenStatus : ${_tokenStatus}');
+          debugPrint('initstate _tokenStatus : ${_tokenStatus}');
 
           if (_tokenStatus == false) {
-            print('initstate: Failed to fetch API.');
+            debugPrint('initstate: Failed to fetch API.');
             Navigator.pushNamed(context, AppRoutes.login);
 
             FloatingSnackBar(
@@ -94,7 +94,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('_getTokenAndFetchCount initiated');
+    debugPrint('_getTokenAndFetchCount initiated');
     final String? _token = await TokenUtil.getToken();
     final String? _username = await TokenUtil.getUsername();
 
@@ -120,7 +120,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     
     DateTime tokenExpiryTimeParsed;
 
-    print('refresh initiated : ${_tokenStatus}');
+    debugPrint('refresh initiated : ${_tokenStatus}');
 
     final String? tokenExpiryTime = await TokenUtil.getTokenExpiryTime();
     tokenExpiryTimeParsed = DateTime.parse(tokenExpiryTime!).add(Duration(hours: int.parse('-4')));
@@ -130,7 +130,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     });
     await Future.delayed(const Duration(seconds: 2));
 
-    print('refresh _getTokenAndFetchCount initiated');
+    debugPrint('refresh _getTokenAndFetchCount initiated');
 
     if(_completer.isCompleted == false) {
 
@@ -143,13 +143,13 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       
 
       tokenFuture.then((value) {
-        print('refresh tokenFuture initiated');
+        debugPrint('refresh tokenFuture initiated');
         _tokenStatus = value;
 
-        print('_tokenStatus : ${_tokenStatus}');
+        debugPrint('_tokenStatus : ${_tokenStatus}');
 
         if (_tokenStatus == false) {
-          print('refresh: Failed to fetch API.');
+          debugPrint('refresh: Failed to fetch API.');
           Navigator.pushNamed(context, AppRoutes.login);
 
           FloatingSnackBar(
@@ -170,7 +170,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('_getUserDetails initiated');
+    debugPrint('_getUserDetails initiated');
     
     if (token == null) {
       if(_completer.isCompleted == false)
@@ -225,7 +225,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('fetchReconCount initiated');
+    debugPrint('fetchReconCount initiated');
     if (token == null) {
       if(_completer.isCompleted == false)
         _completer.complete(false);
@@ -258,7 +258,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('fetchPickListCount initiated');
+    debugPrint('fetchPickListCount initiated');
     if (token == null) {
       if(_completer.isCompleted == false)
         _completer.complete(false);
@@ -293,7 +293,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('fetchSalesOrderCount initiated');
+    debugPrint('fetchSalesOrderCount initiated');
     if (token == null) {
       if(_completer.isCompleted == false)
         _completer.complete(false);
@@ -328,7 +328,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('fetchReturnOrderCount initiated');
+    debugPrint('fetchReturnOrderCount initiated');
     if (token == null) {
       if(_completer.isCompleted == false)
         _completer.complete(false);
@@ -363,7 +363,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     if(_completer.isCompleted) {
       return;
     }
-    print('fetchData initiated');
+    debugPrint('fetchData initiated');
     if (token == null) {
       if(_completer.isCompleted == false)
         _completer.complete(false);
@@ -387,7 +387,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     final String? domainName = await TokenUtil.getDomainName();
     DateTime currentDate = DateTime.now();
     String formattedDate2 = DateFormat('yyyy-MM-dd').format(currentDate);
-    print('formattedDate2:: $formattedDate2');
+    debugPrint('formattedDate2:: $formattedDate2');
 
 
     for (var i = 0; i < (recordType.length) + 2; i++) {
@@ -418,58 +418,58 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         setState(() {
           switch (i) {
             case 0:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotPlanCount = data[_mainBody]["count"];
               break;
             case 1:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotBalanceCount = data[_mainBody]["count"];
               break;
             case 2:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotAdditionalCount = data[_mainBody]["count"];
               break;
             case 3:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               marketReturnCount = data[_mainBody]["count"];
               break;
             case 4:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               mrReturnOrderCount = data[_mainBody]["count"];
               break;
             case 5:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               adhocRequestCount = data[_mainBody]["count"];
               break;
             case 6:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               adhocReturnCount = data[_mainBody]["count"];
               break;
             case 7:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               transferInCount = data[_mainBody]["count"];
               break;
             case 8:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               transferOutCount = data[_mainBody]["count"];
               break;
             case 9:
-              print("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               totalListing = data[_mainBody]["count"];
               break;
             default:
-              print("case default: acknowledgedCount: ${url} ${data[_mainBody]["count"].toString()}");
-              print("case default: pendingCount: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case default: acknowledgedCount: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint("case default: pendingCount: ${url} ${data[_mainBody]["count"].toString()}");
 
               acknowledgedCount = data[_mainBody]["count"];
               pendingCount = totalListing - acknowledgedCount;
@@ -815,7 +815,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                             drawerItem(Icons.person, 'Account Profile', () {
                               setState(() {
                                 showAccountProfile = !showAccountProfile;
-                                print(showAccountProfile);
+                                debugPrint(showAccountProfile.toString());
                               });
                             }),
                               
@@ -843,7 +843,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                             drawerItem(Icons.house, 'Allowed Sites', () {
                               setState(() {
                                 showAllowedSites = !showAllowedSites;
-                                print(showAllowedSites);
+                                debugPrint(showAllowedSites.toString());
                               });
                             }),
                               
@@ -933,9 +933,9 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                             ),
                             onPressed: () {
                               setState(() {
-                                // print(showActionSummary);
+                                // debugPrint(showActionSummary);
                                 showActionSummary = !showActionSummary;
-                                // print(showActionSummary);
+                                // debugPrint(showActionSummary);
                               });
                             },
                           ),

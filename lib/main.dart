@@ -57,7 +57,7 @@ Future<void> _getDeviceID() async {
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
-  print('androidInfo.id.toString() : ${androidInfo.id.toString()}');
+  debugPrint('androidInfo.id.toString() : ${androidInfo.id.toString()}');
 
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('deviceID', androidInfo.id.toString());
@@ -70,13 +70,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('main.dart initRoute : ${initRoute}');
+    debugPrint('main.dart initRoute : ${initRoute}');
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
     
-    print('main.dart editedRoute : ${initRoute}');
+    debugPrint('main.dart editedRoute : ${initRoute}');
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

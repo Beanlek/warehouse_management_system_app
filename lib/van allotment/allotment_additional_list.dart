@@ -13,34 +13,10 @@ import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van%20allotment/layout/allotment_detail.dart';
 
-String titleCheck(String _recordType) {
-      switch (_recordType) {
-        case 'allot_plan':
-          return 'Allotment Plan';
-        case 'allot_balance':
-          return 'Allotment Balance';
-        case 'allot_additional':
-          return 'Allotment Additional';
-        case 'adhoc_request':
-          return 'Adhoc Request';
-        case 'adhoc_return':
-          return 'Adhoc Return';
-        case 'warehouse_stocktake':
-          return 'Warehouse Stocktake';
-        case 'sales_order':
-          return 'Sales Order';
-        case 'van_stocktake':
-          return 'Van Stock Take';
-        default:
-          return 'NNN';
-      }
-    }
-
-    
-  const String TYPE = 'allot_additional';
+const String TYPE = ALLOT_ADDITIONAL;
 
 class AllotmentAdditionalListing extends StatefulWidget {
   const AllotmentAdditionalListing({super.key});
@@ -96,7 +72,7 @@ class _AllotmentAdditionalListingState extends State<AllotmentAdditionalListing>
     String _mainBody = 'wms_van_ids';
     String _subDirectory = '/api/wms/van_ids';
 
-    // print('fetch Unacknowledged API');
+    // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
 
@@ -110,11 +86,11 @@ class _AllotmentAdditionalListingState extends State<AllotmentAdditionalListing>
       'status': selectedFilter.toLowerCase(),
     };
 
-    print('selectedFilter: $selectedFilter');
-    print('_currentPage: $_currentPage');
+    debugPrint('selectedFilter: $selectedFilter');
+    debugPrint('_currentPage: $_currentPage');
 
     final newUri = uri.replace(queryParameters: params);
-    print(newUri);
+    debugPrint(newUri.toString());
 
     final request = http.Request(
       'GET',
@@ -161,12 +137,12 @@ class _AllotmentAdditionalListingState extends State<AllotmentAdditionalListing>
           allotments = List<Map<String, dynamic>>.from(wms_van_ids).toList();
         });
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${stringResponse}');
+      debugPrint('Error Body: ${stringResponse}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',
@@ -567,7 +543,7 @@ class _AllotmentAdditionalListingState extends State<AllotmentAdditionalListing>
                           MaterialPageRoute(
                             builder: (context) => AllotmentDetailView(
                                 allotmentId: allotmentId,
-                                allotmentType: titleCheck(TYPE),
+                                allotmentType: TYPE,
                                 status: status,
                                 createdAt: dateCreatedAt,
                               ),

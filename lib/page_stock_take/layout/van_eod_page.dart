@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/page_stock_take/widget/dialog_widget.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
 import 'package:warehouse/van_stock_take/layout/widget/van_widget.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
@@ -142,7 +142,7 @@ class _VanEODPageState extends State<VanEODPage> {
         await fetchData(selectedDate, siteid);
         selectedVanDetails.clear();
         commentController.clear();
-        print("Acknowledgement successful!");
+        debugPrint("Acknowledgement successful!");
       } else {
         // Handle other error responses
         showDialog(
@@ -218,12 +218,12 @@ class _VanEODPageState extends State<VanEODPage> {
           );
         }
       } else {
-        print('Failed to fetch API. Status code: ${response.statusCode}');
+        debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching data: $e');
-      print(formattedDate);
-      print(url);
+      debugPrint('Error fetching data: $e');
+      debugPrint(formattedDate);
+      debugPrint(url);
     } finally {}
   }
 
@@ -285,12 +285,12 @@ class _VanEODPageState extends State<VanEODPage> {
           }
         }
       } else {
-        print('Failed to fetch API. Status code: ${response.statusCode}');
+        debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching data: $e');
-      print('Formatted Date: $formattedDate');
-      print('URL: $url');
+      debugPrint('Error fetching data: $e');
+      debugPrint('Formatted Date: $formattedDate');
+      debugPrint('URL: $url');
     }
 
     setState(() {
@@ -535,7 +535,7 @@ class _VanEODPageState extends State<VanEODPage> {
                                         dialogBackgroundColor: biruImran,
                                       );
                                       if (values != null) {
-                                        print(values);
+                                        debugPrint(values.toString());
                                         setState(() {
                                           selectedVanId = '';
                                           vanDetails.clear();
@@ -672,7 +672,7 @@ class _VanEODPageState extends State<VanEODPage> {
                                                     // Update the 'updated_qty' value of the element
                                                     element['updated_qty'] = value;
                                                   });
-                                                  print(vanDetails);
+                                                  debugPrint(vanDetails.toString());
                                                 },
                                               ),
                                             ),

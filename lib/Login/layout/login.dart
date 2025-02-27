@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -38,7 +38,7 @@ class _LoginViewState extends State<LoginView>
 
   @override
   void initState() {
-    print('login initstate');
+    debugPrint('login initstate');
 
     _getAppVersion();
     _getDomainName();
@@ -86,7 +86,7 @@ class _LoginViewState extends State<LoginView>
   Future<void> _login() async {
     final prefs = await SharedPreferences.getInstance();
     final String? deviceID = await TokenUtil.getDeviceID();
-    print('deviceID : ${deviceID}');
+    debugPrint('deviceID : ${deviceID}');
 
     setState(() {
       _isLoading = true;
@@ -117,7 +117,7 @@ class _LoginViewState extends State<LoginView>
       final token = json.decode(response.body)['token'];
       String tokenExpiryTime = json.decode(response.body)['token_expiry_time'];
         
-      print('login.dart tokenExpiryTime initialized: ${tokenExpiryTime}');
+      debugPrint('login.dart tokenExpiryTime initialized: ${tokenExpiryTime}');
 
       await prefs.remove('token'); // Remove previous token
       await prefs.setString('token', token); // Save new token
@@ -130,7 +130,7 @@ class _LoginViewState extends State<LoginView>
           message: 'Login success, token and username saved.',
           context: context);
     } else {
-      print("Token Expired: ${response.statusCode}");
+      debugPrint("Token Expired: ${response.statusCode}");
       String _error = 'Please check your credentials';
 
       if (response.statusCode == 502) {
@@ -213,7 +213,7 @@ class _LoginViewState extends State<LoginView>
                             controller: _passwordController,
                             onSubmitted: (value) {
                               if (_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-                                print('run onsubmitted password');
+                                debugPrint('run onsubmitted password');
                                 _isLoading ? null : _login();
                               }
                             },
@@ -285,7 +285,7 @@ class _LoginViewState extends State<LoginView>
                                     //debug
                                     // final String? domainName =
                                     //     await TokenUtil.getDomainName();
-                                    // print(
+                                    // debugPrint(
                                     //     'login.dart domainName before env: $domainName');
                                     //debug
 

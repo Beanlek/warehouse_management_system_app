@@ -16,7 +16,7 @@ import 'package:easy_stepper/easy_stepper.dart';
 import 'package:warehouse/page_market_return/layout/market_return_qr_code.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van%20allotment/widget/dialog_widget.dart';
 
 class MarketReturnDetailView extends StatefulWidget {
@@ -210,7 +210,7 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
                                 onPressed: () {
                                   setState(() {
                                     _showMarketReturnDetails = !_showMarketReturnDetails;
-                                    // print(_showActionSummary);
+                                    // debugPrint(_showActionSummary);
                                   });
                                 },
                               ),
@@ -364,7 +364,7 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
                               controller: _pageController,
                               onPageChanged: (index) {
                                 setState(() {
-                                  print('index');
+                                  debugPrint('index');
                                   activeStep = index;
                                 });
                               },
@@ -468,8 +468,8 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
                                   
                                     if (_confirmAcknowledge) {
                                       String comment = _commentController.text.trim();
-                                      print("choosedMarketReturn['van_id']: ${choosedMarketReturn['van_id']}");
-                                      print("choosedMarketReturn['reference_id']: ${choosedMarketReturn['reference_id']}");
+                                      debugPrint("choosedMarketReturn['van_id']: ${choosedMarketReturn['van_id']}");
+                                      debugPrint("choosedMarketReturn['reference_id']: ${choosedMarketReturn['reference_id']}");
                                       bool tempRefresh = false;
                                       tempRefresh = await Navigator.push(
                                         context,
@@ -815,7 +815,7 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
                             onChanged: (value) {
                               setState(() {
                                 _thisDetails['quantity'][0] = int.parse(value);
-                                print(_thisDetails['quantity'][0]);
+                                debugPrint(_thisDetails['quantity'][0]);
                               });
                             },
                           ) : 
@@ -861,7 +861,7 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
         final marketReturnJson = jsonDecode(marketReturnResponse.body);
         final marketReturnData = marketReturnJson['data'];
         final detailsData = marketReturnData['skus'];
-        print('detailsData: $detailsData');
+        debugPrint('detailsData: $detailsData');
 
         setState(() {
           choosedMarketReturn = marketReturnData;
@@ -872,13 +872,13 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
             Navigator.of(context).pop();
           }
           details = List<Map<String, dynamic>>.from(detailsData);
-          print('details: $details');
+          debugPrint('details: $details');
           // allItemsChecked = _areAllItemsChecked();
         });
 
-        print('Fetch MarketReturn API completed');
+        debugPrint('Fetch MarketReturn API completed');
       } catch (e) {
-        print('Failed to parse MarketReturn JSON: $e');
+        debugPrint('Failed to parse MarketReturn JSON: $e');
       }
     }
     else if(marketReturnResponse.statusCode == 404) {
@@ -891,8 +891,8 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
       Navigator.of(context).pop();
     }
     else {
-      print('Failed to fetch MarketReturn API. Status code: ${marketReturnResponse.statusCode}');
-      print('MarketReturn Error Body: ${marketReturnResponse.body}');
+      debugPrint('Failed to fetch MarketReturn API. Status code: ${marketReturnResponse.statusCode}');
+      debugPrint('MarketReturn Error Body: ${marketReturnResponse.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',

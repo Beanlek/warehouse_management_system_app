@@ -14,37 +14,9 @@ import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/page_mr_return_order/layout/mr_return_order_detail.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
-String titleCheck(String _recordType) {
-      switch (_recordType) {
-        case 'allot_plan':
-          return 'Allotment Plan';
-        case 'allot_balance':
-          return 'Allotment Balance';
-        case 'allot_additional':
-          return 'Allotment Additional';
-        case 'adhoc_request':
-          return 'Adhoc Request';
-        case 'market_return':
-          return 'Market Return';
-        case 'return_order':
-          return 'MR Return Order';
-        case 'adhoc_return':
-          return 'Adhoc Return';
-        case 'warehouse_stocktake':
-          return 'Warehouse Stocktake';
-        case 'sales_order':
-          return 'Sales Order';
-        case 'van_stocktake':
-          return 'Van Stock Take';
-        default:
-          return 'NNN';
-      }
-    }
-
-    
-  const String TYPE = 'return_order';
+const String TYPE = RETURN_ORDER;
 
 class MRReturnOrderListing extends StatefulWidget {
   const MRReturnOrderListing({super.key});
@@ -110,7 +82,7 @@ class _MRReturnOrderListingState extends State<MRReturnOrderListing> {
     String _mainBody = 'wms_acknowledgment';
     String _subDirectory = '/api/wms/android-list';
 
-    // print('fetch Unacknowledged API');
+    // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
 
@@ -124,16 +96,16 @@ class _MRReturnOrderListingState extends State<MRReturnOrderListing> {
       'status': selectedFilter.toLowerCase()
     };
 
-    // print("stringDate: $stringDate");
+    // debugPrint("stringDate: $stringDate");
     // if (selectedDateFilter == "Today") {
     //   params.addEntries( { 'allotment_date': stringDate }.entries);
     // }
 
-    print('selectedFilter: $selectedFilter');
-    print('_currentPage: $_currentPage');
+    debugPrint('selectedFilter: $selectedFilter');
+    debugPrint('_currentPage: $_currentPage');
 
     final newUri = uri.replace(queryParameters: params);
-    print(newUri);
+    debugPrint(newUri.toString());
 
     final request = http.Request(
       'GET',
@@ -179,12 +151,12 @@ class _MRReturnOrderListingState extends State<MRReturnOrderListing> {
           mrReturnOrders = List<Map<String, dynamic>>.from(wms_van_ids).toList();
         });
       } catch (e) {
-        print('Failed to parse JSON: $e');
+        debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      print('Error Body: ${stringResponse}');
+      debugPrint('Error Body: ${stringResponse}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',
@@ -579,7 +551,7 @@ class _MRReturnOrderListingState extends State<MRReturnOrderListing> {
                     child: ListTile(
                       splashColor: white,
                       titleAlignment: ListTileTitleAlignment.titleHeight,
-                      onTap: () async { print(marketReturnId);
+                      onTap: () async { debugPrint(marketReturnId);
                         bool tempRefresh = false;
                         tempRefresh = await Navigator.push(
                           context,

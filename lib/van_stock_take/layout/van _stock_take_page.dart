@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:http/http.dart' as http;
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
 import 'package:warehouse/van_stock_take/layout/widget/van_widget.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
@@ -243,7 +243,7 @@ class _VanStockTakeState extends State<VanStockTake> {
         fetchData(selectedDate, siteid);
         selectedVanDetails.clear();
         commentController.clear();
-        print("Acknowledgement successful!");
+        debugPrint("Acknowledgement successful!");
       } else {
         // Handle other error responses
         showDialog(
@@ -324,12 +324,12 @@ class _VanStockTakeState extends State<VanStockTake> {
           );
         }
       } else {
-        print('Failed to fetch API. Status code: ${response.statusCode}');
+        debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching data: $e');
-      print(formattedDate);
-      print(url);
+      debugPrint('Error fetching data: $e');
+      debugPrint(formattedDate);
+      debugPrint(url);
     } finally {}
   }
 
@@ -383,12 +383,12 @@ class _VanStockTakeState extends State<VanStockTake> {
           }
         }
       } else {
-        print('Failed to fetch API. Status code: ${response.statusCode}');
+        debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching data: $e');
-      print('Formatted Date: $formattedDate');
-      print('URL: $url');
+      debugPrint('Error fetching data: $e');
+      debugPrint('Formatted Date: $formattedDate');
+      debugPrint('URL: $url');
     }
   }
 
@@ -504,8 +504,8 @@ class _VanStockTakeState extends State<VanStockTake> {
                             dialogBackgroundColor: Colors.white,
                           );
                           if (values != null) {
-                            print(values);
-                            // print(_getValueText(
+                            debugPrint(values.toString());
+                            // debugPrint(_getValueText(
                             //   config.calendarType,
                             //   values,
                             // ));
@@ -658,7 +658,7 @@ class _VanStockTakeState extends State<VanStockTake> {
                                               // Update the 'updated_qty' value of the element
                                               element['updated_qty'] = value;
                                             });
-                                            print(vanDetails);
+                                            debugPrint(vanDetails.toString());
                                           },
                                         ),
                                       ),

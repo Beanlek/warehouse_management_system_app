@@ -14,7 +14,7 @@ import 'package:vibration/vibration.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class MRReturnOrderQRScanner extends StatefulWidget {
   MRReturnOrderQRScanner({
@@ -63,7 +63,7 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
     super.initState();
     _init();
     _getToken();
-    print('widget.dataArr : ${widget.dataArr}');
+    debugPrint('widget.dataArr : ${widget.dataArr}');
   }
 
   @override
@@ -142,7 +142,7 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
       'skus': customizedDataArr,
     };
 
-    print("imageBase64: $imageBase64");
+    debugPrint("imageBase64: $imageBase64");
   
 
     try {
@@ -155,12 +155,12 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
         body: jsonEncode(payload),
       );
 
-      print('response.statusCode : ${response.statusCode}');
+      debugPrint('response.statusCode : ${response.statusCode}');
 
       if (response.statusCode == 500) {
         final json = jsonDecode(response.body);
         final errMsg = json['errMsg'];
-        print('errMsg: $errMsg');
+        debugPrint('errMsg: $errMsg');
 
         FloatingSnackBar(
             message: '${widget.refID} encounter an error. $errMsg',
@@ -178,15 +178,15 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
       }
 
       else if (response.statusCode == 200) {
-        print('at 200 : ${response.statusCode}');
+        debugPrint('at 200 : ${response.statusCode}');
         Navigator.pop(context, true);
         FloatingSnackBar(
           message: 'Allotment ${widget.refID} acknowledged.',
           context: context,
         );
       } else {
-        print('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-        print('Error Body: ${response.body}');
+        debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${response.body}');
         Navigator.pushNamed(context, AppRoutes.login);
 
         FloatingSnackBar(
@@ -194,7 +194,7 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
             context: context);
       }
     } catch (error) {
-      print('Error ${error}. Please contact system admin.');
+      debugPrint('Error ${error}. Please contact system admin.');
       FloatingSnackBar(
             message: 'Error ${error}. Please contact system admin.',
             context: context);
@@ -381,7 +381,7 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
     controller.scannedDataStream.listen((scanData) {
       snackbarShown = false; // Reset the snackbarShown variable for each scan
       _processQRCode(scanData, widget.vanID);
-      print(scanData);
+      debugPrint(scanData.toString());
     });
   }
 
@@ -424,7 +424,7 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
       try {
         allotmentDateTime = DateTime.parse(allotmentDate).add(Duration(hours: int.parse('8')));
       } catch (e) {
-        print('Error parsing allotment date: $e');
+        debugPrint('Error parsing allotment date: $e');
       }
 
       // Convert generated time to DateTime
@@ -433,7 +433,7 @@ class _MRReturnOrderQRScannerState extends State<MRReturnOrderQRScanner> {
         generatedDateTime =
             DateTime.fromMillisecondsSinceEpoch(int.parse(generatedTime));
       } catch (e) {
-        print('Error parsing generated time: $e');
+        debugPrint('Error parsing generated time: $e');
       }
 
       if (allotmentDateTime == null || generatedDateTime == null) {

@@ -12,7 +12,7 @@ import 'package:number_paginator/number_paginator.dart';
 import 'package:warehouse/Homepage%20Re-design/homepage.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/widget/dialog_widget.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
 
 class ReconDetailPage extends StatefulWidget {
@@ -143,7 +143,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
 
       if (response.statusCode == 200) {
         // Request successful
-        print('Data posted successfully');
+        debugPrint('Data posted successfully');
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -161,16 +161,16 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
             });
       } else {
         // Request failed
-        print(data);
+        debugPrint(data.toString());
 
-        print('Failed to post data');
+        debugPrint('Failed to post data');
         Navigator.pop(context);
-        print(response.statusCode);
-        print(response.body);
+        debugPrint(response.statusCode.toString());
+        debugPrint(response.body);
       }
     } else {
       // Handle case where token is null
-      print('Token is null');
+      debugPrint('Token is null');
     }
   }
 
@@ -319,7 +319,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                                     onPressed: () {
                                       setState(() {
                                         _showReconDetails = !_showReconDetails;
-                                        // print(_showActionSummary);
+                                        // debugPrint(_showActionSummary);
                                       });
                                     },
                                   ),
@@ -485,7 +485,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                                   controller: _pageController,
                                   onPageChanged: (index) {
                                     setState(() {
-                                      print('index');
+                                      debugPrint('index');
                                       activeStep = index;
                                       _paginatorController.currentPage = index;
                                     });
@@ -1035,8 +1035,8 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                                 setState(() {
                                   details['quantity'][1] =
                                       int.parse(value);
-                                  print(salesReconcilation);
-                                  print([stockRecon["id"]]);
+                                  debugPrint(salesReconcilation.toString());
+                                  debugPrint([stockRecon["id"]].toString());
                                 });
                               },
                             ) :

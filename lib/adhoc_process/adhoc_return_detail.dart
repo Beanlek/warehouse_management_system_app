@@ -10,7 +10,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/QR_code/layout/qr_code_adhocReturn.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
-import 'package:warehouse/utils/color.dart';
+import 'package:warehouse/utils/utils.dart';
 
 class AdhocReturnDetailsPage extends StatefulWidget {
   const AdhocReturnDetailsPage(
@@ -294,7 +294,7 @@ class _AdhocReturnDetailsPageState extends State<AdhocReturnDetailsPage> {
                     onChanged: (newValue) {
                       setState(() {
                         details['quantity'][0] = newValue;
-                        print(details['quantity'][0]);
+                        debugPrint(details['quantity'][0]);
                       });
                     },
                   ),
@@ -323,7 +323,7 @@ class _AdhocReturnDetailsPageState extends State<AdhocReturnDetailsPage> {
     String allotmentUrl =
         '$domainName/api/van/stock/reduce/adhoc/o/';
     final allotmentUri = Uri.parse('$allotmentUrl$allotmentId');
-    print('allotmentId : $allotmentId');
+    debugPrint('allotmentId : $allotmentId');
 
     final allotmentResponse = await http.get(allotmentUri, headers: {'Authorization': 'Bearer $token'});
 
@@ -342,14 +342,14 @@ class _AdhocReturnDetailsPageState extends State<AdhocReturnDetailsPage> {
           allItemsChecked = _areAllItemsChecked();
         });
 
-        print('Fetch Allotment API completed');
+        debugPrint('Fetch Allotment API completed');
       } catch (e) {
-        print('Failed to parse Allotment JSON: $e');
+        debugPrint('Failed to parse Allotment JSON: $e');
       }
     } else {
-      print(
+      debugPrint(
           'Failed to fetch Allotment API. Status code: ${allotmentResponse.statusCode}');
-      print('Allotment Error Body: ${allotmentResponse.body}');
+      debugPrint('Allotment Error Body: ${allotmentResponse.body}');
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
           message: 'Token Expired. Please login back to the system.',
