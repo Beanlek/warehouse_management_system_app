@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Open_Chrome",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome"
+        },
+        {
+            "name": "Open_Tablet",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "R9PT80JGLJD"
+        },
+        {
+            "name": "Open_Zebra",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },
+    ]
+}
