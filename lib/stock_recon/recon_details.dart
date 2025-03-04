@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 import 'package:warehouse/Homepage%20Re-design/homepage.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/widget/dialog_widget.dart';
@@ -32,32 +34,83 @@ class ReconDetailPage extends StatefulWidget {
 }
 
 class _ReconDetailPageState extends State<ReconDetailPage> {
-  final List<String> _tableNames = [
-    'Inventory Details',
-    'Sales Details',
-    'Return Summary',
-    'Physical Quantity',
+  static const String SALES_SUMMARY = 'Sales Summary';
+  static const List<String> SALES_SUMMARY_HEADER = [
+    'SKU ID',
+    'UOM',
+    'OPENING',
+    'SALES',
+    'FRESH',
+    'CONSIGNMENT IN',
+    'CONSIGNMENT OUT',
+    'VAN ADHOC RETURN',
+    'CLOSING',
   ];
+  static const String SALES_RECON = 'Sales Reconcilation';
+  static const List<String> SALES_RECON_HEADER = [
+    'SKU ID',
+    'UOM',
+    'RECEIVED',
+    'NOT RECEIVED',
+    'EXTRA',
+  ];
+  static const String RETURN_SUMMARY = 'Return Summary';
+  static const List<String> RETURN_SUMMARY_HEADER = [
+    'SKU ID',
+    'UOM',
+    'OLD',
+    'DAMAGED',
+    'RECALLED',
+  ];
+  static const String RETURN_RECON = 'Return Reconcilation';
+  static const List<String> RETURN_RECON_HEADER_MAIN = [
+    'RECEIVED',
+    'NOT RECEIVED',
+  ];
+  static const List<String> RETURN_RECON_HEADER = [
+    'SKU ID',
+    'UOM',
+    'OLD',
+    'DAMAGED',
+    'RECALLED',
+    'OLD',
+    'EXTRA(OLD)',
+    'DAMAGED',
+    'EXTRA(DAMAGED)',
+    'RECALLED',
+    'EXTRA(RECALLED)',
+  ];
+  
+  List<String> tableNames = [];
+  List<List<Map<String,dynamic>>> tableContents = [];
+  List<ScrollController> tableScrollsHorizontal = [];
+  List<ScrollController> tableScrollsVertical = [];
+
   final PageController _pageController = PageController();
-  final NumberPaginatorController _paginatorController =
-      NumberPaginatorController();
+  final NumberPaginatorController _paginatorController = NumberPaginatorController();
 
   final ScrollController _scrollController = ScrollController();
-  final ScrollController _scrollInventoryController = ScrollController();
-  final ScrollController _scrollSalesController = ScrollController();
-  final ScrollController _scrollSummaryController = ScrollController();
-  final ScrollController _scrollQuantityController = ScrollController();
+  final ScrollController salesSummaryControllerHorizontal = ScrollController();
+  final ScrollController salesReconControllerHorizontal = ScrollController();
+  final ScrollController returnSummaryControllerHorizontal = ScrollController();
+  final ScrollController returnReconControllerHorizontal = ScrollController();
+  final ScrollController salesSummaryControllerVertical = ScrollController();
+  final ScrollController salesReconControllerVertical = ScrollController();
+  final ScrollController returnSummaryControllerVertical = ScrollController();
+  final ScrollController returnReconControllerVertical = ScrollController();
 
   List<Map<String, dynamic>> details = [];
-  List<Map<String, dynamic>> returnSummary = [];
   List<Map<String, dynamic>> salesSummary = [];
-  List<Map<String, dynamic>> returnReconciliation = [];
   List<Map<String, dynamic>> salesReconcilation = [];
+  List<Map<String, dynamic>> returnSummary = [];
+  List<Map<String, dynamic>> returnReconciliation = [];
+  Map<String, dynamic> allTables = {};
+  int tableCount = 0;
 
   Map<String, dynamic> stockRecon = {};
   int activeStep = 0;
   
-  bool _showReconDetails = true;
+  bool _showReconDetails = false;
   bool _launchLoading = true;
   bool _isLoading = false;
 
@@ -65,7 +118,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
   void initState() {
     super.initState();
 
-    fetchUnacknowledgedData(widget.reconId).then((value) => setState(() {
+    fetchUnacknowledgedData(widget.reconId).whenComplete(() => setState(() {
       _launchLoading = false;
     }));
   }
@@ -75,14 +128,20 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
     _pageController.dispose();
     _paginatorController.dispose();
     _scrollController.dispose();
-    _scrollInventoryController.dispose();
-    _scrollSalesController.dispose();
-    _scrollSummaryController.dispose();
-    _scrollQuantityController.dispose();
+    
+    salesSummaryControllerHorizontal.dispose();
+    salesReconControllerHorizontal.dispose();
+    returnSummaryControllerHorizontal.dispose();
+    returnReconControllerHorizontal.dispose();
+    salesSummaryControllerVertical.dispose();
+    salesReconControllerVertical.dispose();
+    returnSummaryControllerVertical.dispose();
+    returnReconControllerVertical.dispose();
+
     super.dispose();
   }
 
-  Future<Map<String, dynamic>> fetchUnacknowledgedData(String id) async {
+  Future<void> fetchUnacknowledgedData(String id) async {
     final String? token = await TokenUtil.getToken();
     final String? domainName = await TokenUtil.getDomainName();
 
@@ -101,17 +160,49 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
         setState(
           () {
             stockRecon = jsonData["stock_recon"];
-            salesSummary =
-                List<Map<String, dynamic>>.from(jsonData["salesSummary"]);
+            salesSummary = List<Map<String, dynamic>>.from(
+              jsonData["salesSummary"]
+            );
+            if (salesSummary.isNotEmpty) {
+              tableCount = tableCount + 1;
+              allTables.addEntries({ SALES_SUMMARY : [salesSummary, salesSummaryControllerHorizontal, salesSummaryControllerVertical]}.entries);
+            }
+
+            salesReconcilation = List<Map<String, dynamic>>.from(
+              jsonData["salesReconcilation"]
+            );
+            if (salesReconcilation.isNotEmpty) {
+              tableCount = tableCount + 1;
+              allTables.addEntries({ SALES_RECON : [salesReconcilation, salesReconControllerHorizontal, salesReconControllerVertical]}.entries);
+            }
+
+            returnSummary = List<Map<String, dynamic>>.from(
+              jsonData["returnSummary"]
+            );
+            if (returnSummary.isNotEmpty) {
+              tableCount = tableCount + 1;
+              allTables.addEntries({ RETURN_SUMMARY : [returnSummary, returnSummaryControllerHorizontal, returnSummaryControllerVertical]}.entries);
+            }
+
             returnReconciliation = List<Map<String, dynamic>>.from(
-                jsonData["returnReconcilation"]);
-            returnSummary =
-                List<Map<String, dynamic>>.from(jsonData["returnSummary"]);
-            salesReconcilation =
-                List<Map<String, dynamic>>.from(jsonData["salesReconcilation"]);
+              jsonData["returnReconcilation"]
+            );
+            if (returnReconciliation.isNotEmpty) {
+              tableCount = tableCount + 1;
+              allTables.addEntries({ RETURN_RECON : [returnReconciliation, returnReconControllerHorizontal, returnReconControllerVertical]}.entries);
+            }
           },
         );
-        return jsonData;
+
+        allTables.forEach((key, value) {
+          if (value != null) {
+            tableNames.add(key);
+            tableContents.add(value[0]);
+            tableScrollsHorizontal.add(value[1]);
+            tableScrollsVertical.add(value[2]);
+          }
+        },);
+
       } else {
         throw Exception('Failed to load data');
       }
@@ -281,167 +372,156 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                     height: 16,
                   ),
                   Expanded(
-                    child: RawScrollbar(
-                      radius: Radius.circular(10),
-                      thickness: 8,
-                      thumbColor: biruImran4,
-                      thumbVisibility: true,
-                      controller: _scrollController,
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                      'Recon Details',
-                                    style: TextStyle(
-                                      fontSize: 28.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: biruImran,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      _showReconDetails
-                                          ? Icons.keyboard_arrow_up
-                                          : Icons.keyboard_arrow_down,
-                                      size: 30,
-                                      color: biruImran,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _showReconDetails = !_showReconDetails;
-                                        // debugPrint(_showActionSummary);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
                               Text(
-                                'Planned Clock Out: ${widget.plannedClockOutDate.toUpperCase()}',
+                                'Recon Details',
                                 style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w300,
-                                  color: textColorTertiary,
+                                  fontSize: 28.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: biruImran,
                                 ),
                               ),
-                              const SizedBox(
-                                height: 24,
-                              ),
-                              _showReconDetails == false ?
-                              InkWell(
-                                onTap: () {
-                                  setState(() { 
+                              IconButton(
+                                icon: Icon(
+                                  _showReconDetails
+                                      ? Icons.keyboard_arrow_up
+                                      : Icons.keyboard_arrow_down,
+                                  size: 30,
+                                  color: biruImran,
+                                ),
+                                onPressed: () {
+                                  setState(() {
                                     _showReconDetails = !_showReconDetails;
+                                    // debugPrint(_showActionSummary);
                                   });
                                 },
-                                child: Text(
-                                  'Show more',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w300,
-                                    color: textColorTertiary,
+                              ),
+                            ],
+                          ),
+                          Text(
+                            'Planned Clock Out: ${widget.plannedClockOutDate.toUpperCase()}',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w300,
+                              color: textColorTertiary,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          _showReconDetails == false ?
+                          InkWell(
+                            onTap: () {
+                              setState(() { 
+                                _showReconDetails = !_showReconDetails;
+                              });
+                            },
+                            child: Text(
+                              'Show more',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w300,
+                                color: textColorTertiary,
+                              ),
+                            ),
+                          ):
+                          
+                          _launchLoading == true ?
+                          Center(child: CircularProgressIndicator()) :
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 8),
+                                        _buildInfoContainer(
+                                          'Stock Recon ID',
+                                          stockRecon['id'],
+                                          Icons.info,
+                                        ),
+                                        _buildInfoContainer(
+                                          'Van ID',
+                                          stockRecon['van_id'],
+                                          Icons.directions_car,
+                                        ),
+                                        _buildInfoContainer(
+                                          'Sales Date',
+                                          stockRecon['sales_date'],
+                                          Icons.calendar_today,
+                                        ),
+                                        _buildInfoContainer(
+                                          'Status',
+                                          (stockRecon['status'] as String).capitalize(),
+                                          Icons.assignment_turned_in_outlined,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ):
-                              
-                              _launchLoading == true ?
-                              Center(child: CircularProgressIndicator()) :
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 80.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(height: 8),
-                                            _buildInfoContainer(
-                                              'Stock Recon ID',
-                                              stockRecon['id'],
-                                              Icons.info,
-                                            ),
-                                            _buildInfoContainer(
-                                              'Van ID',
-                                              stockRecon['van_id'],
-                                              Icons.directions_car,
-                                            ),
-                                            _buildInfoContainer(
-                                              'Sales Date',
-                                              stockRecon['sales_date'],
-                                              Icons.calendar_today,
-                                            ),
-                                            _buildInfoContainer(
-                                              'Status',
-                                              (stockRecon['status'] as String).capitalize(),
-                                              Icons.assignment_turned_in_outlined,
-                                            ),
-                                          ],
+                                
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 8),
+                                        _buildInfoContainer(
+                                          'Clock Out At',
+                                          stockRecon['clocked_out'],
+                                          Icons.timer,
                                         ),
-                                      ),
-                                    ),
-                                    
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(height: 8),
-                                            _buildInfoContainer(
-                                              'Clock Out At',
-                                              stockRecon['clocked_out'],
-                                              Icons.timer,
-                                            ),
-                                            _buildInfoContainer(
-                                              'Created By',
-                                              stockRecon['created_by'],
-                                              Icons.person,
-                                            ),
-                                            _buildInfoContainer(
-                                              'Created At',
-                                              stockRecon['createdAt'],
-                                              Icons.access_time,
-                                            ),
-                                            _buildInfoContainer(
-                                              'Updated At',
-                                              stockRecon['updatedAt'],
-                                              Icons.send,
-                                            ),
-                                          ],
+                                        _buildInfoContainer(
+                                          'Created By',
+                                          stockRecon['created_by'],
+                                          Icons.person,
                                         ),
-                                      ),
+                                        _buildInfoContainer(
+                                          'Created At',
+                                          stockRecon['createdAt'],
+                                          Icons.access_time,
+                                        ),
+                                        _buildInfoContainer(
+                                          'Updated At',
+                                          stockRecon['updatedAt'],
+                                          Icons.send,
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 24),
-                              SizedBox(
-                                width: (MediaQuery.of(context).size.width / 7) * 4,
-                                child: NumberPaginator(
-                                  controller: _paginatorController,
-                                  contentBuilder: (index) => Expanded(
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          if (tableCount != 0)
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width / 7) * 4,
+                              child: NumberPaginator(
+                                initialPage: 0,
+                                controller: _paginatorController,
+                                contentBuilder: (index) {
+                                  
+                                  return Expanded(
                                     child: Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
+                                        tableNames[index],
                                         textAlign: TextAlign.center,
-                                        index == 2 ?
-                                          returnSummary.isNotEmpty ?
-                                            _tableNames[index] :
-                                            _tableNames[index+1] :
-                                          _tableNames[index]
-                                        ,
                                         style: TextStyle(
                                           fontSize: 20.0,
                                           fontWeight: FontWeight.bold,
@@ -449,168 +529,69 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  numberPages: 3,
-                                  onPageChange: (index) async {
-                                    setState(() {
-                                      activeStep = index;
-                                      _pageController.animateToPage(
-                                        activeStep,
-                                        duration: Duration(milliseconds: 400),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    });
-                                  },
-                                  config: NumberPaginatorUIConfig(
-                                    buttonSelectedForegroundColor: white,
-                                    buttonUnselectedForegroundColor: textColorTertiary,
-                                    buttonSelectedBackgroundColor: biruImran,
-                                  ),
-                                  nextButtonContent: Icon(Icons.chevron_right, size: _responsiveFontSize() * 3,
-                                    color: activeStep == 2 ? greyColor : biruImran,),
-                                  prevButtonContent: Icon(Icons.chevron_left, size: _responsiveFontSize() * 3,
-                                    color: activeStep == 0 ? greyColor : biruImran,),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 48,
-                              ),
-                              
-          
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.92,
-                                height: MediaQuery.of(context).size.height * 0.3,
-                                child: PageView.builder(
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  controller: _pageController,
-                                  onPageChanged: (index) {
-                                    setState(() {
-                                      debugPrint('index');
-                                      activeStep = index;
-                                      _paginatorController.currentPage = index;
-                                    });
-                                  },
-                                  itemCount: 3,
-                                  itemBuilder: (context, index) {
-                                    final double _tableWidth = MediaQuery.of(context).size.width * 0.9;
-                                    final TextStyle _thisStyle = TextStyle(
-                                      fontSize: _responsiveFontSize(),
-                                      fontWeight: FontWeight.w400,
-                                      color: biruImran,
+                                  );
+                                },
+                                numberPages: tableCount,
+                                onPageChange: (index) async {
+                                  setState(() {
+                                    activeStep = index;
+                                    _pageController.animateToPage(
+                                      activeStep,
+                                      duration: Duration(milliseconds: 400),
+                                      curve: Curves.easeInOut,
                                     );
-          
-          
-                                    if (index == 0) {
-                                      return _buildInventoryTable(_tableWidth,_thisStyle);
-                                    }
-                                    if (index == 1) {
-                                      return _buildSalesTable(_tableWidth,_thisStyle); 
-                                    }
-                                    
-                                    else {
-                                      return
-                                      widget.status == 'ready' || widget.status == 'received' ?
-                                        _buildQuantityTable(_tableWidth, _thisStyle) :  
-                                        _buildSummaryTable(_tableWidth, _thisStyle);
-                                    }
-                                  },
-                                )
+                                  });
+                                },
+                                config: NumberPaginatorUIConfig(
+                                  buttonSelectedForegroundColor: white,
+                                  buttonUnselectedForegroundColor: textColorTertiary,
+                                  buttonSelectedBackgroundColor: biruImran,
+                                ),
+                                nextButtonContent: Icon(Icons.chevron_right, size: _responsiveFontSize() * 3,
+                                  color: activeStep == tableCount - 1 ? greyColor : biruImran,),
+                                prevButtonContent: Icon(Icons.chevron_left, size: _responsiveFontSize() * 3,
+                                  color: activeStep == 0 ? greyColor : biruImran,),
                               ),
-                                      
-                              const SizedBox(
-                                height: 12,
-                              ),
-          
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  SizedBox(
-                                    width: 150,
-                                    height: 50,
-                                    child: TextButton(
-                                      onPressed: () {
-                                        if (widget.status != 'ready') {
-                                          Navigator.pop(context, false);
-                                        }
-                                        else {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return DialogConfirmation();
-                                            },
-                                          );
-                                        }
-                                      },
-                                      style: TextButton.styleFrom(
-                                        elevation: 10,
-                                        backgroundColor: biruImran4,
-                                      ),
-                                      child: const Text(
-                                        "Back",
-                                        style: TextStyle(
-                                          color: biruImran,
-                                          fontSize: 16
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  
-                                  widget.status != 'ready' ?
-                                  SizedBox() :
-                                  SizedBox(
-                                    width: 300,
-                                    height: 50,
-                                    child: TextButton(
-                                      onPressed: () async {
-                                        if (activeStep == 2) {
-                                          bool _confirmReceive = false;
-                                        
-                                          _confirmReceive = await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return DialogReceiveConfirmation();
-                                            },
-                                          );
-          
-                                          if (_confirmReceive) {
-                                            setState(() {
-                                              _isLoading = true;
-                                              postDataToAPI().then((value) => setState(() {
-                                                _isLoading = false;
-                                                FloatingSnackBar(
-                                                  message: 'Stock received.',
-                                                  context: context,
-                                                );
-                                                Navigator.pop(context, true);
-                                              }));
-                                            });
-                                          }
-                                        }
-                                        
-                                      },
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: activeStep == 2 ? hijauImran : Colors.transparent,
-                                        side: BorderSide(
-                                          color: activeStep == 2 ? Colors.transparent : greyColor,
-                                        )
-                                      ),
-                                      child: Text(
-                                        'Receive',
-                                        style: TextStyle(
-                                          color: activeStep == 2 ? white : greyColor,
-                                          fontSize: 16
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 150,
-                              ),
-                            ]
+                            ),
+                          const SizedBox(
+                            height: 48,
                           ),
-                        ),
+                          
+                            
+                          Expanded(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.92,
+                              child: PageView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                controller: _pageController,
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    debugPrint('index');
+                                    activeStep = index;
+                                    _paginatorController.currentPage = index;
+                                  });
+                                },
+                                itemCount: tableCount,
+                                itemBuilder: (context, index) {
+                            
+                                  return _buildTables(
+                                    title: tableNames[index],
+                                    data: tableContents[index],
+                                    horizontalScrollController: tableScrollsHorizontal[index],
+                                    verticalScrollController: tableScrollsVertical[index]
+                                  );
+                                  // return Center(child: Text('data'),);
+                                      
+                                },
+                              )
+                            ),
+                          ),
+                            
+                          const SizedBox(
+                            height: 85,
+                          ),
+                          
+                        ]
                       ),
                     ),
                   ),
@@ -619,8 +600,94 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
               ),
             ),
           ),
-
           
+          Positioned(
+            bottom: 24,
+            right: 0,
+            left: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: 150,
+                  height: 50,
+                  child: TextButton(
+                    onPressed: () {
+                      if (widget.status != 'ready') {
+                        Navigator.pop(context, false);
+                      }
+                      else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DialogConfirmation();
+                          },
+                        );
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                      elevation: 10,
+                      backgroundColor: biruImran4,
+                    ),
+                    child: const Text(
+                      "Back",
+                      style: TextStyle(
+                        color: biruImran,
+                        fontSize: 16
+                      ),
+                    ),
+                  ),
+                ),
+                
+                widget.status != 'ready' ?
+                SizedBox() :
+                SizedBox(
+                  width: 300,
+                  height: 50,
+                  child: TextButton(
+                    onPressed: () async {
+                      bool _confirmReceive = false;
+                      
+                      _confirmReceive = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DialogReceiveConfirmation();
+                        },
+                      );
+            
+                      if (_confirmReceive) {
+                        setState(() {
+                          _isLoading = true;
+                          postDataToAPI().then((value) => setState(() {
+                            _isLoading = false;
+                            FloatingSnackBar(
+                              message: 'Stock received.',
+                              context: context,
+                            );
+                            Navigator.pop(context, true);
+                          }));
+                        });
+                      }
+                      
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: hijauImran,
+                      side: BorderSide(
+                        color: Colors.transparent,
+                      )
+                    ),
+                    child: Text(
+                      'Receive',
+                      style: TextStyle(
+                        color: white,
+                        fontSize: 16
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         
           _isLoading ? Opacity(opacity: 0.5,child: Container(
               color: white,
@@ -630,7 +697,13 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
               ),
             ) : SizedBox()
         ],
-      )));
+      ),
+
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //   debugPrint("SALES RECON : ${salesSummary.toString()}");
+      // }),
+      
+      ));
   }
 
   double _responsiveFontSize() {
@@ -639,6 +712,58 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
     const maxSize = 20.0;
 
     return (screenWidth / maxResolution) * maxSize;
+  }
+
+  Widget _buildTables({
+    required String title,
+    required List<Map<String,dynamic>> data,
+    required ScrollController horizontalScrollController,
+    required ScrollController verticalScrollController,
+  }) {
+    
+    final dataQuantity = data[0]['quantity'];
+    debugPrint('DATAQTY : ${dataQuantity.length}');
+    
+    final TextStyle _thisStyle = TextStyle(
+      fontSize: _responsiveFontSize(),
+      fontWeight: FontWeight.w400,
+      color: biruImran,
+    );
+
+    return _launchLoading == true ? Center(child: CircularProgressIndicator()) :
+      RawScrollbar(
+        radius: Radius.circular(10),
+        thickness: 8,
+        thumbColor: biruImran2,
+        thumbVisibility: true,
+        controller: verticalScrollController,
+        child: RawScrollbar(
+          scrollbarOrientation: ScrollbarOrientation.top,
+          radius: Radius.circular(10),
+          thickness: 8,
+          thumbColor: biruImran2,
+          thumbVisibility: true,
+          controller: horizontalScrollController,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0, right: 10),
+            child: TableView.builder(
+              verticalDetails: ScrollableDetails.vertical(
+                controller: verticalScrollController,
+              ),
+              horizontalDetails: ScrollableDetails.horizontal(
+                controller: horizontalScrollController,
+              ),
+              cellBuilder: (context, vicinity) {
+                return _buildCell(context, vicinity, data, type: title, textStyle: _thisStyle);
+              },
+              columnCount: (dataQuantity.length) + 2,
+              columnBuilder: _buildColumnSpan,
+              rowCount: (data.length) + 1,
+              rowBuilder: _buildRowSpan,
+            ),
+          ),
+        ),
+      );
   }
 
   Widget _buildInfoContainer(String label, dynamic value, IconData icon) {
@@ -675,381 +800,189 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
     );
   }
 
-  Widget _buildInventoryTable(double tableWidth, TextStyle thisStyle) {
-    
-    return
-    _launchLoading == true ?
-    Center(child: CircularProgressIndicator()) :
-    RawScrollbar(
-      radius: Radius.circular(10),
-      thickness: 8,
-      thumbColor: biruImran4,
-      thumbVisibility: true,
-      controller: _scrollInventoryController,
-      child: SingleChildScrollView(
-        controller: _scrollInventoryController,
-        child: Column(
-          children: [
-            SizedBox(
-              width: tableWidth,
-              child: DataTable(
-                dataRowMaxHeight: 60.0,
-                border: TableBorder(
-                  horizontalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                  verticalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                ),
-                headingRowColor: MaterialStateProperty.all(biruImran),
-                headingTextStyle: TextStyle(
-                  fontSize: _responsiveFontSize(),
-                  fontWeight: FontWeight.bold,
-                  color: white,
-                ),
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'SKU ID',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'UOM',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Opening',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Sales',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Fresh',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Closing',
-                    ),
-                  ),
-                ],
-                rows: salesSummary.isEmpty ?
-                [DataRow(cells: [
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                ])] :
-                salesSummary.asMap().entries.map((entry) {
-                  final details = entry.value;
-                  
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(details['sku_id'] ?? 'N/A', style: thisStyle,)),
-                      DataCell(Text(details['uom_id'] ?? 'N/A', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][0] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][1] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][2] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][6] ?? 'N/A'}', style: thisStyle,)),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget _buildSalesTable(double tableWidth, TextStyle thisStyle) {
+  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity, List<Map<String,dynamic>> data, {
+    required String type,
+    required TextStyle textStyle,
+  }) {
+    List<String> header = [];
 
-    return
-    _launchLoading == true ?
-    Center(child: CircularProgressIndicator()) :
-    RawScrollbar(
-      radius: Radius.circular(10),
-      thickness: 8,
-      thumbColor: biruImran4,
-      thumbVisibility: true,
-      controller: _scrollSalesController,
-      child: SingleChildScrollView(
-        controller: _scrollSalesController,
-        child: Column(
-          children: [
-            SizedBox(
-              width: tableWidth,
-              child: DataTable(
-                dataRowMaxHeight: 60.0,
-                border: TableBorder(
-                  horizontalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                  verticalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                ),
-                headingRowColor: MaterialStateProperty.all(biruImran),
-                headingTextStyle: TextStyle(
-                  fontSize: _responsiveFontSize(),
-                  fontWeight: FontWeight.bold,
-                  color: white,
-                ),
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'SKU ID',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Consignment\nIn',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Consignment\nOut',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Van Adhoc Return',
-                    ),
-                  ),
-                ],
-                rows: salesSummary.isEmpty ?
-                [DataRow(cells: [
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                ])] :
-                salesSummary.asMap().entries.map((entry) {
-                  final details = entry.value;
-                          
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(details['sku_id'] ?? 'N/A', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][3] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][4] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][5] ?? 'N/A'}', style: thisStyle,)),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget _buildSummaryTable(double tableWidth, TextStyle thisStyle) {
-    
-    return
-    _launchLoading == true ?
-    Center(child: CircularProgressIndicator()) :
-    RawScrollbar(
-      radius: Radius.circular(10),
-      thickness: 8,
-      thumbColor: biruImran4,
-      thumbVisibility: true,
-      controller: _scrollSummaryController,
-      child: SingleChildScrollView(
-        controller: _scrollSummaryController,
-        child: Column(
-          children: [
-            SizedBox(
-              width: tableWidth,
-              child: DataTable(
-                dataRowMaxHeight: 60.0,
-                border: TableBorder(
-                  horizontalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                  verticalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                ),
-                headingRowColor: MaterialStateProperty.all(biruImran),
-                headingTextStyle: TextStyle(
-                  fontSize: _responsiveFontSize(),
-                  fontWeight: FontWeight.bold,
-                  color: white,
-                ),
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'SKU ID',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'UOM',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Old',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Damaged',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Recalled',
-                    ),
-                  ),
-                ],
-                
-                rows: returnSummary.isEmpty ?
-                [DataRow(cells: [
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                ])] :
-                returnSummary.asMap().entries.map((entry) {
-                  final details = entry.value;
-                    
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(details['sku_id'] ?? 'N/A', style: thisStyle,)),
-                      DataCell(Text(details['uom_id'] ?? 'N/A', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][0] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][1] ?? 'N/A'}', style: thisStyle,)),
-                      DataCell(Text('${details['quantity'][2] ?? 'N/A'}', style: thisStyle,)),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget _buildQuantityTable(double tableWidth, TextStyle thisStyle) {
-    
-    return
-    _launchLoading == true ?
-    Center(child: CircularProgressIndicator()) :
-    RawScrollbar(
-      radius: Radius.circular(10),
-      thickness: 8,
-      thumbColor: biruImran4,
-      thumbVisibility: true,
-      controller: _scrollQuantityController,
-      child: SingleChildScrollView(
-        controller: _scrollQuantityController,
-        child: Column(
-          children: [
-            SizedBox(
-              width: tableWidth,
-              child: DataTable(
-                dataRowMaxHeight: 60.0,
-                border: TableBorder(
-                  horizontalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                  verticalInside: BorderSide(
-                      width: 1, color: biruImran2, style: BorderStyle.solid),
-                ),
-                headingRowColor: MaterialStateProperty.all(biruImran),
-                headingTextStyle: TextStyle(
-                  fontSize: _responsiveFontSize(),
-                  fontWeight: FontWeight.bold,
-                  color: white,
-                ),
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'SKU ID',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'UOM',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Received',
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Not Received',
-                    ),
-                  ),
-                ],
-                
-                rows: salesReconcilation.isEmpty ?
-                [DataRow(cells: [
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                  DataCell(Text('N/A', style: thisStyle,)),
-                ])] :
-                salesReconcilation.asMap().entries.map((entry) {
-                  final details = entry.value;
+    switch (type) {
+      case SALES_SUMMARY:
+        header = List.from(SALES_SUMMARY_HEADER);
+        break;
+      case SALES_RECON:
+        header = List.from(SALES_RECON_HEADER);
+        break;
+      case RETURN_SUMMARY:
+        header = List.from(RETURN_SUMMARY_HEADER);
+        break;
+      case RETURN_RECON:
+        header = List.from(RETURN_RECON_HEADER);
+        break;
+      default:
+    }
 
-                  return DataRow(
-                      cells: [
-                        DataCell(Text(details['sku_id'] ?? 'N/A', style: thisStyle,)),
-                        DataCell(Text(details['uom_id'] ?? 'N/A', style: thisStyle,)),
-                        DataCell(
-                          widget.status == "ready" ?
-                            TextFormField(
-                              style: thisStyle,
-                              initialValue:
-                                  details['quantity'][0]?.toString() ??
-                                      '0',
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                // Update the received quantity
-                                setState(() {
-                                  details['quantity'][0] =
-                                      int.parse(value);
-                                });
-                              },
-                            ) :
-                            Text(details['quantity'][0]?.toString() ?? 'N/A', style: thisStyle,),
-                        ),
-                        DataCell(
-                          widget.status == "ready" ?
-                            TextFormField(
-                              style: thisStyle,
-                              initialValue:
-                                  details['quantity'][1]?.toString() ??
-                                      '0',
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {
-                                // Update the not received quantity
-                                setState(() {
-                                  details['quantity'][1] =
-                                      int.parse(value);
-                                  debugPrint(salesReconcilation.toString());
-                                  debugPrint([stockRecon["id"]].toString());
-                                });
-                              },
-                            ) :
-                            Text(details['quantity'][1]?.toString() ?? 'N/A', style: thisStyle,),
-                        ),
-                      ]);
-                }).toList(),
-              ),
-            ),
-          ],
+    Container fixedDataContainer({required Widget child}) {
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.2,
+        height: 30,
+        color: biruImran3,
+        child: Opacity(
+          opacity: .7,
+          child: child,
+        )
+      );
+    }
+    
+    return TableViewCell(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Text('Tile v: ${vicinity.column}, r: ${vicinity.row}'),
+              if(vicinity.row == 0)
+                AutoSizeText(
+                  header[vicinity.column],
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: white,
+                  ),
+          
+                  minFontSize: 1,
+                  maxLines: 1,
+                ),
+          
+              if(vicinity.row != 0 && vicinity.column == 0)
+                fixedDataContainer(
+                  child: AutoSizeText(
+                    data[(vicinity.row) -1]['sku_id'],
+                    style: textStyle,
+                            
+                    minFontSize: 1,
+                    maxLines: 1,
+                  ),
+                ),
+          
+              if(vicinity.row != 0 && vicinity.column == 1)
+                fixedDataContainer(
+                  child: AutoSizeText(
+                    data[(vicinity.row) -1]['uom_id'],
+                    style: textStyle,
+                            
+                    minFontSize: 1,
+                    maxLines: 1,
+                  ),
+                ),
+          
+              if(vicinity.row != 0 && vicinity.column > 1)
+               type == SALES_RECON && vicinity.column >= 3 ?
+                  TextFormField(
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(0),
+                      isDense: true,
+                      border: InputBorder.none,
+                    ),
+                    style: textStyle,
+                    keyboardType: TextInputType.number,
+                    initialValue:
+                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2]?.toString() ?? '0',
+                    onChanged: (value) {
+                      //TODO validation
+                      setState(() {
+                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2] = int.parse(value);
+                        debugPrint(salesReconcilation.toString());
+                        debugPrint([stockRecon["id"]].toString());
+                      });
+                    },
+                  )
+               : type == RETURN_RECON && vicinity.column >= 5 ?
+                  TextFormField(
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(0),
+                      isDense: true,
+                      border: InputBorder.none,
+                    ),
+                    style: textStyle,
+                    keyboardType: TextInputType.number,
+                    initialValue:
+                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2]?.toString() ?? '0',
+                    onChanged: (value) {
+                      //TODO validation
+                      setState(() {
+                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2] = int.parse(value);
+                        debugPrint(salesReconcilation.toString());
+                        debugPrint([stockRecon["id"]].toString());
+                      });
+                    },
+                  )
+                : //else
+                  fixedDataContainer(
+                    child: AutoSizeText(
+                      data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2].toString(),
+                      style: textStyle,
+                                
+                      minFontSize: 1,
+                      maxLines: 1,
+                    ),
+                  ),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  TableSpan _buildColumnSpan(int index) {
+    const TableSpanDecoration decoration = TableSpanDecoration(
+      border: TableSpanBorder(
+        trailing: BorderSide(
+          width: 1,
+          color: biruImran2
+        ),
+      ),
+    );
+
+    return TableSpan(
+      foregroundDecoration: decoration,
+      extent: const FractionalTableSpanExtent(.2),
+      onEnter: (_) => print('Entered column $index'),
+      recognizerFactories: <Type, GestureRecognizerFactory>{
+        TapGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+          () => TapGestureRecognizer(),
+          (TapGestureRecognizer t) =>
+              t.onTap = () => print('Tap column $index'),
+        ),
+      },
+    );
+  }
+
+  TableSpan _buildRowSpan(int index) {
+    final TableSpanDecoration decoration = TableSpanDecoration(
+      color: index == 0 ? biruImran : null,
+      border: const TableSpanBorder(
+        trailing: BorderSide(
+          width: 1,
+          color: biruImran2
+        ),
+      ),
+    );
+
+    return TableSpan(
+      backgroundDecoration: decoration,
+      extent: const FixedTableSpanExtent(50),
+      recognizerFactories: <Type, GestureRecognizerFactory>{
+        TapGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+          () => TapGestureRecognizer(),
+          (TapGestureRecognizer t) =>
+              t.onTap = () => print('Tap row $index'),
+        ),
+      },
+    );
+  }
+
+  
 }

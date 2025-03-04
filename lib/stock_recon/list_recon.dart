@@ -526,6 +526,7 @@ class _StockReconViewListingState extends State<StockReconViewListing> {
                       titleAlignment: ListTileTitleAlignment.titleHeight,
                       onTap: () async {
                         bool tempRefresh = false;
+                        debugPrint('RECON ID : $reconId');
                         tempRefresh = await Navigator.push(
                           context,
                           MaterialPageRoute(
