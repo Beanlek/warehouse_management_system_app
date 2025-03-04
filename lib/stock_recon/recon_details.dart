@@ -877,7 +877,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                 ),
           
               if(vicinity.row != 0 && vicinity.column > 1)
-               type == SALES_RECON && vicinity.column >= 3 ?
+               type == SALES_RECON && vicinity.column >= 3 && widget.status == 'ready' ?
                   TextFormField(
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(0),
@@ -897,7 +897,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                       });
                     },
                   )
-               : type == RETURN_RECON && vicinity.column >= 5 ?
+               : type == RETURN_RECON && vicinity.column >= 5 && widget.status == 'ready' ?
                   TextFormField(
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(0),
