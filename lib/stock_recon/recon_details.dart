@@ -34,6 +34,15 @@ class ReconDetailPage extends StatefulWidget {
 }
 
 class _ReconDetailPageState extends State<ReconDetailPage> {
+  static const String NOT_RECEIVED = 'NOT RECEIVED';
+  static const String EXTRA = 'EXTRA';
+  static const String OLD ='OLD';
+  static const String DAMAGED ='DAMAGED';
+  static const String RECALLED ='RECALLED';
+  static const String EXTRA_OLD ='EXTRA(OLD)';
+  static const String EXTRA_DAMAGED ='EXTRA(DAMAGED)';
+  static const String EXTRA_RECALLED ='EXTRA(RECALLED)';
+
   static const String SALES_SUMMARY = 'Sales Summary';
   static const List<String> SALES_SUMMARY_HEADER = [
     'SKU ID',
@@ -86,6 +95,26 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
   List<ScrollController> tableScrollsHorizontal = [];
   List<ScrollController> tableScrollsVertical = [];
 
+  List<int> salesReconReceived = [];
+  List<int> salesReconNotReceived = [];
+  List<int> salesReconExtra = [];
+
+  List<int> returnReconOld = [];
+  List<int> returnReconDamaged = [];
+  List<int> returnReconRecalled = [];
+
+  List<int> returnReconOldNotReceived = [];
+  List<int> returnReconOldExtra = [];
+
+  List<int> returnReconDamagedNotReceived = [];
+  List<int> returnReconDamagedExtra = [];
+
+  List<int> returnReconRecalledNotReceived = [];
+  List<int> returnReconRecalledExtra = [];
+
+  List<List<int>> salesReconQty = [];
+  List<List<int>> returnReconQty = [];
+
   final PageController _pageController = PageController();
   final NumberPaginatorController _paginatorController = NumberPaginatorController();
 
@@ -99,11 +128,23 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
   final ScrollController returnSummaryControllerVertical = ScrollController();
   final ScrollController returnReconControllerVertical = ScrollController();
 
+  List<TextEditingController> nullTextController = [];
+  List<TextEditingController> notReceivedTextController = [];
+  List<TextEditingController> extraTextController = [];
+  List<TextEditingController> oldNotReceivedTextController = [];
+  List<TextEditingController> oldExtraTextController = [];
+  List<TextEditingController> damagedNotReceivedTextController = [];
+  List<TextEditingController> damagedExtraTextController = [];
+  List<TextEditingController> recalledNotReceivedTextController = [];
+  List<TextEditingController> recalledExtraTextController = [];
+  List<List<TextEditingController>> salesReconTextController = [];
+  List<List<TextEditingController>> returnReconTextController = [];
+
   List<Map<String, dynamic>> details = [];
   List<Map<String, dynamic>> salesSummary = [];
   List<Map<String, dynamic>> salesReconcilation = [];
   List<Map<String, dynamic>> returnSummary = [];
-  List<Map<String, dynamic>> returnReconciliation = [];
+  List<Map<String, dynamic>> returnReconcilation = [];
   Map<String, dynamic> allTables = {};
   int tableCount = 0;
 
@@ -174,6 +215,27 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
             if (salesReconcilation.isNotEmpty) {
               tableCount = tableCount + 1;
               allTables.addEntries({ SALES_RECON : [salesReconcilation, salesReconControllerHorizontal, salesReconControllerVertical]}.entries);
+
+              for (var element in salesReconcilation) {
+                salesReconReceived.add(element['quantity'][0]);
+                salesReconNotReceived.add(element['quantity'][1]);
+                salesReconExtra.add(element['quantity'][2]);
+
+                notReceivedTextController.add(TextEditingController(text: element['quantity'][1].toString()));
+                extraTextController.add(TextEditingController(text: element['quantity'][2].toString()));
+              }
+
+              salesReconQty = List.from([
+                salesReconReceived,
+                salesReconNotReceived,
+                salesReconExtra,
+              ]);
+
+              salesReconTextController = List.from([
+                nullTextController, //null
+                notReceivedTextController,
+                extraTextController,
+              ]);
             }
 
             returnSummary = List<Map<String, dynamic>>.from(
@@ -184,12 +246,55 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
               allTables.addEntries({ RETURN_SUMMARY : [returnSummary, returnSummaryControllerHorizontal, returnSummaryControllerVertical]}.entries);
             }
 
-            returnReconciliation = List<Map<String, dynamic>>.from(
+            returnReconcilation = List<Map<String, dynamic>>.from(
               jsonData["returnReconcilation"]
             );
-            if (returnReconciliation.isNotEmpty) {
+            if (returnReconcilation.isNotEmpty) {
               tableCount = tableCount + 1;
-              allTables.addEntries({ RETURN_RECON : [returnReconciliation, returnReconControllerHorizontal, returnReconControllerVertical]}.entries);
+              allTables.addEntries({ RETURN_RECON : [returnReconcilation, returnReconControllerHorizontal, returnReconControllerVertical]}.entries);
+
+              for (var element in returnReconcilation) {
+                returnReconOld.add(element['quantity'][0]);
+                returnReconDamaged.add(element['quantity'][1]);
+                returnReconRecalled.add(element['quantity'][2]);
+                returnReconOldNotReceived.add(element['quantity'][3]);
+                returnReconOldExtra.add(element['quantity'][4]);
+                returnReconDamagedNotReceived.add(element['quantity'][5]);
+                returnReconDamagedExtra.add(element['quantity'][6]);
+                returnReconRecalledNotReceived.add(element['quantity'][7]);
+                returnReconRecalledExtra.add(element['quantity'][8]);
+
+                oldNotReceivedTextController.add(TextEditingController(text: element['quantity'][3].toString()));
+                oldExtraTextController.add(TextEditingController(text: element['quantity'][4].toString()));
+                damagedNotReceivedTextController.add(TextEditingController(text: element['quantity'][5].toString()));
+                damagedExtraTextController.add(TextEditingController(text: element['quantity'][6].toString()));
+                recalledNotReceivedTextController.add(TextEditingController(text: element['quantity'][7].toString()));
+                recalledExtraTextController.add(TextEditingController(text: element['quantity'][8].toString()));
+              }
+
+              returnReconQty = List.from([
+                returnReconOld,
+                returnReconDamaged,
+                returnReconRecalled,
+                returnReconOldNotReceived,
+                returnReconOldExtra,
+                returnReconDamagedNotReceived,
+                returnReconDamagedExtra,
+                returnReconRecalledNotReceived,
+                returnReconRecalledExtra
+              ]);
+
+              returnReconTextController = List.from([
+                nullTextController, //null
+                nullTextController, //null
+                nullTextController, //null
+                oldNotReceivedTextController,
+                oldExtraTextController,
+                damagedNotReceivedTextController,
+                damagedExtraTextController,
+                recalledNotReceivedTextController,
+                recalledExtraTextController
+              ]);
             }
           },
         );
@@ -224,6 +329,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
       final data = {
         'stockRecons': [stockRecon['id']],
         'receivingSalesSku': salesReconcilation,
+        'receivingReturnSku': returnReconcilation,
       };
 
       final response = await http.post(
@@ -700,7 +806,10 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
       ),
 
       // floatingActionButton: FloatingActionButton(onPressed: () {
-      //   debugPrint("SALES RECON : ${salesSummary.toString()}");
+      //   debugPrint("SALES RECON : ${salesReconReceived.toString()}");
+      //   debugPrint("SALES RECON : ${returnReconOld.toString()}");
+      //   debugPrint("SALES RECON : ${returnReconDamaged.toString()}");
+      //   debugPrint("SALES RECON : ${returnReconRecalled.toString()}");
       // }),
       
       ));
@@ -879,6 +988,7 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
               if(vicinity.row != 0 && vicinity.column > 1)
                type == SALES_RECON && vicinity.column >= 3 && widget.status == 'ready' ?
                   TextFormField(
+                    controller: salesReconTextController[(vicinity.column) - 2][(vicinity.row) -1],
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(0),
                       isDense: true,
@@ -886,19 +996,77 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                     ),
                     style: textStyle,
                     keyboardType: TextInputType.number,
-                    initialValue:
-                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2]?.toString() ?? '0',
+                    // initialValue:
+                    //     data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2]?.toString() ?? '0',
                     onChanged: (value) {
-                      //TODO validation
+                      if (value.isEmpty) {
+                        salesReconTextController[(vicinity.column) - 2][(vicinity.row) -1].text = (salesReconQty[(vicinity.column) - 2][(vicinity.row) -1]).toString();
+                        value = '0';
+                      }
+                      
+                      final int inputQty = int.parse(value);
+                      salesReconTextController[(vicinity.column) - 2][(vicinity.row) -1].text = inputQty.toString();
+
+                      int newQty = 0;
+
+                      if (inputQty < 0) {
+                        FloatingSnackBar(message: 'Cannot place numbers less than 0.', context: context, backgroundColor: category4Color);
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        setState(() {
+                          data[(vicinity.row) -1]['quantity'][0] = salesReconQty[0][(vicinity.row) -1];
+                          salesReconTextController[1][(vicinity.row) -1].text = (salesReconQty[1][(vicinity.row) -1]).toString();
+                          salesReconTextController[2][(vicinity.row) -1].text = (salesReconQty[2][(vicinity.row) -1]).toString();
+                        });
+
+                        return;
+                        
+                      } else if (inputQty > salesReconQty[0][(vicinity.row) -1]) {
+                        FloatingSnackBar(message: 'Input exceeds received quantity.', context: context, backgroundColor: category4Color);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        
+                        setState(() {
+                          data[(vicinity.row) -1]['quantity'][0] = salesReconQty[0][(vicinity.row) -1];
+                          salesReconTextController[1][(vicinity.row) -1].text = (salesReconQty[1][(vicinity.row) -1]).toString();
+                          salesReconTextController[2][(vicinity.row) -1].text = (salesReconQty[2][(vicinity.row) -1]).toString();
+                        });
+
+                        return;
+
+                      } else if (header[vicinity.column] == NOT_RECEIVED) {
+                        final int extra = int.parse(salesReconTextController[2][(vicinity.row) -1].text);
+                        newQty = salesReconQty[0][(vicinity.row) -1] - inputQty + extra;
+
+                      } else if (header[vicinity.column] == EXTRA) {
+                        final int notReceived = int.parse(salesReconTextController[1][(vicinity.row) -1].text);
+                        newQty = salesReconQty[0][(vicinity.row) -1] - notReceived + inputQty;
+
+                      }
+
+                      if (newQty > salesReconQty[0][(vicinity.row) -1] || newQty < 0) {
+                        FloatingSnackBar(message: 'New calculated Received quantity cannot exceed original Received quantity.', context: context, backgroundColor: category4Color);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        
+                        setState(() {
+                          data[(vicinity.row) -1]['quantity'][0] = salesReconQty[0][(vicinity.row) -1];
+                          salesReconTextController[1][(vicinity.row) -1].text = (salesReconQty[1][(vicinity.row) -1]).toString();
+                          salesReconTextController[2][(vicinity.row) -1].text = (salesReconQty[2][(vicinity.row) -1]).toString();
+                        });
+
+                        return;
+                      }
+
                       setState(() {
-                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2] = int.parse(value);
-                        debugPrint(salesReconcilation.toString());
-                        debugPrint([stockRecon["id"]].toString());
+                        data[(vicinity.row) -1]['quantity'][0] = newQty;
+                        // data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2] = inputQty;
                       });
+                      
+
                     },
                   )
                : type == RETURN_RECON && vicinity.column >= 5 && widget.status == 'ready' ?
                   TextFormField(
+                    controller: returnReconTextController[(vicinity.column) - 2][(vicinity.row) - 1],
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(0),
                       isDense: true,
@@ -906,15 +1074,133 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
                     ),
                     style: textStyle,
                     keyboardType: TextInputType.number,
-                    initialValue:
-                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2]?.toString() ?? '0',
+                    // initialValue:
+                    //     data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2]?.toString() ?? '0',
                     onChanged: (value) {
-                      //TODO validation
+                      if (value.isEmpty) {
+                        returnReconTextController[(vicinity.column) - 2][(vicinity.row) -1].text = (returnReconQty[(vicinity.column) - 2][(vicinity.row) -1]).toString();
+                        value = '0';
+                      }
+                      
+                      final int inputQty = int.parse(value);
+                      returnReconTextController[(vicinity.column) - 2][(vicinity.row) -1].text = inputQty.toString();
+
+                      int newQtyOld = data[(vicinity.row) -1]['quantity'][0];
+                      int newQtyDamaged = data[(vicinity.row) -1]['quantity'][1];
+                      int newQtyRecalled = data[(vicinity.row) -1]['quantity'][2];
+
+                      bool checkInput(int index) {
+                        if (inputQty > returnReconQty[index][(vicinity.row) -1]) {
+                          FloatingSnackBar(message: 'Input exceeds received quantity.', context: context, backgroundColor: category4Color);
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          
+                          setState(() {
+                            data[(vicinity.row) -1]['quantity'][index] = returnReconQty[index][(vicinity.row) -1];
+                            
+                            returnReconTextController[index * 2 + 3][(vicinity.row) -1].text = (returnReconQty[3][(vicinity.row) -1]).toString();
+                            returnReconTextController[index * 2 + 4][(vicinity.row) -1].text = (returnReconQty[4][(vicinity.row) -1]).toString();
+                          });
+
+                          return true;
+                        }
+                        return false;
+                      }
+
+                      if (inputQty < 0) {
+                        FloatingSnackBar(message: 'Cannot place numbers less than 0.', context: context, backgroundColor: category4Color);
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        setState(() {
+                          data[(vicinity.row) -1]['quantity'][0] = returnReconQty[0][(vicinity.row) -1];
+                          data[(vicinity.row) -1]['quantity'][1] = returnReconQty[1][(vicinity.row) -1];
+                          data[(vicinity.row) -1]['quantity'][2] = returnReconQty[2][(vicinity.row) -1];
+                          returnReconTextController[3][(vicinity.row) -1].text = (returnReconQty[3][(vicinity.row) -1]).toString();
+                          returnReconTextController[4][(vicinity.row) -1].text = (returnReconQty[4][(vicinity.row) -1]).toString();
+                          returnReconTextController[5][(vicinity.row) -1].text = (returnReconQty[5][(vicinity.row) -1]).toString();
+                          returnReconTextController[6][(vicinity.row) -1].text = (returnReconQty[6][(vicinity.row) -1]).toString();
+                          returnReconTextController[7][(vicinity.row) -1].text = (returnReconQty[7][(vicinity.row) -1]).toString();
+                          returnReconTextController[8][(vicinity.row) -1].text = (returnReconQty[8][(vicinity.row) -1]).toString();
+                        });
+
+                        return;
+                        
+                      } else if (header[vicinity.column] == OLD) {
+                        if (checkInput(0)) return;
+                        
+                        final int extra = int.parse(returnReconTextController[4][(vicinity.row) -1].text);
+                        newQtyOld = returnReconQty[0][(vicinity.row) -1] - inputQty + extra;
+
+                        debugPrint('CALC ERROR : ${extra.toString()}');
+                        debugPrint('CALC ERROR : ${inputQty.toString()}');
+                        debugPrint('CALC ERROR : ${returnReconQty[0][(vicinity.row) -1].toString()}');
+                        debugPrint('CALC ERROR : ${newQtyOld.toString()}');
+
+                      } else if (header[vicinity.column] == EXTRA_OLD) {
+                        if (checkInput(0)) return;
+                        
+                        final int old = int.parse(returnReconTextController[3][(vicinity.row) -1].text);
+                        newQtyOld = returnReconQty[0][(vicinity.row) -1] - old + inputQty;
+                        
+                        debugPrint('CALC ERROR OLD : ${inputQty.toString()}');
+                        debugPrint('CALC ERROR OLD : ${old.toString()}');
+                        debugPrint('CALC ERROR OLD : ${returnReconQty[0][(vicinity.row) -1].toString()}');
+                        debugPrint('CALC ERROR OLD : ${newQtyOld.toString()}');
+
+                      } else if (header[vicinity.column] == DAMAGED) {
+                        if (checkInput(1)) return;
+                        
+                        final int extra = int.parse(returnReconTextController[6][(vicinity.row) -1].text);
+                        newQtyDamaged = returnReconQty[1][(vicinity.row) -1] - inputQty + extra;
+
+                      } else if (header[vicinity.column] == EXTRA_DAMAGED) {
+                        if (checkInput(1)) return;
+                        
+                        final int damaged = int.parse(returnReconTextController[5][(vicinity.row) -1].text);
+                        newQtyDamaged = returnReconQty[1][(vicinity.row) -1] - damaged + inputQty;
+
+                      } else if (header[vicinity.column] == RECALLED) {
+                        if (checkInput(2)) return;
+                        
+                        final int extra = int.parse(returnReconTextController[8][(vicinity.row) -1].text);
+                        newQtyRecalled = returnReconQty[2][(vicinity.row) -1] - inputQty + extra;
+
+                      } else if (header[vicinity.column] == EXTRA_RECALLED) {
+                        if (checkInput(2)) return;
+                        
+                        final int recalled = int.parse(returnReconTextController[7][(vicinity.row) -1].text);
+                        newQtyRecalled = returnReconQty[2][(vicinity.row) -1] - recalled + inputQty;
+
+                      }
+
+                      if (
+                        (newQtyOld > returnReconQty[0][(vicinity.row) -1] || newQtyOld < 0) ||
+                        (newQtyDamaged > returnReconQty[1][(vicinity.row) -1] || newQtyDamaged < 0) ||
+                        (newQtyRecalled > returnReconQty[2][(vicinity.row) -1] || newQtyRecalled < 0)
+                      ) {
+                        FloatingSnackBar(message: 'New calculated Received quantity cannot exceed original Received quantity.', context: context, backgroundColor: category4Color);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        
+                        setState(() {
+                          data[(vicinity.row) -1]['quantity'][0] = returnReconQty[0][(vicinity.row) -1];
+                          data[(vicinity.row) -1]['quantity'][1] = returnReconQty[1][(vicinity.row) -1];
+                          data[(vicinity.row) -1]['quantity'][2] = returnReconQty[2][(vicinity.row) -1];
+                          returnReconTextController[3][(vicinity.row) -1].text = (returnReconQty[3][(vicinity.row) -1]).toString();
+                          returnReconTextController[4][(vicinity.row) -1].text = (returnReconQty[4][(vicinity.row) -1]).toString();
+                          returnReconTextController[5][(vicinity.row) -1].text = (returnReconQty[5][(vicinity.row) -1]).toString();
+                          returnReconTextController[6][(vicinity.row) -1].text = (returnReconQty[6][(vicinity.row) -1]).toString();
+                          returnReconTextController[7][(vicinity.row) -1].text = (returnReconQty[7][(vicinity.row) -1]).toString();
+                          returnReconTextController[8][(vicinity.row) -1].text = (returnReconQty[8][(vicinity.row) -1]).toString();
+                        });
+
+                        return;
+                      }
+
                       setState(() {
-                        data[(vicinity.row) -1]['quantity'][(vicinity.column) - 2] = int.parse(value);
-                        debugPrint(salesReconcilation.toString());
-                        debugPrint([stockRecon["id"]].toString());
+                        data[(vicinity.row) -1]['quantity'][0] = newQtyOld;
+                        data[(vicinity.row) -1]['quantity'][1] = newQtyDamaged;
+                        data[(vicinity.row) -1]['quantity'][2] = newQtyRecalled;
                       });
+
                     },
                   )
                 : //else
