@@ -179,6 +179,18 @@ class _ReconDetailPageState extends State<ReconDetailPage> {
     returnSummaryControllerVertical.dispose();
     returnReconControllerVertical.dispose();
 
+    for (var lists in salesReconTextController) {
+      for (var textController in lists) {
+        textController.dispose();
+      }
+    }
+
+    for (var lists in returnReconTextController) {
+      for (var textController in lists) {
+        textController.dispose();
+      }
+    }
+
     super.dispose();
   }
 
