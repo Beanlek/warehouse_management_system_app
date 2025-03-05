@@ -111,7 +111,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
       body:
       WillPopScope(
         onWillPop: () async {
-          if (widget.status == 'acknowledged') {
+          if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
             return true;
           }
           bool willPop = false;
@@ -138,7 +138,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                         text: 'Home ',
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            if (widget.status == 'acknowledged') {
+                            if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
                               Navigator.pop(context, false);
                               Navigator.pop(context, false);
                             }
@@ -163,7 +163,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                             text: '> ${titleCheck(widget.allotmentType)} ',
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                if (widget.status == 'acknowledged') {
+                                if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
                                   Navigator.pop(context, false);
                                 }
                                 else {
@@ -396,7 +396,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                           ),
 
                           const SizedBox(height: 24),
-                          widget.status == 'acknowledged' ?
+                          widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE ?
                           SizedBox() :
                           EasyStepper(
                             finishedStepIconColor: white,
@@ -463,7 +463,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                             },
                           ),
                           
-                          widget.status == 'acknowledged' ?
+                          widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE ?
                           _buildItemTable() :
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.9,
@@ -506,7 +506,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                 height: 50,
                                 child: TextButton(
                                   onPressed: () {
-                                    if (widget.status == 'acknowledged') {
+                                    if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
                                       Navigator.pop(context, false);
                                     }
                                     else if (activeStep == 1) {
@@ -543,7 +543,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                 ),
                               ),
                               
-                              widget.status == 'acknowledged' ?
+                              widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE ?
                               SizedBox() :
                               SizedBox(
                                 width: 300,
@@ -1127,7 +1127,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                       'Qty',
                     ),
                   ),
-                  if (widget.status == 'unacknowledged' || widget.allotmentType == 'Adhoc Return')
+                  if ((widget.status == 'unacknowledged' && widget.allotmentType != ALLOT_BALANCE) || widget.allotmentType == 'Adhoc Return')
                     DataColumn(
                       label:
                       widget.allotmentType == 'Adhoc Return' ?
@@ -1178,7 +1178,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                       DataCell(Text(_thisDetails['uom_id'] ?? 'N/A', style: _thisStyle)),
                       DataCell(Text('${_thisDetails['requested_qty'] ?? 'N/A'}', style: _thisStyle)),
                       DataCell(
-                        widget.status == 'unacknowledged' ?
+                        widget.status == 'unacknowledged' && widget.allotmentType != ALLOT_BALANCE ?
                           TextFormField(
                             initialValue: stockTake.toString(),
                             style: _thisStyle,
@@ -1204,7 +1204,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                       DataCell(Text(_thisDetails['uom_id'] ?? 'N/A', style: _thisStyle,)),
                       DataCell(Text('${_thisDetails['quantity'][0] ?? 'N/A'}', style: _thisStyle,)),
                       
-                      if (widget.status == 'unacknowledged')
+                      if (widget.status == 'unacknowledged' && widget.allotmentType != ALLOT_BALANCE)
                         DataCell(
                           SizedBox(
                             width: 30,
