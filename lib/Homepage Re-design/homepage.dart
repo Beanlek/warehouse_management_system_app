@@ -1037,7 +1037,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                 return stockMovementTile(
                                   'assets/homepage/icon_allotmentPlan.png',
                                   'Allotment\nMovements',
-                                  allotPlanCount + allotAdditionalCount + allotBalanceCount,
+                                  allotPlanCount + allotAdditionalCount + allotBalanceCount + allotRequestCount,
                                   () async {
                                     await showDialog( context: context,
                                       builder: (BuildContext context) {
@@ -1108,9 +1108,10 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                   'assets/homepage/icon_stockRecon.png',
                                   'Stock\nRecon',
                                   reconCount,
-                                  () { Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const StockReconViewListing()),
+                                  () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const StockReconViewListing()),
                                   );}
                                 );
                               } else if (index == 4) {

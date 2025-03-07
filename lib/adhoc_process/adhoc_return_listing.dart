@@ -84,7 +84,7 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
     Map<String, String> params = {
       'limit_rows': '20',
       'page': (_currentPage + 1).toString(),
-      'type': TYPE,
+      'type': ADHOC_RETURN,
       'status': selectedFilter.toLowerCase(),
     };
 
@@ -348,10 +348,15 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
   }
 
   Color colorCheck(String _status) {
-    if (_status == 'acknowledged') {
-      return hijauImran2;
-    } else {
-      return colorMerah;
+    switch (_status.capitalize()) {
+      case (ACKNOWLEDGED || RECEIVED):
+        return hijauImran2;
+      case PENDING:
+        return orangeRed;
+      case PENDING_WA_ACK:
+        return orangeRed;
+      default:
+        return colorMerah;
     }
   }
 
@@ -398,16 +403,18 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
         final siteId = allotment['site_id'] ?? 'null';
         final recordType = allotment['record_type'] ?? 'null';
         final status = allotment['status'] ?? 'null';
+        final adhocStatus = allotment['van_adhoc_return_status'] ?? 'null';
         final createdAt = allotment['created_at'] ?? 'null';
 
         return _buildListTile(
           index,
-          vanId,
-          allotmentId,
-          siteId,
-          recordType,
-          status,
-          createdAt,
+          vanId : vanId,
+          allotmentId : allotmentId,
+          siteId : siteId,
+          recordType : recordType,
+          adhocStatus : adhocStatus,
+          status : status,
+          createdAt : createdAt,
         );
       },
       // controller: _scrollController,
@@ -484,15 +491,46 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
     );
   }
 
+  Widget indicator(BuildContext context, {key,
+    required String status
+  } ) {
+    final _widget = Row(
+      children: [
+        SizedBox(width: 10),
+        Icon(
+          Icons.circle_rounded,
+          size: 8,
+          color: colorCheck(status),
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          child: AutoSizeText(
+            status.capitalize(),
+            maxLines: 1,
+            style: TextStyle(
+                color: colorCheck(status),
+                fontWeight: FontWeight.w500,
+                fontSize: 16),
+          ),
+        ),
+      ],
+    );
+  
+    return _widget;
+  }
+
   // Builds an individual ListTile
   Widget _buildListTile(
     int index,
-    String vanId,
-    String allotmentId,
-    String siteId,
-    String recordType,
-    String status,
-    String createdAt,
+    {
+      required String vanId,
+      required String allotmentId,
+      required String siteId,
+      required String recordType,
+      required String adhocStatus,
+      required String status,
+      required String createdAt,
+    }
   ) {
     DateTime dateTimeParsed =
         DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
@@ -549,17 +587,7 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
                           await fetchAPI(_token);
                         }
                       },
-                      // onTap: () {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => AdhocReturnDetailsPage(
-                      //         allotmentId: allotmentId,
-                      //         status: status,
-                      //       ),
-                      //     ),
-                      //   );
-                      // },
+                      
                       leading: CircleAvatar(
                         maxRadius: 10,
                         backgroundColor: Colors.transparent,
@@ -667,25 +695,10 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.2,
-                  child: Row(
+                  child: Column(
                     children: [
-                      SizedBox(width: 10),
-                      Icon(
-                        Icons.circle_rounded,
-                        size: 8,
-                        color: colorCheck(status),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: AutoSizeText(
-                          status.capitalize(),
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: colorCheck(status),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16),
-                        ),
-                      ),
+                      indicator(context, status: adhocStatus),
+                      indicator(context, status: status),
                     ],
                   ),
                 )

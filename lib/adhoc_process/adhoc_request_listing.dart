@@ -11,14 +11,11 @@ import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:warehouse/adhoc_process/adhoc_request_details.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van_allotment/layout/allotment_detail.dart';
-
-    
-const String TYPE = ADHOC_REQUEST;
 
 class AdhocRequestListing extends StatefulWidget {
   const AdhocRequestListing({super.key});
@@ -30,13 +27,15 @@ class AdhocRequestListing extends StatefulWidget {
 class _AdhocRequestListingState extends State<AdhocRequestListing> {
   List<Map<String, dynamic>> allotments = [];
   List<String> filters = [
-    'All',
-    'Acknowledged',
-    'Unacknowledged',
+    ALL,
+    PENDING,
+    REJECTED,
+    ALLOTTED,
+    EXPIRED,
   ];
-  String selectedFilter = 'Unacknowledged';
+  String selectedFilter = PENDING;
   int _currentPage = 0;
-  int _numPages = 10;
+  int _numPages = 20;
 
   final TextEditingController _searchFieldController = TextEditingController();
   final NumberPaginatorController _paginatorController =
@@ -71,8 +70,8 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
           context: context);
       return;
     }
-    String _mainBody = 'wms_van_ids';
-    String _subDirectory = '/api/wms/van_ids';
+    String _mainBody = 'van_requests';
+    String _subDirectory = '/api/wms/van_request/list';
 
     // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
@@ -84,7 +83,6 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
     Map<String, String> params = {
       'limit_rows': '20',
       'page': (_currentPage + 1).toString(),
-      'type': TYPE,
       'status': selectedFilter.toLowerCase(),
     };
 
@@ -113,8 +111,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
       try {
         final json = jsonDecode(stringResponse);
         final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
-        String stringCount = json[_mainBody]['count'];
-        int count = int.parse(stringCount);
+        int count = json[_mainBody]['count'];
 
         if (count == 0) {
           count = 1;
@@ -127,6 +124,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
 
         setState(() {
           allotments = List<Map<String, dynamic>>.from(wms_van_ids).toList();
+          debugPrint('ADHOC REQQ : ${allotments.toString()}');
         });
       } catch (e) {
         debugPrint('Failed to parse JSON: $e');
@@ -161,17 +159,17 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
 
       // Filter allotments based on search text
       allotments = allotments.where((_allotments) {
-        final vanId = _allotments['van_id'].toString().toLowerCase();
         final allotmentsId = _allotments['id'].toString().toLowerCase();
+        final vanId = _allotments['van_allot_id'].toString().toLowerCase();
         final site = _allotments['site_id'].toString().toLowerCase();
-        final recordType = _allotments['record_type'].toString().toLowerCase();
         final status = _allotments['status'].toString().toLowerCase();
+        final reqBy = _allotments['requested_by'].toString().toLowerCase();
         final searchText = _searchFieldController.text.toLowerCase();
 
         return vanId.contains(searchText) ||
             allotmentsId.contains(searchText) ||
             site.contains(searchText) ||
-            recordType.contains(searchText) ||
+            reqBy.contains(searchText) ||
             status.contains(searchText);
       }).toList();
     });
@@ -186,7 +184,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
         child: AppBar(
           centerTitle: true,
           title: Text(
-            '${titleCheck(TYPE)} Lists',
+            '${titleCheck(ADHOC_REQUEST)} Lists',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24.0,
@@ -220,7 +218,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                         fontFamily: 'Poppins',
                         color: textColorTertiary,
                       ),
-                      children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
+                      children: [TextSpan(text: '> ${titleCheck(ADHOC_REQUEST)}')]),
                 ),
               ),
             ),
@@ -315,10 +313,8 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                 controller: _paginatorController,
                 numberPages: _numPages,
                 onPageChange: (index) async {
-                  setState(() {
-                    allotments.clear();
-                    _currentPage = index;
-                  });
+                  allotments.clear();
+                  _currentPage = index;
                   await fetchAPI(_token);
                 },
                 config: NumberPaginatorUIConfig(
@@ -348,10 +344,17 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
   }
 
   Color colorCheck(String _status) {
-    if (_status == 'acknowledged') {
-      return hijauImran2;
-    } else {
-      return colorMerah;
+    switch (_status.capitalize()) {
+      case ALLOTTED:
+        return hijauImran2;
+      case PENDING:
+        return orange;
+      case REJECTED:
+        return colorMerah;
+      case EXPIRED:
+        return colorMerah;
+      default:
+        return colorMerah;
     }
   }
 
@@ -375,17 +378,17 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
     // Filter allotments based on search text
     List<Map<String, dynamic>> filteredAllotments =
         allotments.where((_allotments) {
-      final vanId = _allotments['van_id'].toString().toLowerCase();
+      final vanId = _allotments['van_allot_id'].toString().toLowerCase();
       final allotmentsId = _allotments['id'].toString().toLowerCase();
       final site = _allotments['site_id'].toString().toLowerCase();
-      final recordType = _allotments['record_type'].toString().toLowerCase();
       final status = _allotments['status'].toString().toLowerCase();
+      final reqBy = _allotments['requested_by'].toString().toLowerCase();
       final searchText = _searchFieldController.text.toLowerCase();
 
       return vanId.contains(searchText) ||
           allotmentsId.contains(searchText) ||
           site.contains(searchText) ||
-          recordType.contains(searchText) ||
+          reqBy.contains(searchText) ||
           status.contains(searchText);
     }).toList();
 
@@ -393,21 +396,25 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
       itemCount: filteredAllotments.length,
       itemBuilder: (context, index) {
         final allotment = filteredAllotments[index];
-        final vanId = allotment['van_id'] ?? 'null';
-        final allotmentId = allotment['id'] ?? 'null';
+        final vanId = allotment['van_allot_id'] ?? 'null';
+        final vanAdhocReqId = allotment['id'] ?? 'null';
         final siteId = allotment['site_id'] ?? 'null';
-        final recordType = allotment['record_type'] ?? 'null';
         final status = allotment['status'] ?? 'null';
         final createdAt = allotment['created_at'] ?? 'null';
 
+        final reqBy = allotment['requested_by'] ?? 'null';
+        final reqAt = allotment['requested_at'] ?? 'null';
+
         return _buildListTile(
           index,
-          vanId,
-          allotmentId,
-          siteId,
-          recordType,
-          status,
-          createdAt,
+          vanId: vanId,
+          vanAdhocReqId: vanAdhocReqId,
+          siteId: siteId,
+          status: status,
+          createdAt: createdAt,
+
+          reqBy: reqBy,
+          reqAt: reqAt,
         );
       },
       // controller: _scrollController,
@@ -487,15 +494,18 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
   // Builds an individual ListTile
   Widget _buildListTile(
     int index,
-    String vanId,
-    String allotmentId,
-    String siteId,
-    String recordType,
-    String status,
-    String createdAt,
+    {
+      required String vanId,
+      required String vanAdhocReqId,
+      required String siteId,
+      required String status,
+      required String createdAt,
+
+      required String reqBy,
+      required String reqAt,
+    }
   ) {
-    DateTime dateTimeParsed =
-        DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
+    DateTime dateTimeParsed = DateTime.parse(reqAt).add(Duration(hours: int.parse('8')));
     String dateCreatedAt = _myFormat!.format(dateTimeParsed);
 
     if (_currentPage != 0) {
@@ -533,11 +543,9 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                         tempRefresh = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AllotmentDetailView(
-                                allotmentId: allotmentId,
-                                allotmentType: TYPE,
-                                status: status,
-                                createdAt: dateCreatedAt,
+                            builder: (context) => AdhocRequestDetailView(
+                                referenceId: vanAdhocReqId,
+                                status: status.capitalize(),
                               ),
                           ),
                         );
@@ -549,24 +557,12 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                           await fetchAPI(_token);
                         }
                       },
-                      // onTap: () {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => AdhocRequestDetailView(
-                      //         allotmentId: allotmentId,
-                      //         status: status,
-                      //       ),
-                      //     ),
-                      //   );
-                      // },
                       leading: CircleAvatar(
                         maxRadius: 10,
                         backgroundColor: Colors.transparent,
                         child: Text(
                           '${index + 1}',
-                          style:
-                              const TextStyle(color: biruImran, fontSize: 14),
+                          style: const TextStyle(color: biruImran, fontSize: 14),
                         ),
                       ),
                       title: Row(
@@ -575,7 +571,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                             child: SizedBox(
                               child: AutoSizeText(
                                 maxLines: 1,
-                                allotmentId,
+                                vanAdhocReqId,
                                 style: const TextStyle(
                                   color: biruImran,
                                   fontSize: 22.0,
@@ -585,10 +581,11 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                             ),
                           ),
                           SizedBox(
-                            width: 120,
+                            width: 200,
                             child: RichText(
+                              textAlign: TextAlign.end,
                               text: TextSpan(
-                                  text: 'Van ',
+                                  text: 'Van Allot ',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w300,
                                     color: black,
@@ -632,7 +629,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           AutoSizeText(
-                            titleCheck(TYPE),
+                            titleCheck(ADHOC_REQUEST),
                             maxLines: 1,
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,
@@ -643,7 +640,27 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                           RichText(
                             textAlign: TextAlign.end,
                             text: TextSpan(
-                                text: 'Created At\n',
+                                text: 'Requested By\n',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: black,
+                                  fontSize: 15.0,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: reqBy,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ),
+                          RichText(
+                            textAlign: TextAlign.end,
+                            text: TextSpan(
+                                text: 'Requested At\n',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: black,
@@ -666,7 +683,7 @@ class _AdhocRequestListingState extends State<AdhocRequestListing> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.15,
                   child: Row(
                     children: [
                       SizedBox(width: 10),

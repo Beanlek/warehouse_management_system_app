@@ -56,6 +56,8 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
   bool _launchLoading = true;
   bool _showAllotmentDetails = true;
   bool allItemsChecked = false;
+
+  String adhocReturnStatus = 'null';
   
   int activeStep = 0;
   XFile? _capturedImage;
@@ -109,6 +111,8 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
       ),
       
       body:
+      _launchLoading ?
+      Center(child: CircularProgressIndicator()) :
       WillPopScope(
         onWillPop: () async {
           if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
@@ -347,14 +351,14 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                           Icons.description,
                                         ),
                                         _buildInfoContainer(
-                                          'Status',
+                                          'Adhoc Return Status',
                                           (adhocDetails['status'] as String).capitalize(),
                                           Icons.assignment_turned_in_outlined,
                                         ),
                                         _buildInfoContainer(
-                                          'Time Created',
-                                          adhocDetails['createdAt'],
-                                          Icons.access_time,
+                                          'WMS Status',
+                                          widget.status.capitalize(),
+                                          Icons.assignment_turned_in_outlined,
                                         ),
                                       ],
                                     ),
@@ -501,148 +505,191 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(
-                                width: 150,
-                                height: 50,
-                                child: TextButton(
-                                  onPressed: () {
-                                    if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
-                                      Navigator.pop(context, false);
-                                    }
-                                    else if (activeStep == 1) {
-                                      setState(() {
-                                        activeStep = 0;
-                                        _pageController.animateToPage(
-                                          activeStep,
-                                          duration: Duration(milliseconds: 700),
-                                          curve: Curves.easeInOut,
-                                        );
-                                      });
-                                      return;
-                                    }
-                                    else {
-                                      showDialog(
+                              if(adhocReturnStatus.capitalize() == PENDING && widget.status.capitalize() == ACKNOWLEDGED)
+                                SizedBox(
+                                  width: 300,
+                                  height: 50,
+                                  child: TextButton(
+                                    onPressed: () async {
+                                    
+                                      bool _confirmAcknowledge = false;
+                                    
+                                      _confirmAcknowledge = await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return DialogConfirmation();
+                                          return DialogRejectConfirmation();
                                         },
                                       );
-                                    }
-                                  },
-                                  style: TextButton.styleFrom(
-                                    elevation: 10,
-                                    backgroundColor: biruImran4,
-                                  ),
-                                  child: const Text(
-                                    "Back",
-                                    style: TextStyle(
-                                      color: biruImran,
-                                      fontSize: 16
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              
-                              widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE ?
-                              SizedBox() :
-                              SizedBox(
-                                width: 300,
-                                height: 50,
-                                child: TextButton(
-                                  onPressed: () async {
-                                    if (allItemsChecked == false) {
-                                      FloatingSnackBar(
-                                        message:
-                                          'Please tick all the following SKUs. Any problem please forward to management.',
-                                        context: context,
-                                      );
-                                      return;
-                                    }
                                     
-                                    if (activeStep == 0) {
-                                      setState(() {
-                                        activeStep = 1;
-                                        _pageController.animateToPage(
-                                          activeStep,
-                                          duration: Duration(milliseconds: 700),
-                                          curve: Curves.easeInOut,
-                                        );
-                                      });
-                                      return;
-                                    }
-                                  
-                                    if (_capturedImage == null || _commentController.text == '') {
-                                      FloatingSnackBar(
-                                        message:
-                                          'Please comment and take an image of the SKU.',
-                                        context: context,
-                                      );
-                                      return;
-                                    }
-                                  
-                                    bool _confirmAcknowledge = false;
-                                  
-                                    _confirmAcknowledge = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogAcknowledgeConfirmation();
-                                      },
-                                    );
-                                  
-                                    if (_confirmAcknowledge) {
-                                      String comment = _commentController.text.trim();
+                                      if (_confirmAcknowledge) {
+                                        final String refID = adhocDetails['id'];
 
-                                      switch (widget.allotmentType) {
-                                        case ADHOC_RETURN:
+                                        String _subDirectory = '/api/acknowledgment/wms/van_adhoc_return/reject';
+                                        
+                                        final String? _domainName = await TokenUtil.getDomainName();
+                                        String domainName = _domainName!;
 
-                                          final String refID = adhocDetails['id'];
-                                          
-                                          final List<Map<String, dynamic>> dataArr = details;
+                                        String url = '$domainName$_subDirectory';
+                                        final uri = Uri.parse(url);
 
-                                          if (token == null) {
+                                        Map<String, dynamic> payload = {
+                                          'van_return_id': refID,
+                                        };
+
+                                        try {
+                                          final response = await http.post(
+                                            uri,
+                                            headers: <String, String>{
+                                              'Content-Type': 'application/json',
+                                              'Authorization': 'Bearer $token',
+                                            },
+                                            body: jsonEncode(payload),
+                                          );
+
+                                          debugPrint('response.statusCode : ${response.statusCode}');
+
+                                          if (response.statusCode == 500) {
+                                            final json = jsonDecode(response.body);
+                                            final errMsg = json['errMsg'];
+
+                                            FloatingSnackBar(
+                                              message: '${refID} encounter an error ${response.statusCode}. $errMsg',
+                                              context: context);
+                                          }
+
+                                          else if (response.statusCode == 403) {
                                             Navigator.pushNamed(context, AppRoutes.login);
+                                            
                                             FloatingSnackBar(
                                                 message: 'Token Expired. Please login back to the system.',
                                                 context: context);
-                                            return;
                                           }
 
-                                          String _subDirectory = '/api/acknowledgment/wms/submit/acknowledge';
-                                          File dataImage;
+                                          else if (response.statusCode == 200) {
+                                            debugPrint('at 200 : ${response.statusCode}');
+                                            
+                                            Navigator.pop(context, true);
+
+                                            FloatingSnackBar(
+                                              message: 'Adhoc Return ${refID} rejected.',
+                                              context: context,
+                                            );
+                                          } else {
+                                            debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+                                            debugPrint('Error Body: ${response.body}');
+
+                                            
+                                            const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+                                            FloatingSnackBar(
+                                                message: '${refID} encounter an error ${response.statusCode}. $errMsg',
+                                                context: context);
+
+                                            Navigator.of(context).pop();
+                                          }
+                                        } catch (error) {
+
+                                          FloatingSnackBar(
+                                                message: 'Error ${error}. Please contact system admin.',
+                                                context: context
+                                          );
+                                          
+                                        }
+                                      }
+                                    },
+                                    
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: redColor,
+                                      side: BorderSide(
+                                        color: Colors.transparent,
+                                      )
+                                    ),
+                                    child: Text(
+                                      "Reject",
+                                      style: TextStyle(
+                                        color: white,
+                                        fontSize: 16
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              if(!(adhocReturnStatus.capitalize() == PENDING && widget.status.capitalize() == ACKNOWLEDGED))
+                                SizedBox(
+                                  width: 150,
+                                  height: 50,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      if (widget.status == 'acknowledged' || widget.allotmentType == ALLOT_BALANCE) {
+                                        Navigator.pop(context, false);
+                                      }
+                                      else if (activeStep == 1) {
+                                        setState(() {
+                                          activeStep = 0;
+                                          _pageController.animateToPage(
+                                            activeStep,
+                                            duration: Duration(milliseconds: 700),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        });
+                                        return;
+                                      }
+                                      else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return DialogConfirmation();
+                                          },
+                                        );
+                                      }
+                                    },
+                                    style: TextButton.styleFrom(
+                                      elevation: 10,
+                                      backgroundColor: biruImran4,
+                                    ),
+                                    child: const Text(
+                                      "Back",
+                                      style: TextStyle(
+                                        color: biruImran,
+                                        fontSize: 16
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              
+                              if((widget.status == 'unacknowledged' && widget.allotmentType != ALLOT_BALANCE) || adhocReturnStatus.capitalize() == PENDING)
+                                SizedBox(
+                                  width: 300,
+                                  height: 50,
+                                  child: TextButton(
+                                    onPressed: () async {
+                                      
+
+                                      if(adhocReturnStatus.capitalize() == PENDING && widget.status.capitalize() == ACKNOWLEDGED) {
+                                    
+                                        bool _confirmAcknowledge = false;
+
+                                        _confirmAcknowledge = await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return DialogApproveConfirmation();
+                                          },
+                                        );
+                                        
+                                        if (_confirmAcknowledge) {
+                                          final String refID = adhocDetails['id'];
+
+                                          String _subDirectory = '/api/acknowledgment/wms/van_adhoc_return/receive';
                                           
                                           final String? _domainName = await TokenUtil.getDomainName();
                                           String domainName = _domainName!;
 
                                           String url = '$domainName$_subDirectory';
                                           final uri = Uri.parse(url);
-                                          
-                                          dataImage = File(_capturedImage!.path);
 
-                                          final List<int> imageBytes = dataImage.readAsBytesSync();
-                                          final String imageBase64 = base64Encode(imageBytes);
-
-                                          Map<String, dynamic> payload = {};
-
-                                          final List<Map<String, dynamic>> customizedDataArr = [];
-
-                                          for (final skuData in dataArr) {
-                                            final Map<String, dynamic> customizedSkuData = {
-                                              'sku_id': skuData['sku_id'],
-                                              'uom_id': skuData['uom_id'],
-                                              'init_qty': skuData['requested_qty'],
-                                              'updated_qty': skuData['quantity'][0],
-                                            };
-                                            customizedDataArr.add(customizedSkuData);
-                                          }
-
-                                          payload = {
-                                            'id': refID,
-                                            'skus': customizedDataArr,
-                                            'comment': comment,
-                                            'image': [
-                                              {'image': 'data:image/png;base64,${imageBase64}'}
-                                            ],
+                                          Map<String, dynamic> payload = {
+                                            'van_return_id': refID,
                                           };
+                                          debugPrint('APPROVE RES : ${refID}');
 
                                           try {
                                             final response = await http.post(
@@ -660,201 +707,272 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                                               final json = jsonDecode(response.body);
                                               final errMsg = json['errMsg'];
 
+                                              debugPrint('APPROVE RES : ${errMsg}');
+
                                               FloatingSnackBar(
-                                                  message: '${refID} encounter an error. $errMsg',
-                                                  context: context);
+                                                message: '${refID} encounter an error ${response.statusCode}. $errMsg',
+                                                context: context);
                                             }
 
-                                            else if (response.statusCode == 302) {
-
+                                            else if (response.statusCode == 403) {
+                                              Navigator.pushNamed(context, AppRoutes.login);
+                                              
                                               FloatingSnackBar(
-                                                  message: 'Error ${response.statusCode}. Please contact system admin.',
+                                                  message: 'Token Expired. Please login back to the system.',
                                                   context: context);
-
                                             }
 
                                             else if (response.statusCode == 200) {
                                               debugPrint('at 200 : ${response.statusCode}');
+                                              
                                               Navigator.pop(context, true);
+
                                               FloatingSnackBar(
-                                                message: 'Adhoc ${refID} acknowledged.',
+                                                message: 'Adhoc Return ${refID} approved.',
                                                 context: context,
                                               );
                                             } else {
                                               debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
                                               debugPrint('Error Body: ${response.body}');
-                                              Navigator.pushNamed(context, AppRoutes.login);
 
-                                              FloatingSnackBar(
-                                                  message: 'Token Expired. Please login back to the system.',
-                                                  context: context);
-                                            }
-                                          } catch (error) {
-                                            FloatingSnackBar(
-                                                  // message: '${widget.returnedOrderId} encounter an error. $json',
-                                                  message: 'Error ${error}. Please contact system admin.',
-                                                  context: context);
-                                          }
-                                          break;
-                                        case ADHOC_REQUEST:
-                                        
-                                          final String refID = adhocDetails['id'];
-
-                                          if (token == null) {
-                                            Navigator.pushNamed(context, AppRoutes.login);
-                                            FloatingSnackBar(
-                                                message: 'Token Expired. Please login back to the system.',
-                                                context: context);
-                                            return;
-                                          }
-
-                                          String _subDirectory = '/api/wms/android_acknowledge';
-                                          File dataImage;
-                                          
-                                          final String? _domainName = await TokenUtil.getDomainName();
-                                          String domainName = _domainName!;
-
-                                          String url = '$domainName$_subDirectory/${refID}';
-                                          final uri = Uri.parse(url);
-                                          
-                                          dataImage = File(_capturedImage!.path);
-
-                                          final List<int> imageBytes = dataImage.readAsBytesSync();
-                                          final String imageBase64 = base64Encode(imageBytes);
-
-                                          Map<String, dynamic> payload = {};
-
-                                          payload = {
-                                            'comment': comment,
-                                            'image': [
-                                              {'image': 'data:image/png;base64,${imageBase64}'}
-                                            ],
-                                          };
-                                        
-
-                                          try {
-                                            final response = await http.post(
-                                              uri,
-                                              headers: <String, String>{
-                                                'Content-Type': 'application/json',
-                                                'Authorization': 'Bearer $token',
-                                              },
-                                              body: jsonEncode(payload),
-                                            );
-
-                                            print('response.statusCode : ${response.statusCode}');
-
-                                            if (response.statusCode == 500) {
-                                              final json = jsonDecode(response.body);
-                                              final errMsg = json['errMsg'];
-
-                                              FloatingSnackBar(
-                                                  message: '${refID} encounter an error. $errMsg',
-                                                  context: context);
-
-                                              // Navigator.of(context).pop();
-                                            }
-
-                                            else if (response.statusCode == 302) {
-
-                                              // final errBody = jsonDecode(response.body);
-
-                                              FloatingSnackBar(
-                                                  // message: '${widget.returnedOrderId} encounter an error. $json',
-                                                  message: 'Error ${response.statusCode}. Please contact system admin.',
-                                                  context: context);
-
-                                            }
-
-                                            else if (response.statusCode == 200) {
-                                              print('at 200 : ${response.statusCode}');
-                                              Navigator.pop(context, true);
-                                              FloatingSnackBar(
-                                                message: 'Adhoc ${refID} acknowledged.',
-                                                context: context,
-                                              );
-                                            } else {
-                                              print('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-                                              print('Error Body: ${response.body}');
-                                              Navigator.pushNamed(context, AppRoutes.login);
-
-                                              FloatingSnackBar(
-                                                  message: 'Token Expired. Please login back to the system.',
-                                                  context: context);
-                                            }
-                                          } catch (error) {
-                                            FloatingSnackBar(
                                               
-                                                  message: 'Error ${error}. Please contact system admin.',
-                                                  context: context);
-                                          }
+                                              const errMsg = 'This may due to server hickups. Please wait for a while.';
 
-                                          break;
-                                        default:
-                                          bool tempRefresh = false;
-                                          tempRefresh = await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => QRScannerPageAllotment(
-                                                  refID: choosedAllotment['id'] ?? adhocDetails['id'],
-                                                  vanID: choosedAllotment['van_id'] ?? adhocDetails['van_id'],
-                                                  comment: comment,
-                                                  imageFile: _capturedImage!,
-                                                  
-                                                  isAdhocReturn: false,
-                              
-                                                  dataArr: [],
-                                                ),
-                                              ),
-                                          );
-                                          if (tempRefresh) {
-                                            setState(() {
-                                              Navigator.pop(context, true);
-                                              tempRefresh = false;
-                                            });
+                                              FloatingSnackBar(
+                                                  message: '${refID} encounter an error ${response.statusCode}. $errMsg',
+                                                  context: context);
+
+                                              Navigator.of(context).pop();
+                                            }
+                                          } catch (error) {
+
+                                            FloatingSnackBar(
+                                                  message: 'Error ${error}. Please contact system admin.',
+                                                  context: context
+                                            );
+                                            
                                           }
+                                        }
+                                        
+                                        return;
                                       }
-                                    }
-                                  
-                                  },
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: 
-                                      activeStep == 1 ?
-                                        _capturedImage == null || _commentController.text == '' ?
-                                          Colors.transparent
-                                          : hijauImran
-                                        : allItemsChecked ? hijauImran
-                                      : Colors.transparent
-                                    ,
-                                    side: BorderSide(
-                                      color:
+                                      
+                                      if (allItemsChecked == false) {
+                                        FloatingSnackBar(
+                                          message:
+                                            'Please tick all the following SKUs. Any problem please forward to management.',
+                                          context: context,
+                                        );
+                                        return;
+                                      }
+                                      
+                                      if (activeStep == 0) {
+                                        setState(() {
+                                          activeStep = 1;
+                                          _pageController.animateToPage(
+                                            activeStep,
+                                            duration: Duration(milliseconds: 700),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        });
+                                        return;
+                                      }
+                                    
+                                      if (_capturedImage == null || _commentController.text == '') {
+                                        FloatingSnackBar(
+                                          message:
+                                            'Please comment and take an image of the SKU.',
+                                          context: context,
+                                        );
+                                        return;
+                                      }
+                                    
+                                      bool _confirmAcknowledge = false;
+                                    
+                                      _confirmAcknowledge = await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogAcknowledgeConfirmation();
+                                        },
+                                      );
+                                    
+                                      if (_confirmAcknowledge) {
+                                        String comment = _commentController.text.trim();
+
+                                        switch (widget.allotmentType) {
+                                          case ADHOC_RETURN:
+
+                                            final String refID = adhocDetails['id'];
+                                            
+                                            final List<Map<String, dynamic>> dataArr = details;
+
+                                            if (token == null) {
+                                              Navigator.pushNamed(context, AppRoutes.login);
+                                              FloatingSnackBar(
+                                                  message: 'Token Expired. Please login back to the system.',
+                                                  context: context);
+                                              return;
+                                            }
+
+                                            String _subDirectory = '/api/acknowledgment/wms/submit/acknowledge';
+                                            File dataImage;
+                                            
+                                            final String? _domainName = await TokenUtil.getDomainName();
+                                            String domainName = _domainName!;
+
+                                            String url = '$domainName$_subDirectory';
+                                            final uri = Uri.parse(url);
+                                            
+                                            dataImage = File(_capturedImage!.path);
+
+                                            final List<int> imageBytes = dataImage.readAsBytesSync();
+                                            final String imageBase64 = base64Encode(imageBytes);
+
+                                            Map<String, dynamic> payload = {};
+
+                                            final List<Map<String, dynamic>> customizedDataArr = [];
+
+                                            for (final skuData in dataArr) {
+                                              final Map<String, dynamic> customizedSkuData = {
+                                                'sku_id': skuData['sku_id'],
+                                                'uom_id': skuData['uom_id'],
+                                                'init_qty': skuData['requested_qty'],
+                                                'updated_qty': skuData['quantity'][0],
+                                              };
+                                              customizedDataArr.add(customizedSkuData);
+                                            }
+
+                                            payload = {
+                                              'id': refID,
+                                              'skus': customizedDataArr,
+                                              'comment': comment,
+                                              'image': [
+                                                {'image': 'data:image/png;base64,${imageBase64}'}
+                                              ],
+                                            };
+
+                                            try {
+                                              final response = await http.post(
+                                                uri,
+                                                headers: <String, String>{
+                                                  'Content-Type': 'application/json',
+                                                  'Authorization': 'Bearer $token',
+                                                },
+                                                body: jsonEncode(payload),
+                                              );
+
+                                              debugPrint('response.statusCode : ${response.statusCode}');
+
+                                              if (response.statusCode == 500) {
+                                                final json = jsonDecode(response.body);
+                                                final errMsg = json['errMsg'];
+
+                                                FloatingSnackBar(
+                                                    message: '${refID} encounter an error. $errMsg',
+                                                    context: context);
+                                              }
+
+                                              else if (response.statusCode == 302) {
+
+                                                FloatingSnackBar(
+                                                    message: 'Error ${response.statusCode}. Please contact system admin.',
+                                                    context: context);
+
+                                              }
+
+                                              else if (response.statusCode == 200) {
+                                                debugPrint('at 200 : ${response.statusCode}');
+                                                Navigator.pop(context, true);
+                                                FloatingSnackBar(
+                                                  message: 'Adhoc ${refID} acknowledged.',
+                                                  context: context,
+                                                );
+                                              } else {
+                                                debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+                                                debugPrint('Error Body: ${response.body}');
+                                                Navigator.pushNamed(context, AppRoutes.login);
+
+                                                FloatingSnackBar(
+                                                    message: 'Token Expired. Please login back to the system.',
+                                                    context: context);
+                                              }
+                                            } catch (error) {
+                                              FloatingSnackBar(
+                                                    // message: '${widget.returnedOrderId} encounter an error. $json',
+                                                    message: 'Error ${error}. Please contact system admin.',
+                                                    context: context);
+                                            }
+                                            break;
+                                          
+                                          default:
+                                            bool tempRefresh = false;
+                                            tempRefresh = await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => QRScannerPageAllotment(
+                                                    refID: choosedAllotment['id'] ?? adhocDetails['id'],
+                                                    vanID: choosedAllotment['van_id'] ?? adhocDetails['van_id'],
+                                                    comment: comment,
+                                                    imageFile: _capturedImage!,
+                                                    
+                                                    isAdhocReturn: false,
+                                
+                                                    dataArr: [],
+                                                  ),
+                                                ),
+                                            );
+                                            if (tempRefresh) {
+                                              setState(() {
+                                                Navigator.pop(context, true);
+                                                tempRefresh = false;
+                                              });
+                                            }
+                                        }
+                                      }
+                                    
+                                    },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: 
                                         activeStep == 1 ?
                                           _capturedImage == null || _commentController.text == '' ?
-                                            greyColor
-                                            : Colors.transparent
-                                          : allItemsChecked ? Colors.transparent
-                                        : greyColor
+                                            Colors.transparent
+                                            : hijauImran
+                                          : allItemsChecked ? hijauImran
+                                        : Colors.transparent
                                       ,
-                                    )
-                                  ),
-                                  child: Text(
-                                    activeStep == 1 ?
-                                      "Acknowledge" :
-                                      "Next",
-                                    style: TextStyle(
-                                      color:
+                                      side: BorderSide(
+                                        color:
+                                          activeStep == 1 ?
+                                            _capturedImage == null || _commentController.text == '' ?
+                                              greyColor
+                                              : Colors.transparent
+                                            : allItemsChecked ? Colors.transparent
+                                          : greyColor
+                                        ,
+                                      )
+                                    ),
+                                    child: Text(
+                                      adhocReturnStatus.capitalize() == PENDING_WA_ACK ?
                                         activeStep == 1 ?
-                                          _capturedImage == null || _commentController.text == '' ?
-                                            greyColor
-                                            : white
-                                          : allItemsChecked ? white
-                                        : greyColor
-                                      ,
-                                      fontSize: 16
+                                          "Acknowledge" :
+                                          "Next"
+                                      :
+                                        "Approve",
+
+                                      style: TextStyle(
+                                        color:
+                                          activeStep == 1 ?
+                                            _capturedImage == null || _commentController.text == '' ?
+                                              greyColor
+                                              : white
+                                            : allItemsChecked ? white
+                                          : greyColor
+                                        ,
+                                        fontSize: 16
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                           const SizedBox(
@@ -871,6 +989,10 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
           ),
         ),
       ),
+
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        debugPrint('WHATTT : ${adhocReturnStatus.toString()}');
+      }),
     ));
   }
 
@@ -1283,8 +1405,10 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
         setState(() {
           details = List<Map<String, dynamic>>.from(detailsData);
           adhocDetails = Map<String, dynamic>.from(adhocReturnDetailsData);
-          acknowledgeDetails =
-              Map<String, dynamic>.from(acknowledgeDetailsData);
+
+          adhocReturnStatus = adhocDetails['status'] ?? 'null';
+          
+          acknowledgeDetails = Map<String, dynamic>.from(acknowledgeDetailsData);
           allItemsChecked = _areAllItemsChecked();
         });
 

@@ -28,6 +28,13 @@ const String TRANSFER_OUT = 'transfer_out';
 const String ALL = 'All';
 const String ACKNOWLEDGED ='Acknowledged';
 const String UNACKNOWLEDGED ='Unacknowledged';
+const String RECEIVED ='Received';
+
+const String PENDING_WA_ACK ='Pending_wa_ack';
+const String PENDING ='Pending';
+const String REJECTED ='Rejected';
+const String ALLOTTED ='Allotted';
+const String EXPIRED ='Expired';
 
 String titleCheck(String _recordType) {
       switch (_recordType) {
