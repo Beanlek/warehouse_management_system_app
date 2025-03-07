@@ -28,9 +28,7 @@ import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/list_recon.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van%20allotment/allotment_additional_list.dart';
-import 'package:warehouse/van%20allotment/allotment_balance_list.dart';
-import 'package:warehouse/van%20allotment/allotment_plan_list.dart';
+import 'package:warehouse/van_allotment/layout/allotment_listslookup.dart';
 
 class HomepageV2 extends StatefulWidget {
   const HomepageV2({super.key});
@@ -370,18 +368,20 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       return;
     }
     String _mainBody = 'wms_acknowledgment';
+    String _vanReqBody = 'van_requests';
     String _subDirectory = '/api/wms/android-list';
+    String _vanReqDirectory = '/api/wms/van_request/list';
 
     List<String> recordType = [
-      'allot_plan',
-      'allot_balance',
-      'allot_additional',
-      'market_return',
-      'return_order',
-      'adhoc_request',
-      'adhoc_return',
-      'transfer_in',
-      'transfer_out',
+      ALLOT_PLAN,
+      ALLOT_BALANCE,
+      ALLOT_ADDITIONAL,
+      MARKET_RETURN,
+      RETURN_ORDER,
+      ALLOT_REQUEST,
+      ADHOC_RETURN,
+      TRANSFER_IN,
+      TRANSFER_OUT,
     ];
     
     final String? domainName = await TokenUtil.getDomainName();
@@ -390,7 +390,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     debugPrint('formattedDate2:: $formattedDate2');
 
 
-    for (var i = 0; i < (recordType.length) + 2; i++) {
+    for (var i = 0; i < (recordType.length) + 3; i++) {
       String rootUrl = '$domainName$_subDirectory?limit_rows=1';
       String url = rootUrl;
 
@@ -400,8 +400,9 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
 
         else url = '${rootUrl}&type=${recordType[i]}&status=unacknowledged';
 
-      }
-      else if (i == recordType.length + 1) {
+      } else if (i == recordType.length) {
+        url = '${domainName}${_vanReqDirectory}?limit_rows=0&status=pending';
+      } else if (i == recordType.length + 2) {
         url = '${rootUrl}&status=acknowledged';
       }
 
@@ -445,7 +446,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
             case 5:
               debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
-              adhocRequestCount = data[_mainBody]["count"];
+              allotRequestCount = data[_mainBody]["count"];
               break;
             case 6:
               debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
@@ -463,11 +464,17 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
               transferOutCount = data[_mainBody]["count"];
               break;
             case 9:
+              debugPrint("case $i: ${url} ${data[_vanReqBody]["count"].toString()}");
+
+              adhocRequestCount = data[_vanReqBody]["count"];
+              break;
+            case 10:
               debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               totalListing = data[_mainBody]["count"];
               break;
             default:
+             // FOR ACKNOWLDEGE COUNT ONLY
               debugPrint("case default: acknowledgedCount: ${url} ${data[_mainBody]["count"].toString()}");
               debugPrint("case default: pendingCount: ${url} ${data[_mainBody]["count"].toString()}");
 
@@ -1039,11 +1046,13 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                             { "allotmentPlan" : allotPlanCount },
                                             { "allotmentBalance" : allotBalanceCount },
                                             { "allotmentAdditional" : allotAdditionalCount },
+                                            { "allotmentRequest" : allotRequestCount },
                                           ],
                                           routes: [
-                                            { "allotmentPlan" : AllotmentPlanListing() },
-                                            { "allotmentBalance" : AllotmentBalanceListing() },
-                                            { "allotmentAdditional" : AllotmentAdditionalListing() },
+                                            { "allotmentPlan" : AllotmentListsLookup(allotmentType: ALLOT_PLAN,) },
+                                            { "allotmentBalance" : AllotmentListsLookup(allotmentType: ALLOT_BALANCE,) },
+                                            { "allotmentAdditional" : AllotmentListsLookup(allotmentType: ALLOT_ADDITIONAL,) },
+                                            { "allotmentRequest" : AllotmentListsLookup(allotmentType: ALLOT_REQUEST,) },
                                           ],
                                         );
                                       },

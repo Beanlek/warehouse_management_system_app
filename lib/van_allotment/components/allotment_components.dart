@@ -1,63 +1,46 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously, unused_field, library_private_types_in_public_api, prefer_const_constructors, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, non_constant_identifier_names, constant_identifier_names
-
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/routes/routes.dart';
-import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van%20allotment/layout/allotment_detail.dart';
+import 'package:warehouse/shared_preference/token.dart';
+import 'package:http/http.dart' as http;
+import 'package:warehouse/van_allotment/layout/allotment_detail.dart';
 
-const String TYPE = ALLOT_PLAN;
-
-class AllotmentPlanListing extends StatefulWidget {
-  const AllotmentPlanListing({super.key});
-
-  @override
-  _AllotmentPlanListingState createState() => _AllotmentPlanListingState();
-}
-
-class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
+mixin AllotmentComponents<T extends StatefulWidget> on State<T> {
+  String allotment_type = '';
+  
   List<Map<String, dynamic>> allotments = [];
   List<String> filters = [
-    'All',
-    'Acknowledged',
-    'Unacknowledged',
+    ALL,
+    ACKNOWLEDGED,
+    UNACKNOWLEDGED,
   ];
-  String selectedFilter = 'Unacknowledged';
-  int _currentPage = 0;
-  int _numPages = 10;
+  String selectedFilter = UNACKNOWLEDGED;
+  int currentPage = 0;
+  int numPages = 10;
 
-  final TextEditingController _searchFieldController = TextEditingController();
-  final NumberPaginatorController _paginatorController =
-      NumberPaginatorController();
+  final TextEditingController searchFieldController = TextEditingController();
+  final ScrollController mainScrollController = ScrollController();
+  final NumberPaginatorController paginatorController = NumberPaginatorController();
 
-  DateFormat? _myFormat;
-  String? _token;
+  DateFormat? myFormat;
+  String? tokenComponent;
 
-  @override
-  void initState() {
-    super.initState();
-    _myFormat = DateFormat('dd-MM-yyyy').add_Hms();
-    _getToken();
-  }
-
-  Future<void> _getToken() async {
+   Future<void> getToken() async {
     final String? token = await TokenUtil.getToken();
     setState(() {
-      _token = token!;
+      tokenComponent = token!;
       // showPickLists = true;
     });
     if (token != null) {
-      await fetchAPI(_token);
+      await fetchAPI(tokenComponent);
     }
   }
 
@@ -71,8 +54,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
     }
     String _mainBody = 'wms_van_ids';
     String _subDirectory = '/api/wms/van_ids';
-
-    // debugPrint('fetch Unacknowledged API');
+    
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
 
@@ -81,13 +63,13 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
 
     Map<String, String> params = {
       'limit_rows': '20',
-      'page': (_currentPage + 1).toString(),
-      'type': TYPE,
+      'page': (currentPage + 1).toString(),
+      'type': allotment_type,
       'status': selectedFilter.toLowerCase(),
     };
 
     debugPrint('selectedFilter: $selectedFilter');
-    debugPrint('_currentPage: $_currentPage');
+    debugPrint('currentPage: $currentPage');
 
     final newUri = uri.replace(queryParameters: params);
     debugPrint(newUri.toString());
@@ -107,7 +89,25 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
 
     String stringResponse = await response.stream.bytesToString();
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 500) {
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(allotment_type)} encounter an error ${response.statusCode}. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+    }
+
+    else if (response.statusCode == 403) {
+      Navigator.pushNamed(context, AppRoutes.login);
+      
+      FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context);
+    }
+
+    else if (response.statusCode == 200) {
       try {
         final json = jsonDecode(stringResponse);
         final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
@@ -118,9 +118,9 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
           count = 1;
         }
 
-        _numPages = (count / 20).round();
-        if (_numPages < (count / 20)) {
-          _numPages++;
+        numPages = (count / 20).round();
+        if (numPages < (count / 20)) {
+          numPages++;
         }
 
         setState(() {
@@ -130,17 +130,19 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
         debugPrint('Failed to parse JSON: $e');
       }
     } else {
-      debugPrint(
-          'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+      debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
       debugPrint('Error Body: ${stringResponse}');
-      Navigator.pushNamed(context, AppRoutes.login);
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
       FloatingSnackBar(
-          message: 'Token Expired. Please login back to the system.',
+          message: '${titleCheck(allotment_type)} encounter an error ${response.statusCode}. $errMsg',
           context: context);
+
+      Navigator.of(context).pop();
     }
   }
 
-  Future<void> _refreshData() async {
+  Future<void> refreshData() async {
     setState(() {
       allotments.clear(); // Clear the existing data
     });
@@ -149,13 +151,13 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
       const Duration(seconds: 2),
     ); // Simulate a delay (replace with your actual data fetching logic)
 
-    await fetchAPI(_token);
+    await fetchAPI(tokenComponent);
   }
 
-  void _onSearchSubmitted(String query) {
+  void onSearchSubmitted(String query) {
     setState(() async {
-      await fetchAPI(_token);
-      _searchFieldController.text = query;
+      await fetchAPI(tokenComponent);
+      searchFieldController.text = query;
 
       // Filter allotments based on search text
       allotments = allotments.where((_allotments) {
@@ -164,7 +166,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
         final site = _allotments['site_id'].toString().toLowerCase();
         final recordType = _allotments['record_type'].toString().toLowerCase();
         final status = _allotments['status'].toString().toLowerCase();
-        final searchText = _searchFieldController.text.toLowerCase();
+        final searchText = searchFieldController.text.toLowerCase();
 
         return vanId.contains(searchText) ||
             allotmentsId.contains(searchText) ||
@@ -175,178 +177,8 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector( onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70),
-        child: AppBar(
-          centerTitle: true,
-          title: Text(
-            '${titleCheck(TYPE)} Lists',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24.0,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          backgroundColor: biruImran,
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 20, top: 24.0, right: 20),
-                child: RichText(
-                  text: TextSpan(
-                      text: 'Home ',
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.of(context).pop();
-                        },
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        color: textColorTertiary,
-                      ),
-                      children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 70,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          onChanged: _onSearchSubmitted,
-                          controller: _searchFieldController,
-                          decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.search),
-                              hintText: 'Search ...',
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide:
-                                      BorderSide(color: greyColor, width: 2))),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: 55,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: greyColor, width: 2)),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: DropdownButton<String>(
-                            padding: EdgeInsets.only(right: 12, left: 12),
-                            isExpanded: true,
-                            value: selectedFilter,
-                            items: filters
-                                .map(
-                                  (filter) => DropdownMenuItem<String>(
-                                    alignment: AlignmentDirectional.centerEnd,
-                                    value: filter,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: SizedBox(
-                                        child: Text(
-                                          filter,
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (filter) async {
-                              setState(
-                                () {
-                                  selectedFilter = filter!;
-                                  _currentPage = 0;
-                                  _paginatorController.currentPage = 0;
-                                  allotments.clear();
-                                },
-                              );
-                              await fetchAPI(_token);
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: _numPages == 1 ? 12 : 24,
-            ),
-            _numPages == 1 ?
-            SizedBox() :
-            SizedBox(
-              width: (MediaQuery.of(context).size.width / 7) * 4,
-              child: NumberPaginator(
-                controller: _paginatorController,
-                numberPages: _numPages,
-                onPageChange: (index) async {
-                  setState(() {
-                    allotments.clear();
-                    _currentPage = index;
-                  });
-                  await fetchAPI(_token);
-                },
-                config: NumberPaginatorUIConfig(
-                  buttonSelectedForegroundColor: white,
-                  buttonUnselectedForegroundColor: textColorTertiary,
-                  buttonSelectedBackgroundColor: biruImran,
-                ),
-                showNextButton: _numPages == 1 ? false : true,
-                showPrevButton: _numPages == 1 ? false : true,
-              ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                color: colorFirst,
-                backgroundColor: whiteColor,
-                onRefresh: _refreshData,
-                child: _buildListView(selectedFilter),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
-  }
-
   Color colorCheck(String _status) {
-    if (_status == 'acknowledged') {
+    if (_status == ACKNOWLEDGED) {
       return hijauImran2;
     } else {
       return colorMerah;
@@ -354,7 +186,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
   }
 
   // Builds the ListView to display allotment data
-  Widget _buildListView(String _filter) {
+  Widget buildListView(String _filter) {
     // Show shimmer if data is empty
     _filter = _filter.toLowerCase();
     if (allotments.isEmpty) {
@@ -378,7 +210,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
       final site = _allotments['site_id'].toString().toLowerCase();
       final recordType = _allotments['record_type'].toString().toLowerCase();
       final status = _allotments['status'].toString().toLowerCase();
-      final searchText = _searchFieldController.text.toLowerCase();
+      final searchText = searchFieldController.text.toLowerCase();
 
       return vanId.contains(searchText) ||
           allotmentsId.contains(searchText) ||
@@ -391,6 +223,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
       itemCount: filteredAllotments.length,
       itemBuilder: (context, index) {
         final allotment = filteredAllotments[index];
+
         final vanId = allotment['van_id'] ?? 'null';
         final allotmentId = allotment['id'] ?? 'null';
         final siteId = allotment['site_id'] ?? 'null';
@@ -398,17 +231,18 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
         final status = allotment['status'] ?? 'null';
         final createdAt = allotment['created_at'] ?? 'null';
 
-        return _buildListTile(
+        return buildListTile(
           index,
-          vanId,
-          allotmentId,
-          siteId,
-          recordType,
-          status,
-          createdAt,
+          tag: titleCheck(allotment_type),
+          vanId: vanId,
+          allotmentId: allotmentId,
+          siteId: siteId,
+          recordType: recordType,
+          status: status,
+          createdAt: createdAt,
         );
       },
-      // controller: _scrollController,
+      controller: mainScrollController,
       physics: const AlwaysScrollableScrollPhysics(),
     );
   }
@@ -482,24 +316,25 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
     );
   }
 
-  
-
   // Builds an individual ListTile
-  Widget _buildListTile(
+  Widget buildListTile(
     int index,
-    String vanId,
-    String allotmentId,
-    String siteId,
-    String recordType,
-    String status,
-    String createdAt,
+    {
+      required String tag,
+      required String vanId,
+      required String allotmentId,
+      required String siteId,
+      required String recordType,
+      required String status,
+      required String createdAt,
+    }
   ) {
     DateTime dateTimeParsed =
         DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
-    String dateCreatedAt = _myFormat!.format(dateTimeParsed);
+    String dateCreatedAt = myFormat!.format(dateTimeParsed);
 
-    if (_currentPage != 0) {
-      index = index + (20 * _currentPage);
+    if (currentPage != 0) {
+      index = index + (20 * currentPage);
     }
 
     return Padding(
@@ -535,7 +370,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
                           MaterialPageRoute(
                             builder: (context) => AllotmentDetailView(
                                 allotmentId: allotmentId,
-                                allotmentType: TYPE,
+                                allotmentType: allotment_type,
                                 status: status,
                                 createdAt: dateCreatedAt,
                               ),
@@ -546,7 +381,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
                             allotments.clear();
                             tempRefresh = false;
                           });
-                          await fetchAPI(_token);
+                          await fetchAPI(tokenComponent);
                         }
                       },
                       leading: CircleAvatar(
@@ -621,7 +456,7 @@ class _AllotmentPlanListingState extends State<AllotmentPlanListing> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           AutoSizeText(
-                            titleCheck(TYPE),
+                            tag,
                             maxLines: 1,
                             style: const TextStyle(
                               fontWeight: FontWeight.normal,

@@ -17,7 +17,7 @@ import 'package:warehouse/page_mr_return_order/layout/mr_return_order_qr_code.da
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van%20allotment/widget/dialog_widget.dart';
+import 'package:warehouse/van_allotment/widgets/dialog_widget.dart';
 
 class MRReturnOrderDetailView extends StatefulWidget {
   const MRReturnOrderDetailView({

@@ -15,7 +15,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van%20allotment/layout/allotment_detail.dart';
+import 'package:warehouse/van_allotment/layout/allotment_detail.dart';
 
     
 const String TYPE = ADHOC_RETURN;

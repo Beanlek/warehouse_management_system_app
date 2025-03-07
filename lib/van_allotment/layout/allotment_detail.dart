@@ -18,7 +18,7 @@ import 'package:warehouse/QR_code/layout/qr_code_allotment.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van%20allotment/widget/dialog_widget.dart';
+import 'package:warehouse/van_allotment/widgets/dialog_widget.dart';
 
 class AllotmentDetailView extends StatefulWidget {
   const AllotmentDetailView({
@@ -1122,15 +1122,15 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                   ),
                   DataColumn(
                     label: Text(
-                      widget.allotmentType == 'Adhoc Return' ?
+                      widget.allotmentType == ADHOC_RETURN ?
                       'Req Qty' :
                       'Qty',
                     ),
                   ),
-                  if ((widget.status == 'unacknowledged' && widget.allotmentType != ALLOT_BALANCE) || widget.allotmentType == 'Adhoc Return')
+                  if ((widget.status == 'unacknowledged' && widget.allotmentType != ALLOT_BALANCE) || widget.allotmentType == ADHOC_RETURN)
                     DataColumn(
                       label:
-                      widget.allotmentType == 'Adhoc Return' ?
+                      widget.allotmentType == ADHOC_RETURN ?
                       Text('Stock Take') :
                       Row(
                         children: [
@@ -1167,7 +1167,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
                   DataCell(Text('N/A', style: _thisStyle,)),
                   DataCell(Text('N/A', style: _thisStyle,)),
                 ])] :
-                widget.allotmentType == 'Adhoc Return' ?
+                widget.allotmentType == ADHOC_RETURN ?
                 details.asMap().entries.map((entry) {
                   final _thisDetails = entry.value;
                   final int stockTake = _thisDetails['quantity'][0] ?? 0;
@@ -1250,7 +1250,7 @@ class _AllotmentDetailViewState extends State<AllotmentDetailView> {
       return false;
     }
 
-    if (widget.allotmentType == 'Adhoc Return') {
+    if (widget.allotmentType == ADHOC_RETURN) {
       return true;
     }
 

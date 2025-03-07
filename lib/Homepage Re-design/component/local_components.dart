@@ -13,6 +13,7 @@ mixin HomepageComponents {
   int allotPlanCount = 0;
   int allotBalanceCount = 0;
   int allotAdditionalCount = 0;
+  int allotRequestCount = 0;
   int adhocReturnCount = 0;
   int adhocRequestCount = 0;
   int marketReturnCount = 0;

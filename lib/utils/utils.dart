@@ -14,7 +14,8 @@ Future<void> launchURL() async {
 const String ALLOT_PLAN = 'allot_plan';
 const String ALLOT_BALANCE = 'allot_balance';
 const String ALLOT_ADDITIONAL = 'allot_additional';
-const String ADHOC_REQUEST = 'adhoc_request';
+const String ALLOT_REQUEST = 'adhoc_request';
+const String ADHOC_REQUEST = 'van_adhoc_request';
 const String ADHOC_RETURN = 'adhoc_return';
 const String WAREHOUSE_STOCKTAKE = 'warehouse_stocktake';
 const String SALES_ORDER = 'sales_order';
@@ -24,6 +25,10 @@ const String RETURN_ORDER = 'return_order';
 const String TRANSFER_IN = 'transfer_in';
 const String TRANSFER_OUT = 'transfer_out';
 
+const String ALL = 'All';
+const String ACKNOWLEDGED ='Acknowledged';
+const String UNACKNOWLEDGED ='Unacknowledged';
+
 String titleCheck(String _recordType) {
       switch (_recordType) {
         case ALLOT_PLAN:
@@ -32,6 +37,8 @@ String titleCheck(String _recordType) {
           return 'Allotment Balance';
         case ALLOT_ADDITIONAL:
           return 'Allotment Additional';
+        case ALLOT_REQUEST:
+          return 'Allotment Request';
         case ADHOC_REQUEST:
           return 'Adhoc Request';
         case ADHOC_RETURN:
