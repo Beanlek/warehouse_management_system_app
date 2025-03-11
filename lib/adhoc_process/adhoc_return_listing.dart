@@ -30,9 +30,13 @@ class AdhocReturnListing extends StatefulWidget {
 class _AdhocReturnListingState extends State<AdhocReturnListing> {
   List<Map<String, dynamic>> allotments = [];
   List<String> filters = [
-    'All',
-    'Acknowledged',
-    'Unacknowledged',
+    ALL,
+    ACKNOWLEDGED,
+    UNACKNOWLEDGED,
+    PENDING_WA_ACK,
+    PENDING,
+    RECEIVED,
+    REJECTED,
   ];
   String selectedFilter = 'Unacknowledged';
   int _currentPage = 0;
@@ -85,8 +89,18 @@ class _AdhocReturnListingState extends State<AdhocReturnListing> {
       'limit_rows': '20',
       'page': (_currentPage + 1).toString(),
       'type': ADHOC_RETURN,
-      'status': selectedFilter.toLowerCase(),
     };
+
+    switch (selectedFilter) {
+      case (ALL || ACKNOWLEDGED || UNACKNOWLEDGED):
+        params.addEntries({'status': selectedFilter.toLowerCase()}.entries);
+        break;
+      case (PENDING_WA_ACK || PENDING || RECEIVED || REJECTED):
+        params.addEntries({'status': ALL.toLowerCase()}.entries);
+        params.addEntries({'van_adhoc_return_status': selectedFilter.toLowerCase()}.entries);
+        break;
+      default:
+    }
 
     debugPrint('selectedFilter: $selectedFilter');
     debugPrint('_currentPage: $_currentPage');
