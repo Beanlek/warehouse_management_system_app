@@ -816,6 +816,9 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                                 width: 300,
                                 height: 50,
                                 child: TextButton(
+                                  // onPressed:() {
+                                  //   debugPrint('QUANTITY: ${_inventoryData[0]['quantity'].toString()}');
+                                  // },
                                   onPressed: _commentController.text.isNotEmpty ? () async {
                                     bool _confirmSave = false;
                                       
@@ -883,6 +886,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
       final String? domainName = await TokenUtil.getDomainName();
 
       String apiUrl = '$domainName/api/inventory/list/${widget.id}?active=active';
+      // eg: {{tnv}}/api/inventory/list/7Y?active=active
       final uri = Uri.parse(apiUrl);
 
       final response = await http.get(uri, headers: {'Authorization': 'Bearer $token'});
@@ -896,6 +900,17 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
 
         for (var i = 0; i < inventoryLength; i++) {
           final sub_category = inventoryData[i]['sub_category'];
+          final quantity = [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+          ];
+
+          inventoryData[i]['quantity'] = List.from(quantity);
           
           final int subCategoryLength = subCategoryFilters.length;
 
@@ -1126,6 +1141,29 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                       // debugPrint('shortCodeGroup.length : ${shortCodeGroup.length}');
                     
                       return ExpansionTile(
+                        onExpansionChanged: (value) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          // debugPrint('SHORTCODE : ${shortCodeGroup.keys.toString()}');
+
+                          // var shortCodeGroupList = [];
+
+                          // shortCodeGroupList = shortCodeGroup.entries.map((entry) {
+                          //   return {
+                          //     entry.key,
+                          //     entry.value
+                          //   };
+                          // }).toList();
+
+                          // debugPrint('SHORTCODE LIST : ${shortCodeGroupList.toString()}');
+
+                          // for (var i = 0; i < shortCodeGroupList.length; i++) {
+                          //   debugPrint('SHORTCODE CODE : run');  
+                          //   final code = shortCodeGroupList[i][1][0]['is_expanded'];
+                          //   debugPrint('SHORTCODE CODE : ${code.toString()}');  
+
+                          //   shortCodeGroup[code]![0]['is_expanded'] = false;
+                          // }
+                        },
                         shape: RoundedRectangleBorder(),
                         title: Text(
                           category,
@@ -1212,6 +1250,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
               ],
             ),
             onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               setState(() {
                 _expanded = !_expanded;
                 debugPrint('_expanded : $_expanded');
@@ -1332,7 +1371,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                                 setState(() {
                                   item['quantity'][conditionsIndex] = int.parse(value);
                                 });
-                                debugPrint(item['quantity']);
+                                debugPrint(item['quantity'].toString());
                               },
                               decoration: InputDecoration(
                                 labelText: 'Quantity',

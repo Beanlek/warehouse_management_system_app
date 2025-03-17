@@ -185,6 +185,8 @@ class _VanEODPageState extends State<VanEODPage> {
     String url =
         '$domainName/api/van/stock/take/wms/list/vanStatus/$siteid/$formattedDate';
 
+    debugPrint('URL : ${url.toString()}');
+
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -243,6 +245,8 @@ class _VanEODPageState extends State<VanEODPage> {
     String url =
         '$domainName/api/van/stock/take/wms/eod/sku/list/$siteId/$vanId/$formattedDate';
 
+    debugPrint('VANID : ${url.toString()}');
+
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -270,6 +274,7 @@ class _VanEODPageState extends State<VanEODPage> {
             final skuId = sku['sku_id'];
             final skuUom = sku['uom_id'];
             final skuQuantity = sku['quantity'][0];
+            const int skuUpdatedQuantity = 0;
 
             setState(() {
               vanDetails.add({
@@ -279,7 +284,7 @@ class _VanEODPageState extends State<VanEODPage> {
                 'sku_id': skuId,
                 'uom_id': skuUom,
                 'init_qty': skuQuantity,
-                'updated_qty': skuQuantity,
+                'updated_qty': skuUpdatedQuantity,
               });
             });
           }
@@ -401,7 +406,8 @@ class _VanEODPageState extends State<VanEODPage> {
         if (isKeyboardVisible == false) {
           _commentFocusNode.unfocus();
         }
-        return Scaffold(
+        return GestureDetector( onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(70),
             child: AppBar(
@@ -659,7 +665,7 @@ class _VanEODPageState extends State<VanEODPage> {
                                             SizedBox(
                                               width: MediaQuery.of(context).size.width * 0.2,
                                               child: TextFormField(
-                                                initialValue: '${element['init_qty']}',
+                                                initialValue: '${element['updated_qty']}',
                                                 keyboardType: TextInputType.number,
                                                 textAlign: TextAlign.start,
                                                 style: TextStyle(color: biruImran2),
@@ -668,11 +674,17 @@ class _VanEODPageState extends State<VanEODPage> {
                                                   suffixIcon: Icon(Icons.edit, size: _responsiveFontSize() * 0.8, color: biruImran,),
                                                 ),
                                                 onChanged: (value) {
+                                                  if (value.isEmpty) {
+                                                    value = '0';
+                                                  }
+                                                  
+                                                  final int inputQty = int.parse(value);
+                                                  value = inputQty.toString();
+
                                                   setState(() {
-                                                    // Update the 'updated_qty' value of the element
                                                     element['updated_qty'] = value;
                                                   });
-                                                  debugPrint(vanDetails.toString());
+                                                  // debugPrint(vanDetails.toString());
                                                 },
                                               ),
                                             ),
@@ -790,6 +802,9 @@ class _VanEODPageState extends State<VanEODPage> {
                                         width: 300,
                                         height: 50,
                                         child: TextButton(
+                                          // onPressed: () {
+                                          //   debugPrint('HA : ${vanDetails.toString()}');
+                                          // },
                                           onPressed: _commentController.text.isNotEmpty ? () async {
                                             bool _confirmSave = false;
                                             
@@ -832,7 +847,7 @@ class _VanEODPageState extends State<VanEODPage> {
                                             )
                                           ),
                                           child: Text(
-                                            "Save",
+                                            "Acknowledge",
                                             style: TextStyle(
                                               color: _commentController.text.isNotEmpty ? white : greyColor,
                                               fontSize: 16
@@ -940,7 +955,7 @@ class _VanEODPageState extends State<VanEODPage> {
               ],
             ),
           ),
-        );
+        ));
       }
     );
   }
