@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:warehouse/Homepage%20Re-design/component/local_components.dart';
+import 'package:warehouse/page_homepage/component/local_components.dart';
 
-import 'package:warehouse/Homepage%20Re-design/widget/appbar_homepage.dart';
-import 'package:warehouse/Homepage%20Re-design/widget/dialog_Widget.dart';
-import 'package:warehouse/Login/layout/login.dart';
+import 'package:warehouse/page_homepage/widget/appbar_homepage.dart';
+import 'package:warehouse/page_homepage/widget/dialog_Widget.dart';
+import 'package:warehouse/page_login/layout/login.dart';
 import 'package:warehouse/adhoc_process/adhoc_request_listing.dart';
 import 'package:warehouse/adhoc_process/adhoc_return_listing.dart';
 import 'package:warehouse/page_market_return/layout/market_return_list.dart';

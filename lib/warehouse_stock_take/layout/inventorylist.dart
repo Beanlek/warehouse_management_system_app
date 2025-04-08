@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
+import 'package:warehouse/van_stock_take/widget/modal.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
 
 import '../widget/shimmer_list.dart';

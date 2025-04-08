@@ -14,8 +14,8 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/page_stock_take/widget/dialog_widget.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
-import 'package:warehouse/van_stock_take/layout/widget/van_widget.dart';
+import 'package:warehouse/van_stock_take/widget/modal.dart';
+import 'package:warehouse/van_stock_take/widget/van_widget.dart';
 import 'package:warehouse/widgets/global_dialog.dart';
 
 class VanEODPage extends StatefulWidget {

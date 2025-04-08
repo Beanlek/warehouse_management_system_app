@@ -14,7 +14,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 
-import 'package:warehouse/QR_code/layout/qr_code_allotment.dart';
+import 'package:warehouse/qr_code/layout/qr_code_allotment.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';

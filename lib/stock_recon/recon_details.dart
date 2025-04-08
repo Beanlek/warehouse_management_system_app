@@ -11,11 +11,11 @@ import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
-import 'package:warehouse/Homepage%20Re-design/homepage.dart';
+import 'package:warehouse/page_homepage/homepage.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/widget/dialog_widget.dart';
 import 'package:warehouse/utils/utils.dart';
-import 'package:warehouse/van_stock_take/layout/widget/modal.dart';
+import 'package:warehouse/van_stock_take/widget/modal.dart';
 
 class ReconDetailPage extends StatefulWidget {
   const ReconDetailPage({
