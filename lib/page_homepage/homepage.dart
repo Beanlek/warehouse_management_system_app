@@ -23,6 +23,7 @@ import 'package:warehouse/page_returned_order/layout/main_returned_order.dart';
 import 'package:warehouse/page_sales_order/layout/main_sales_order.dart';
 import 'package:warehouse/page_stock_take/layout/main_stock_take.dart';
 import 'package:warehouse/page_transfer_in/layout/transfer_in_list.dart';
+import 'package:warehouse/page_transfer_inout/layout/transfer_inout_list.dart';
 import 'package:warehouse/page_transfer_out/layout/transfer_out_list.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
@@ -1116,7 +1117,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                 );
                               } else if (index == 4) {
                                 return stockMovementTile(
-                                  'assets/homepage/icon_transferIn.png',
+                                  'assets/homepage/icon_transferInOut.png',
                                   'Transfer I/O \nMovements',
                                   transferInCount + transferOutCount,
                                   () async {
@@ -1124,12 +1125,14 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                       builder: (BuildContext context) {
                                         return DialogStockMovement( title: "Transfer I/O",
                                           counts: [
-                                            { "transferIn" : transferInCount },
-                                            { "transferOut" : transferOutCount },
+                                            { "transferIn" : -1 },
+                                            { "transferOut" : -1 },
+                                            { "transferInOutAcknowledgement" : transferInCount + transferOutCount },
                                           ],
                                           routes: [
                                             { "transferIn" : TransferInListing() },
                                             { "transferOut" : TransferOutListing() },
+                                            { "transferInOutAcknowledgement" : TransferInOutListing() },
                                           ],
                                         );
                                       },

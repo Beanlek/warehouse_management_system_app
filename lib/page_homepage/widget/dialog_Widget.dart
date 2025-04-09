@@ -355,8 +355,10 @@ class DialogStockMovement extends StatelessWidget {
                           child: SizedBox(
                             child: Text(
                               count < 1000 ?
-                                '${count}' :
-                                NumberFormat.compact().format(count),
+                              count < 0 ?
+                              '' :
+                              '${count}' :
+                              NumberFormat.compact().format(count),
                               style: TextStyle(
                                 fontSize: 30,
                                 color: Colors.white,
@@ -371,14 +373,20 @@ class DialogStockMovement extends StatelessWidget {
                     // SizedBox(height: 35),
 
                     Expanded(
-                      child: SizedBox(
-                        child: AutoSizeText(
-                          title.capitalizeCamelCase(),
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: 32,
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 24.0, top: 12.0),
+                        child: SizedBox(
+                          child: AutoSizeText(
+                            title.capitalizeCamelCase(),
+                            style: TextStyle(
+                              fontSize: 32,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            
+                            wrapWords: false,
+                            maxLines: 2,
+                            minFontSize: 1,
                           ),
                         ),
                       ),

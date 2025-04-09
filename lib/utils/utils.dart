@@ -24,6 +24,7 @@ const String MARKET_RETURN = 'market_return';
 const String RETURN_ORDER = 'return_order';
 const String TRANSFER_IN = 'transfer_in';
 const String TRANSFER_OUT = 'transfer_out';
+const String TRANSFER_INOUT = 'all_tin_tout';
 
 const String ALL = 'All';
 const String ACKNOWLEDGED ='Acknowledged';
@@ -64,6 +65,8 @@ String titleCheck(String _recordType) {
           return 'Transfer In';
         case TRANSFER_OUT:
           return 'Transfer Out';
+        case TRANSFER_INOUT:
+          return 'Transfer In / Out';
         default:
           return 'NNN';
       }
