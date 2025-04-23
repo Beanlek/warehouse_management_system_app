@@ -41,7 +41,7 @@ class _VanEODPageState extends State<VanEODPage> {
   String errMsg = 'No information provided by this van. Please foward this issue to management.';
 
   String? selectedVanId;
-  
+  bool showInactiveSKU = false;
   bool _isLoading = false;
   bool isDateSelected = false;
   bool vanDetailsLoading = false;
@@ -243,7 +243,7 @@ class _VanEODPageState extends State<VanEODPage> {
     final String? domainName = await TokenUtil.getDomainName();
 
     String url =
-        '$domainName/api/van/stock/take/wms/eod/sku/list/$siteId/$vanId/$formattedDate';
+        '$domainName/api/van/stock/take/wms/eod/sku/list/$siteId/$vanId/$formattedDate?inactive_bat=$showInactiveSKU';
 
     debugPrint('VANID : ${url.toString()}');
 
@@ -299,7 +299,9 @@ class _VanEODPageState extends State<VanEODPage> {
     }
 
     setState(() {
-      errMsg = 'No information provided by this van. Please foward this issue to management.';
+      errMsg = !showInactiveSKU? 
+              'No information provided by this van. Please foward this issue to management.':
+              'No inactive SKU found'; //if showInactiveSKU is true and the list is empty
       vanDetailsLoading = false;
     });
   }
@@ -363,6 +365,57 @@ class _VanEODPageState extends State<VanEODPage> {
         Widget? dayWidget;
         return dayWidget;
       },
+
+      monthBuilder: ({
+        required month,
+        decoration,
+        isCurrentMonth,
+        isDisabled,
+        isSelected,
+        textStyle,
+      }) {
+        bool _isSelected = isSelected ?? false;
+        List <String> months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ];
+        return Center(
+          child: Container(
+            height: 32,
+            //width: 100,
+            decoration: !_isSelected ? null :
+            BoxDecoration(
+              color: biruImran4,
+              borderRadius: BorderRadius.all(radiusCircular(10)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  months[month - 1],
+                  style: _isSelected ? dayTextStyle.copyWith(color: biruImran) :
+                  dayTextStyle,
+                ),
+                if (isCurrentMonth == true)
+                  SizedBox(width: 10,),
+                if (isCurrentMonth == true)
+                  Icon(Icons.circle_rounded, color: _isSelected ? biruImran : white, size: 10,),
+              ],
+            ),
+          ),
+        );
+      },
+      
       yearBuilder: ({
         required year,
         decoration,
@@ -558,38 +611,68 @@ class _VanEODPageState extends State<VanEODPage> {
                             ),
                         
                             if (vans.isNotEmpty && isDateSelected)
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: vans
-                                      .map((van) => Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                            child: VanWidget(
-                                              vanId: van['id'] ?? 'N/A',
-                                              status: van['status'] ?? 'N/A',
-                                              siteId: widget.siteid,
-                                              selectedDate: selectedDate[0]!,
-                                              token: _token,
-                                              fetchDataForVan: fetchDataForVan,
-                                              onCloseCalendar: () {
-                                                controller.close();
-                                              },
-                                              clearVanDetails: () async {
-                                                await clearVanDetails();
-                                              },
-                                              
-                                              isSelected: van['id'] == selectedVanId,
-                                              // isSelected: false,
-                
-                                              onVanSelected: (vanId) {
-                                                setState(() {
-                                                  selectedVanId = vanId;
-                                                });
-                                              },
-                                            ),
-                                          ))
-                                      .toList(),
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: vans
+                                          .map((van) => Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                child: VanWidget(
+                                                  vanId: van['id'] ?? 'N/A',
+                                                  status: van['status'] ?? 'N/A',
+                                                  siteId: widget.siteid,
+                                                  selectedDate: selectedDate[0]!,
+                                                  token: _token,
+                                                  fetchDataForVan: fetchDataForVan,
+                                                  onCloseCalendar: () {
+                                                    controller.close();
+                                                  },
+                                                  clearVanDetails: () async {
+                                                    await clearVanDetails();
+                                                  },
+                                                  
+                                                  isSelected: van['id'] == selectedVanId,
+                                                  // isSelected: false,
+                                                  
+                                                  onVanSelected: (vanId) {
+                                                    setState(() {
+                                                      selectedVanId = vanId;
+                                                    });
+                                                  },
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+                                        activeColor: biruImran,
+                                        value: showInactiveSKU, 
+                                        onChanged: (value){
+                                          setState(() {
+                                            showInactiveSKU = value!;
+                                            //refresh the van details
+                                            vanDetails.clear();
+                                            fetchDataForVan(
+                                              widget.siteid,
+                                              selectedVanId!,
+                                              selectedDate[0]!,
+                                              _token);
+                                            debugPrint('Show Inactive SKU : $showInactiveSKU');
+                                          });
+                                        }
+                                      ),
+                                      Text('Show Inactive BAT SKU', style: TextStyle(color: biruImran),),
+                                    ],
+                                  )
+                                ],
                               ),
                         
                             Expanded(
