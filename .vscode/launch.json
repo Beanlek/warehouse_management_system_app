@@ -12,16 +12,16 @@
             "deviceId": "chrome"
         },
         {
-            "name": "Open_Tablet",
-            "request": "launch",
-            "type": "dart",
-            "deviceId": "R9PT80JGLJD"
-        },
-        {
             "name": "Open_Zebra",
             "request": "launch",
             "type": "dart",
             "deviceId": "emulator-5554"
+        },
+        {
+            "name": "R9PT80JGLJD",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "R9PT80JGLJD"
         },
     ]
 }

@@ -1125,13 +1125,13 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                       builder: (BuildContext context) {
                                         return DialogStockMovement( title: "Transfer I/O",
                                           counts: [
-                                            { "transferIn" : -1 },
-                                            { "transferOut" : -1 },
+                                            // { "transferIn" : -1 },
+                                            // { "transferOut" : -1 },
                                             { "transferInOutAcknowledgement" : transferInCount + transferOutCount },
                                           ],
                                           routes: [
-                                            { "transferIn" : TransferInListing() },
-                                            { "transferOut" : TransferOutListing() },
+                                            // { "transferIn" : TransferInListing() },
+                                            // { "transferOut" : TransferOutListing() },
                                             { "transferInOutAcknowledgement" : TransferInOutListing() },
                                           ],
                                         );
