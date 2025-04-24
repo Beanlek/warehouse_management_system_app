@@ -1,12 +1,14 @@
 name: warehouse
 description: "A new Flutter project."
 publish_to: 'none'
-version: 3.1.0
+version: 3.2.0
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
 
 dependencies:
+  dio: ^5.7.0
+
   roundcheckbox: ^2.0.5
   anim_search_bar: ^2.0.3
   animated_page_reveal: ^1.0.0

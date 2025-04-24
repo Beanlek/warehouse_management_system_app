@@ -37,6 +37,32 @@ const String REJECTED ='Rejected';
 const String ALLOTTED ='Allotted';
 const String EXPIRED ='Expired';
 
+// transferinout status
+const String TIO_RECEIVED ='received';
+const String TIO_PARTIALLY_RECEIVED ='partially received';
+const String TIO_IN_TRANSIT ='in transit';
+const String TIO_PENDING_APPROVAL ='pending_approval';
+const String TIO_PENDING_WA_ACK ='pending_wa_ack';
+
+String tioStatusCheck(String _status) {
+  switch (_status) {
+    case ALL:
+      return 'All';
+    case TIO_RECEIVED:
+      return 'Received';
+    case TIO_PARTIALLY_RECEIVED:
+      return 'Partially received';
+    case TIO_IN_TRANSIT:
+      return 'In transit';
+    case TIO_PENDING_APPROVAL:
+      return 'Pending approval';
+    case TIO_PENDING_WA_ACK:
+      return 'Pending wa ack';
+    default:
+    return '-';
+  }
+}
+
 String titleCheck(String _recordType) {
       switch (_recordType) {
         case ALLOT_PLAN:
@@ -68,7 +94,7 @@ String titleCheck(String _recordType) {
         case TRANSFER_INOUT:
           return 'Transfer In / Out';
         default:
-          return 'NNN';
+          return '-';
       }
     }
 

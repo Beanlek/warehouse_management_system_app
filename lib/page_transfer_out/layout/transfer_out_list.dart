@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously, unused_field, library_private_types_in_public_api, prefer_const_constructors, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, non_constant_identifier_names, constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +29,17 @@ class TransferOutListing extends StatefulWidget {
 
 class _TransferOutListingState extends State<TransferOutListing> {
   List<Map<String, dynamic>> transferOuts = [];
+
   List<String> filters = [
-    'All',
-    'Acknowledged',
-    'Unacknowledged',
+    ALL,
+    TIO_RECEIVED,
+    TIO_PARTIALLY_RECEIVED,
+    TIO_IN_TRANSIT,
+    TIO_PENDING_APPROVAL,
   ];
-  String selectedFilter = 'Unacknowledged';
+
+  String selectedFilter = ALL;
+
   int _currentPage = 0;
   int _numPages = 10;
 
@@ -62,7 +69,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
       // showPickLists = true;
     });
     if (token != null) {
-      await fetchAPI(_token);
+      await fetchAPINew(_token);
     }
   }
 
@@ -74,12 +81,13 @@ class _TransferOutListingState extends State<TransferOutListing> {
           context: context);
       return;
     }
-    String _mainBody = 'wms_acknowledgment';
-    String _subDirectory = '/api/wms/android-list';
-
-    // debugPrint('fetch Unacknowledged API');
     final String? _domainName = await TokenUtil.getDomainName();
-    String domainName = _domainName!;
+    
+    String _mainBody = 'transferOut';
+    String _subDirectory = '/api/tin_tout/transfer_out/list';
+    
+    final String domain = _domainName!.substring(_domainName.lastIndexOf('/t')+1, _domainName.length);
+    String domainName = _domainName;
 
     String url = '$domainName$_subDirectory';
     final uri = Uri.parse(url);
@@ -87,17 +95,22 @@ class _TransferOutListingState extends State<TransferOutListing> {
     Map<String, String> params = {
       'limit_rows': '20',
       'page': (_currentPage + 1).toString(),
-      'type': TYPE,
-      'status': selectedFilter.toLowerCase()
+
+      if(selectedFilter != ALL)
+        'status': "selected\%Filter"
     };
 
     debugPrint("stringDate: $stringDate");
+    debugPrint("domain: $domain");
 
     debugPrint('selectedFilter: $selectedFilter');
+    debugPrint('params: $params');
     debugPrint('_currentPage: $_currentPage');
 
-    final newUri = uri.replace(queryParameters: params);
+    final newUri = Uri.https(domain, _subDirectory, params);
+    final newUri2 = uri.replace(queryParameters: params);
     debugPrint(newUri.toString());
+    debugPrint(newUri2.toString());
 
     final request = http.Request(
       'GET',
@@ -125,8 +138,14 @@ class _TransferOutListingState extends State<TransferOutListing> {
     }
 
     else if (response.statusCode == 200) {
+
+      debugPrint("RESPONSE STRING :: ${stringResponse.toString()}");
+
       try {
         final json = jsonDecode(stringResponse);
+
+        debugPrint("RESPONSE JSON :: ${json.toString()}");
+        
         final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
         int count = json[_mainBody]['count'];
 
@@ -156,6 +175,122 @@ class _TransferOutListingState extends State<TransferOutListing> {
     }
   }
 
+  Future<void> fetchAPINew(String? token) async {
+    if (token == null) {
+      Navigator.pushNamed(context, AppRoutes.login);
+      FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context);
+      return;
+    }
+
+    int statusCode = 505;
+    
+    final String? _domainName = await TokenUtil.getDomainName();
+    String url = '${_domainName}/api/tin_tout/transfer_out/list';
+    final Dio dio = Dio();
+
+    String _mainBody = 'transferOut';
+
+    Map<String, String> params = {
+      'limit_rows': '20',
+      'page': (_currentPage + 1).toString(),
+
+      if(selectedFilter != ALL)
+        'status': 'partially received'
+    };
+
+    debugPrint("stringDate: $stringDate");
+
+    debugPrint('selectedFilter: $selectedFilter');
+    debugPrint('params: $params');
+    debugPrint('_currentPage: $_currentPage');
+
+    debugPrint(url.toString());
+
+    try {
+      final response = await dio.get(
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }),
+
+        url,
+        queryParameters: params
+      ).timeout(Duration(seconds: 3));
+
+      statusCode = response.statusCode!;
+
+      if (statusCode == 200 || statusCode == 201) {
+        final json = response.data;
+
+        try {
+
+          debugPrint("RESPONSE JSON :: ${json.toString()}");
+          
+          final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
+          int count = json[_mainBody]['count'];
+
+          if (count == 0) {
+            count = 1;
+          }
+
+          _numPages = (count / 20).round();
+          if (_numPages < (count / 20)) {
+            _numPages++;
+          }
+
+          setState(() {
+            transferOuts = List<Map<String, dynamic>>.from(wms_van_ids).toList();
+          });
+        } catch (e) {
+          debugPrint('Failed to parse JSON: $e');
+        }
+      } else {
+        debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${json}');
+
+        Navigator.pushNamed(context, AppRoutes.login);
+        FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context
+        );
+      }
+
+    } on TimeoutException {
+      
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+
+    } on DioException catch (e) {
+      
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+
+    } catch (e) {
+
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+    }
+  }
+
   Future<void> _refreshData() async {
     setState(() {
       transferOuts.clear(); // Clear the existing data
@@ -165,25 +300,25 @@ class _TransferOutListingState extends State<TransferOutListing> {
       const Duration(seconds: 2),
     ); // Simulate a delay (replace with your actual data fetching logic)
 
-    await fetchAPI(_token);
+    await fetchAPINew(_token);
   }
 
   void _onSearchSubmitted(String query) {
     setState(() async {
-      await fetchAPI(_token);
+      await fetchAPINew(_token);
       _searchFieldController.text = query;
 
       // Filter transferOuts based on search text
-      transferOuts = transferOuts.where((_transferOuts) {
-        // final vanId = _transferOuts['van_id'].toString().toLowerCase();
-        final _transferOutsId = _transferOuts['id'].toString().toLowerCase();
-        final site = _transferOuts['site_id'].toString().toLowerCase();
-        final recordType = _transferOuts['record_type'].toString().toLowerCase();
-        final status = _transferOuts['status'].toString().toLowerCase();
+      transferOuts = transferOuts.where((_tOut) {
+        // final vanId = _tOut['van_id'].toString().toLowerCase();
+        final id = _tOut['id'].toString().toLowerCase();
+        final site = _tOut['site_id'].toString().toLowerCase();
+        final recordType = _tOut['record_type'].toString().toLowerCase();
+        final status = _tOut['status'].toString().toLowerCase();
         final searchText = _searchFieldController.text.toLowerCase();
 
         return //vanId.contains(searchText) ||
-            _transferOutsId.contains(searchText) ||
+            id.contains(searchText) ||
             site.contains(searchText) ||
             recordType.contains(searchText) ||
             status.contains(searchText);
@@ -287,7 +422,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
                                       alignment: Alignment.centerRight,
                                       child: SizedBox(
                                         child: Text(
-                                          filter,
+                                          tioStatusCheck(filter),
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
                                               fontWeight: FontWeight.normal),
@@ -306,7 +441,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
                                   transferOuts.clear();
                                 },
                               );
-                              await fetchAPI(_token);
+                              await fetchAPINew(_token);
                             },
                           ),
                         ),
@@ -331,7 +466,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
                     transferOuts.clear();
                     _currentPage = index;
                   });
-                  await fetchAPI(_token);
+                  await fetchAPINew(_token);
                 },
                 config: NumberPaginatorUIConfig(
                   buttonSelectedForegroundColor: white,
@@ -385,47 +520,53 @@ class _TransferOutListingState extends State<TransferOutListing> {
     }
 
     // Filter transferOuts based on search text
-    List<Map<String, dynamic>> filteredTransferIns =
-        transferOuts.where((_transferOuts) {
-      // final vanId = _transferOuts['van_id'].toString().toLowerCase();
-      final _transferOutsId = _transferOuts['id'].toString().toLowerCase();
-      final site = _transferOuts['site_id'].toString().toLowerCase();
-      final recordType = _transferOuts['record_type'].toString().toLowerCase();
-      final status = _transferOuts['status'].toString().toLowerCase();
+    List<Map<String, dynamic>> filteredTout = transferOuts.where((_tOut) {
+      
+      final id = _tOut['id'].toString().toLowerCase();
+      final site = _tOut['from_site_id'].toString().toLowerCase();
+      final recordType = _tOut['record_type'].toString().toLowerCase();
+      final status = _tOut['status'].toString().toLowerCase();
       final searchText = _searchFieldController.text.toLowerCase();
 
-      return //vanId.contains(searchText) ||
-          _transferOutsId.contains(searchText) ||
-          site.contains(searchText) ||
-          recordType.contains(searchText) ||
-          status.contains(searchText);
+      return
+        id.contains(searchText) ||
+        site.contains(searchText) ||
+        recordType.contains(searchText) ||
+        status.contains(searchText);
+
     }).toList();
 
     return ListView.builder(
-      itemCount: filteredTransferIns.length,
+      itemCount: filteredTout.length,
       itemBuilder: (context, index) {
-        final transferOut = filteredTransferIns[index];
+        final transferOut = filteredTout[index];
 
-        final transferOutsId = transferOut['id'] ?? 'null';
-        final siteId = transferOut['site_id'] ?? 'null';
-        final recordType = transferOut['record_type'] ?? 'null';
+        final id = transferOut['id'] ?? 'null';
+        final date = transferOut['date'] ?? 'null';
         final status = transferOut['status'] ?? 'null';
-        final read_notification = transferOut['read_notification'] ?? 'null';
-        final acknowledged_at = transferOut['acknowledged_at'] ?? 'null';
-        final comment = transferOut['comment'] ?? 'null';
+        
+        final fromSiteId = transferOut['from_site_id'] ?? 'null';
+        final toSiteId = transferOut['to_site_id'] ?? 'null';
+
+        final createdBy = transferOut['created_by'] ?? 'null';
         final createdAt = transferOut['created_at'] ?? 'null';
+        
+        final remark = transferOut['remark'] ?? 'null';
 
         return _buildListTile(
           index,
           
-          transferOutsId,
-          siteId,
-          recordType,
-          status,
-          read_notification,
-          acknowledged_at,
-          comment,
-          createdAt,
+          id: id,
+          date: date,
+          status: status,
+
+          fromSiteId: fromSiteId,
+          toSiteId: toSiteId,
+
+          createdAt: createdAt,
+          createdBy: createdBy,
+          
+          remark: remark,
         );
       },
       // controller: _scrollController,
@@ -503,17 +644,19 @@ class _TransferOutListingState extends State<TransferOutListing> {
   }
 
   // Builds an individual ListTile
-  Widget _buildListTile(
-    int index,
-    String transferOutsId,
-    String siteId,
-    String recordType,
-    String status,
-    bool readNotification,
-    String acknowledgedAt,
-    String comment,
-    String createdAt,
-  ) {
+  Widget _buildListTile( int index, {
+    required String id,
+    required String date,
+    required String status,
+
+    required String fromSiteId,
+    required String toSiteId,
+    
+    required String createdAt,
+    required String createdBy,
+    
+    required String remark,
+  }) {
     DateTime dateTimeParsed =
         DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
     String dateCreatedAt = _myFormat!.format(dateTimeParsed);
@@ -548,13 +691,13 @@ class _TransferOutListingState extends State<TransferOutListing> {
                     child: ListTile(
                       splashColor: white,
                       titleAlignment: ListTileTitleAlignment.titleHeight,
-                      onTap: () async { debugPrint(transferOutsId);
+                      onTap: () async { debugPrint(id);
                         bool tempRefresh = false;
                         tempRefresh = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TransferOutDetailView(
-                                transferOutId: transferOutsId,
+                                transferOutId: id,
                                 status: status,
                                 createdAt: dateCreatedAt,
                               ),
@@ -565,7 +708,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
                             transferOuts.clear();
                             tempRefresh = false;
                           });
-                          await fetchAPI(_token);
+                          await fetchAPINew(_token);
                         }
                       },
                       leading: CircleAvatar(
@@ -583,7 +726,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
                             child: SizedBox(
                               child: AutoSizeText(
                                 maxLines: 1,
-                                transferOutsId,
+                                id,
                                 style: const TextStyle(
                                   color: biruImran,
                                   fontSize: 22.0,
@@ -594,7 +737,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
                           ),
                           RichText(
                             text: TextSpan(
-                                text: 'Site ',
+                                text: 'From Site ',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: black,
@@ -602,7 +745,25 @@ class _TransferOutListingState extends State<TransferOutListing> {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: siteId,
+                                    text: fromSiteId,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                                text: 'To Site ',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: black,
+                                  fontSize: 16.0,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: toSiteId,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 18.0,
