@@ -1,12 +1,13 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously, unused_field, library_private_types_in_public_api, prefer_const_constructors, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, non_constant_identifier_names, constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
@@ -28,12 +29,8 @@ class TransferInListing extends StatefulWidget {
 class _TransferInListingState extends State<TransferInListing> {
   List<dynamic> transferInLists = [];
   List<Map<String, dynamic>> transferIns = [];
-  List<String> filters = [
-    'All',
-    'Acknowledged',
-    'Unacknowledged',
-  ];
-  String selectedFilter = 'Unacknowledged';
+  Map filters = TI_filter;
+  String selectedFilter = '';
   int _currentPage = 0;
   int _numPages = 10;
 
@@ -50,9 +47,10 @@ class _TransferInListingState extends State<TransferInListing> {
   @override
   void initState() {
     super.initState();
+    selectedFilter = filters.values.first;
     _myFormat = DateFormat('dd-MM-yyyy').add_Hms();
     stringDate = the_date_format.format(currentDate);
-    
+
     _getToken();
   }
 
@@ -67,6 +65,99 @@ class _TransferInListingState extends State<TransferInListing> {
     }
   }
 
+  // Future<void> fetchAPI(String? token) async {
+  //   if (token == null) {
+  //     Navigator.pushNamed(context, AppRoutes.login);
+  //     FloatingSnackBar(
+  //         message: 'Token Expired. Please login back to the system.',
+  //         context: context);
+  //     return;
+  //   }
+  //   String _mainBody = 'wms_acknowledgment';
+  //   String _subDirectory = '/api/tin_tout/transfer_in/list';
+  //   //'/api/wms/android-list';
+
+  //   // debugPrint('fetch Unacknowledged API');
+  //   final String? _domainName = await TokenUtil.getDomainName();
+  //   String domainName = _domainName!;
+
+  //   String url = '$domainName$_subDirectory';
+  //   final uri = Uri.parse(url);
+
+  //   Map<String, String> params = {
+  //     'page': (_currentPage + 1).toString(),
+  //     'limit_rows': '20',
+  //     //'type': TYPE,
+  //     'status': filters.keys.firstWhere(
+  //       (key) => filters[key] == selectedFilter,
+  //       orElse: () => 'received',
+  //     ),
+  //   };
+
+  //   debugPrint("stringDate: $stringDate");
+
+  //   debugPrint('selectedFilter: $selectedFilter');
+  //   debugPrint('_currentPage: $_currentPage');
+
+  //   final newUri = uri.replace(queryParameters: params);
+  //   debugPrint('The new URI is : ${newUri.toString()}');
+
+  //   final request = http.Request(
+  //     'GET',
+  //     newUri,
+  //   )..headers.addAll(
+  //       {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+
+  //   request.body = jsonEncode(params);
+  //   http.StreamedResponse response = await request.send();
+
+  //   String stringResponse = await response.stream.bytesToString();
+
+  //   if (response.statusCode == 500) {
+  //     const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+  //     FloatingSnackBar(
+  //         message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+  //         context: context);
+
+  //     Navigator.of(context).pop();
+  //   } else if (response.statusCode == 200) {
+  //     try {
+  //       final json = jsonDecode(stringResponse);
+  //       final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
+  //       transferInLists = List.from(wms_van_ids);
+  //       int count = json[_mainBody]['count'];
+
+  //       if (count == 0) {
+  //         count = 1;
+  //       }
+
+  //       _numPages = (count / 20).round();
+  //       if (_numPages < (count / 20)) {
+  //         _numPages++;
+  //       }
+
+  //       setState(() {
+  //         transferIns = List<Map<String, dynamic>>.from(wms_van_ids).toList();
+  //       });
+  //     } catch (e) {
+  //       debugPrint('Failed to parse JSON: $e');
+  //     }
+  //   } else {
+  //     debugPrint(
+  //         'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+  //     debugPrint('Error Body: ${stringResponse}');
+  //     Navigator.pushNamed(context, AppRoutes.login);
+  //     FloatingSnackBar(
+  //         message: 'Token Expired. Please login back to the system.',
+  //         context: context);
+  //   }
+  // }
+
   Future<void> fetchAPI(String? token) async {
     if (token == null) {
       Navigator.pushNamed(context, AppRoutes.login);
@@ -75,47 +166,76 @@ class _TransferInListingState extends State<TransferInListing> {
           context: context);
       return;
     }
-    String _mainBody = 'wms_acknowledgment';
-    String _subDirectory = '/api/wms/android-list';
 
-    // debugPrint('fetch Unacknowledged API');
+    int statusCode = 505;
+    
     final String? _domainName = await TokenUtil.getDomainName();
-    String domainName = _domainName!;
+    String url = '${_domainName}/api/tin_tout/transfer_in/list';
+    final Dio dio = Dio();
 
-    String url = '$domainName$_subDirectory';
-    final uri = Uri.parse(url);
+    String _mainBody = 'transferIn';
 
     Map<String, String> params = {
-      'limit_rows': '20',
       'page': (_currentPage + 1).toString(),
-      'type': TYPE,
-      'status': selectedFilter.toLowerCase()
+      'limit_rows': '20',
+      'status': filters.keys.firstWhere(
+        (key) => filters[key] == selectedFilter,
+        orElse: () => '',
+      ),
     };
 
-    debugPrint("stringDate: $stringDate");
-
-    debugPrint('selectedFilter: $selectedFilter');
-    debugPrint('_currentPage: $_currentPage');
-
-    final newUri = uri.replace(queryParameters: params);
-    debugPrint(newUri.toString());
-
-    final request = http.Request(
-      'GET',
-      newUri,
-    )..headers.addAll(
-        {
+    try {
+      debugPrint("URL :: $url, params: $params");
+      final response = await dio.get(
+        options: Options(headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
-        },
-      );
+        }),
 
-    request.body = jsonEncode(params);
-    http.StreamedResponse response = await request.send();
+        url,
+        queryParameters: params
+      ).timeout(Duration(seconds: 3));
 
-    String stringResponse = await response.stream.bytesToString();
+      statusCode = response.statusCode!;
 
-    if (response.statusCode == 500) {
+      if (statusCode == 200 || statusCode == 201) {
+        final json = response.data;
+
+        try {
+
+          debugPrint("RESPONSE JSON :: ${json.toString()}");
+          
+          final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
+          int count = int.parse(json[_mainBody]['count']);
+
+          if (count == 0) {
+            count = 1;
+          }
+
+          _numPages = (count / 20).round();
+          if (_numPages < (count / 20)) {
+            _numPages++;
+          }
+
+          setState(() {
+            transferIns = List<Map<String, dynamic>>.from(wms_van_ids).toList();
+          });
+        } catch (e) {
+          debugPrint('Failed to parse JSON: $e');
+        }
+      } else {
+        debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${json}');
+
+        Navigator.pushNamed(context, AppRoutes.login);
+        FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context
+        );
+      }
+
+    } on TimeoutException {
+      
       const errMsg = 'This may due to server hickups. Please wait for a while.';
 
       FloatingSnackBar(
@@ -123,38 +243,28 @@ class _TransferInListingState extends State<TransferInListing> {
           context: context);
 
       Navigator.of(context).pop();
-    }
 
-    else if (response.statusCode == 200) {
-      try {
-        final json = jsonDecode(stringResponse);
-        final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
-        transferInLists = List.from(wms_van_ids);
-        int count = json[_mainBody]['count'];
+    } on DioException catch (e) {
+      
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
 
-        if (count == 0) {
-          count = 1;
-        }
-
-        _numPages = (count / 20).round();
-        if (_numPages < (count / 20)) {
-          _numPages++;
-        }
-
-        setState(() {
-          transferIns = List<Map<String, dynamic>>.from(wms_van_ids).toList();
-        });
-      } catch (e) {
-        debugPrint('Failed to parse JSON: $e');
-      }
-    } else {
-      debugPrint(
-          'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      debugPrint('Error Body: ${stringResponse}');
-      Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(
-          message: 'Token Expired. Please login back to the system.',
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
           context: context);
+
+      Navigator.of(context).pop();
+
+    } catch (e) {
+
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
     }
   }
 
@@ -186,9 +296,9 @@ class _TransferInListingState extends State<TransferInListing> {
 
         return //vanId.contains(searchText) ||
             transferInsId.contains(searchText) ||
-            site.contains(searchText) ||
-            recordType.contains(searchText) ||
-            status.contains(searchText);
+                site.contains(searchText) ||
+                recordType.contains(searchText) ||
+                status.contains(searchText);
       }).toList();
     });
   }
@@ -218,25 +328,51 @@ class _TransferInListingState extends State<TransferInListing> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 20, top: 24.0, right: 20),
-                child: RichText(
-                  text: TextSpan(
-                      text: 'Home ',
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.of(context).pop();
-                        },
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        color: textColorTertiary,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 24.0, 20, 0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                        text: 'Home ',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.of(context).pop();
+                          },
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                          color: textColorTertiary,
+                        ),
+                        children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: biruImran,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                      children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
-                ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                    ),
+                    child: Text(
+                      'Create Transfer In',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        color: white,
+                      ),
+                    ),
+                    onPressed: () {
+                      debugPrint("You're a frog now");
+                    },
+                  )
+                ],
               ),
             ),
             const SizedBox(
@@ -245,7 +381,6 @@ class _TransferInListingState extends State<TransferInListing> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                
                 children: [
                   Expanded(
                     child: SizedBox(
@@ -280,7 +415,7 @@ class _TransferInListingState extends State<TransferInListing> {
                             padding: EdgeInsets.only(right: 12, left: 12),
                             isExpanded: true,
                             value: selectedFilter,
-                            items: filters
+                            items: filters.values
                                 .map(
                                   (filter) => DropdownMenuItem<String>(
                                     alignment: AlignmentDirectional.centerEnd,
@@ -321,29 +456,29 @@ class _TransferInListingState extends State<TransferInListing> {
             SizedBox(
               height: _numPages == 1 ? 12 : 24,
             ),
-            _numPages == 1 ?
-            SizedBox() :
-            SizedBox(
-              width: (MediaQuery.of(context).size.width / 7) * 4,
-              child: NumberPaginator(
-                controller: _paginatorController,
-                numberPages: _numPages,
-                onPageChange: (index) async {
-                  setState(() {
-                    transferIns.clear();
-                    _currentPage = index;
-                  });
-                  await fetchAPI(_token);
-                },
-                config: NumberPaginatorUIConfig(
-                  buttonSelectedForegroundColor: white,
-                  buttonUnselectedForegroundColor: textColorTertiary,
-                  buttonSelectedBackgroundColor: biruImran,
-                ),
-                showNextButton: _numPages == 1 ? false : true,
-                showPrevButton: _numPages == 1 ? false : true,
-              ),
-            ),
+            _numPages == 1
+                ? SizedBox()
+                : SizedBox(
+                    width: (MediaQuery.of(context).size.width / 7) * 4,
+                    child: NumberPaginator(
+                      controller: _paginatorController,
+                      numberPages: _numPages,
+                      onPageChange: (index) async {
+                        setState(() {
+                          transferIns.clear();
+                          _currentPage = index;
+                        });
+                        await fetchAPI(_token);
+                      },
+                      config: NumberPaginatorUIConfig(
+                        buttonSelectedForegroundColor: white,
+                        buttonUnselectedForegroundColor: textColorTertiary,
+                        buttonSelectedBackgroundColor: biruImran,
+                      ),
+                      showNextButton: _numPages == 1 ? false : true,
+                      showPrevButton: _numPages == 1 ? false : true,
+                    ),
+                  ),
             const SizedBox(
               height: 24,
             ),
@@ -370,16 +505,25 @@ class _TransferInListingState extends State<TransferInListing> {
       //     );
       //   });
       // } ),
-      
     );
   }
 
   Color colorCheck(String _status) {
-    if (_status == 'acknowledged') {
-      return hijauImran2;
-    } else {
-      return colorMerah;
+    switch (_status){
+      case 'received':
+        return hijauImran2;
+      case 'partially received':
+        return category4Color;
+      case 'in transit':
+        return biruImran;
+      default:
+        return biruImran;
     }
+    // if (_status == 'acknowledged') {
+    //   return hijauImran2;
+    // } else {
+    //   return colorMerah;
+    // }
   }
 
   // Builds the ListView to display transferIn data
@@ -411,9 +555,9 @@ class _TransferInListingState extends State<TransferInListing> {
 
       return //vanId.contains(searchText) ||
           transferInsId.contains(searchText) ||
-          site.contains(searchText) ||
-          recordType.contains(searchText) ||
-          status.contains(searchText);
+              site.contains(searchText) ||
+              recordType.contains(searchText) ||
+              status.contains(searchText);
     }).toList();
 
     return ListView.builder(
@@ -421,26 +565,30 @@ class _TransferInListingState extends State<TransferInListing> {
       itemBuilder: (context, index) {
         final transferIn = filteredTransferIns[index];
 
-        final transferInId = transferIn['id'] ?? 'null';
+        final id = transferIn['id'] ?? 'null';
+        final tid = transferIn['tid'] ?? 'null';
+        final refId = transferIn['ref_id'] ?? 'null';
+        final date = transferIn['date'] ?? 'null';
         final siteId = transferIn['site_id'] ?? 'null';
-        final recordType = transferIn['record_type'] ?? 'null';
+        final type = transferIn['type'] ?? 'null';
+        final principal = transferIn['principal'] ?? 'null';
+        final createdBy = transferIn['created_by'] ?? 'null';
         final status = transferIn['status'] ?? 'null';
-        final read_notification = transferIn['read_notification'] ?? 'null';
-        final acknowledged_at = transferIn['acknowledged_at'] ?? 'null';
-        final comment = transferIn['comment'] ?? 'null';
-        final createdAt = transferIn['created_at'] ?? 'null';
+        final remark = transferIn['remark'] ?? 'null';
+
 
         return _buildListTile(
           index,
-          
-          transferInId,
+          id,
+          tid,
+          refId,
+          date,
           siteId,
-          recordType,
+          type,
+          principal,
+          createdBy,
           status,
-          read_notification,
-          acknowledged_at,
-          comment,
-          createdAt,
+          remark,
         );
       },
       // controller: _scrollController,
@@ -521,13 +669,15 @@ class _TransferInListingState extends State<TransferInListing> {
   Widget _buildListTile(
     int index,
     String transferInId,
-    String siteId,
-    String recordType,
-    String status,
-    bool readNotification,
-    String acknowledgedAt,
-    String comment,
+    String tid,
+    String refId,
     String createdAt,
+    String siteId,
+    String type,
+    String principal,
+    String createdBy,
+    String status,
+    String? comment,
   ) {
     DateTime dateTimeParsed =
         DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
@@ -563,16 +713,16 @@ class _TransferInListingState extends State<TransferInListing> {
                     child: ListTile(
                       splashColor: white,
                       titleAlignment: ListTileTitleAlignment.titleHeight,
-                      onTap: () async { debugPrint(transferInId);
+                      onTap: () async {
+                        debugPrint(transferInId);
                         bool tempRefresh = false;
                         tempRefresh = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TransferInDetailView(
-                                transferInId: transferInId,
-                                status: status,
-                                createdAt: dateCreatedAt,
-                              ),
+                              transferInId: transferInId,
+                              status: status,
+                            ),
                           ),
                         );
                         if (tempRefresh) {
@@ -627,38 +777,82 @@ class _TransferInListingState extends State<TransferInListing> {
                           ),
                         ],
                       ),
-                      subtitle: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      subtitle: Column(
                         children: [
-                          AutoSizeText(
-                            titleCheck(TYPE),
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: black,
-                              fontSize: 18.0,
-                            ),
-                          ),
-                          RichText(
-                            textAlign: TextAlign.end,
-                            text: TextSpan(
-                                text: 'Created At\n',
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                titleCheck(TYPE),
+                                maxLines: 1,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w300,
+                                  fontWeight: FontWeight.normal,
                                   color: black,
-                                  fontSize: 15.0,
+                                  fontSize: 18.0,
                                 ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  TextSpan(
-                                    text: dateCreatedAt,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15.0,
+                                  RichText(
+                                    textAlign: TextAlign.end,
+                                    text: TextSpan(
+                                      text: 'Created At\n',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        color: black,
+                                        fontSize: 15.0,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: dateCreatedAt,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  AutoSizeText(
+                                    'Created by: $createdBy',
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: black,
+                                      fontSize: 14.0,
                                     ),
                                   ),
                                 ],
                               ),
+                            ],
                           ),
+                          Divider(),
+                          Opacity(
+                            opacity: .65,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Remark: ',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                  ),
+                                ),
+                                AutoSizeText(
+                                  comment ?? 'No remark',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                  ),
+                                  wrapWords: false,
+                                  maxLines: 2,
+                                  minFontSize: 1,
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -677,7 +871,8 @@ class _TransferInListingState extends State<TransferInListing> {
                       SizedBox(width: 10),
                       Expanded(
                         child: AutoSizeText(
-                          status.capitalize(),
+                          (status == 'pending_wa_ack')?
+                          'Pending WA Acknowledged' : status.capitalize(),
                           maxLines: 1,
                           style: TextStyle(
                               color: colorCheck(status),

@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';

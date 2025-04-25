@@ -690,7 +690,6 @@ class _VanEODPageState extends State<VanEODPage> {
                                             .toList(),
                                       ),
                                     ),
-                                    
                                   ],
                                 ),
                               ),

@@ -7,8 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 Future<void> launchURL() async {
   final Uri url = Uri.parse('https://amast.com.my/');
   if (!await launchUrl(url)) {
-        throw Exception('Could not launch https://amast.com.my/');
-    }
+    throw Exception('Could not launch https://amast.com.my/');
+  }
 }
 
 const String ALLOT_PLAN = 'allot_plan';
@@ -27,9 +27,9 @@ const String TRANSFER_OUT = 'transfer_out';
 const String TRANSFER_INOUT = 'all_tin_tout';
 
 const String ALL = 'All';
-const String ACKNOWLEDGED ='Acknowledged';
-const String UNACKNOWLEDGED ='Unacknowledged';
-const String RECEIVED ='Received';
+const String ACKNOWLEDGED = 'Acknowledged';
+const String UNACKNOWLEDGED = 'Unacknowledged';
+const String RECEIVED = 'Received';
 
 const String PENDING_WA_ACK ='Pending_wa_ack';
 const String PENDING ='Pending';
@@ -108,41 +108,52 @@ String titleCheck(String _recordType) {
     }
 
 extension StringExtension on String {
-    String capitalize() {
-      return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
-    }
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+  }
 
-    String capitalizeCamelCase() {
-      String spaced = this.replaceAllMapped(RegExp(r'(?<!^)([A-Z])'), (match) {
-        return ' ${match.group(1)}';
-      });
+  String capitalizeCamelCase() {
+    String spaced = this.replaceAllMapped(RegExp(r'(?<!^)([A-Z])'), (match) {
+      return ' ${match.group(1)}';
+    });
 
-      // Capitalize the first letter of each word
-      String titleCase = spaced.split(' ').map((word) {
-        return word[0].toUpperCase() + word.substring(1).toLowerCase();
-      }).join(' ');
+    // Capitalize the first letter of each word
+    String titleCase = spaced.split(' ').map((word) {
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
 
-      return titleCase;
-    }
+    return titleCase;
+  }
 }
 
 void printLongString(String text) {
   final RegExp pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-  pattern.allMatches(text).forEach((RegExpMatch match) =>   debugPrint(match.group(0)));
+  pattern
+      .allMatches(text)
+      .forEach((RegExpMatch match) => debugPrint(match.group(0)));
 }
 
 Widget ERROR_OVERLAY() {
   return const Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.warning_amber_rounded, color: colorMerah, size: 80,),
-            SizedBox(height: 12,),
-            Text('Error occured while trying to show page.', style: TextStyle(color: biruImran, fontSize: 20),)
-          ],
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.warning_amber_rounded,
+          color: colorMerah,
+          size: 80,
         ),
-      );
+        SizedBox(
+          height: 12,
+        ),
+        Text(
+          'Error occured while trying to show page.',
+          style: TextStyle(color: biruImran, fontSize: 20),
+        )
+      ],
+    ),
+  );
 }
 
 final primaryColor = Colors.blue.withAlpha(32);

@@ -7,7 +7,6 @@ environment:
   sdk: '>=3.2.0 <4.0.0'
 
 dependencies:
-  dio: ^5.7.0
 
   roundcheckbox: ^2.0.5
   anim_search_bar: ^2.0.3
@@ -69,6 +68,7 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   url_launcher: ^6.3.0
   flutter_hooks: ^0.21.2
+  dio: ^5.7.0
 
 dev_dependencies:
   flutter_test:
