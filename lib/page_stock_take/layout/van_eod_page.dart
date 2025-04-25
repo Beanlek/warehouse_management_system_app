@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
@@ -41,7 +42,7 @@ class _VanEODPageState extends State<VanEODPage> {
   String errMsg = 'No information provided by this van. Please foward this issue to management.';
 
   String? selectedVanId;
-  
+  bool showInactiveSKU = false;
   bool _isLoading = false;
   bool isDateSelected = false;
   bool vanDetailsLoading = false;
@@ -243,7 +244,7 @@ class _VanEODPageState extends State<VanEODPage> {
     final String? domainName = await TokenUtil.getDomainName();
 
     String url =
-        '$domainName/api/van/stock/take/wms/eod/sku/list/$siteId/$vanId/$formattedDate';
+        '$domainName/api/van/stock/take/wms/eod/sku/list/$siteId/$vanId/$formattedDate?inactive_bat=$showInactiveSKU';
 
     debugPrint('VANID : ${url.toString()}');
 
@@ -299,7 +300,9 @@ class _VanEODPageState extends State<VanEODPage> {
     }
 
     setState(() {
-      errMsg = 'No information provided by this van. Please foward this issue to management.';
+      errMsg = !showInactiveSKU? 
+              'No information provided by this van. Please foward this issue to management.':
+              'No inactive SKU found'; //if showInactiveSKU is true and the list is empty
       vanDetailsLoading = false;
     });
   }
@@ -363,6 +366,57 @@ class _VanEODPageState extends State<VanEODPage> {
         Widget? dayWidget;
         return dayWidget;
       },
+
+      monthBuilder: ({
+        required month,
+        decoration,
+        isCurrentMonth,
+        isDisabled,
+        isSelected,
+        textStyle,
+      }) {
+        bool _isSelected = isSelected ?? false;
+        List <String> months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ];
+        return Center(
+          child: Container(
+            height: 32,
+            //width: 100,
+            decoration: !_isSelected ? null :
+            BoxDecoration(
+              color: biruImran4,
+              borderRadius: BorderRadius.all(radiusCircular(10)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  months[month - 1],
+                  style: _isSelected ? dayTextStyle.copyWith(color: biruImran) :
+                  dayTextStyle,
+                ),
+                if (isCurrentMonth == true)
+                  SizedBox(width: 10,),
+                if (isCurrentMonth == true)
+                  Icon(Icons.circle_rounded, color: _isSelected ? biruImran : white, size: 10,),
+              ],
+            ),
+          ),
+        );
+      },
+      
       yearBuilder: ({
         required year,
         decoration,
@@ -500,95 +554,144 @@ class _VanEODPageState extends State<VanEODPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Material(
-                                elevation: 3,
-                                borderRadius: BorderRadius.circular(24.0),
-                                child: Container(
-                                  // elevation: 4,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: const [biruImran3, layoutBackgroundWhite],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Material(
+                                      elevation: 3,
+                                      borderRadius: BorderRadius.circular(24.0),
+                                      child: Container(
+                                        // elevation: 4,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: const [biruImran3, layoutBackgroundWhite],
+                                          ),
+                                          borderRadius: BorderRadius.circular(24)
+                                        ),
+                                        child: ListTile(
+                                          leading: Icon(Icons.calendar_today, color: biruImran, size: _responsiveFontSize(),),
+                                          title: Text(
+                                            isDateSelected
+                                                ? 'Selected Date: ${BoardDateFormat('dd MMMM yyyy').format(selectedDate[0]!)}'
+                                                : 'Choose Date',
+                                            style: TextStyle(
+                                              color: !isDateSelected ? biruImran2 : biruImran
+                                            )
+                                          ),
+                                          trailing:
+                                          !isDateSelected ? null :
+                                          IconButton(onPressed: () {
+                                            setState(() {
+                                              isDateSelected = false;
+                                              selectedVanId = '';
+                                            });
+                                          }, icon: Icon(Icons.close, color: biruImran,)),
+                                          onTap: () async {
+                                            final values = await showCalendarDatePicker2Dialog(
+                                              context: context,
+                                              config: config,
+                                              dialogSize: Size(screenWidth * 0.6, screenHeight * 0.2),
+                                              borderRadius: BorderRadius.circular(15),
+                                              value: selectedDate,
+                                              dialogBackgroundColor: biruImran,
+                                            );
+                                            if (values != null) {
+                                              debugPrint(values.toString());
+                                              setState(() {
+                                                selectedVanId = '';
+                                                vanDetails.clear();
+                                                isDateSelected = true;
+                                                selectedDate[0] = values[0];
+                                              });
+                                              fetchData(selectedDate[0]!, widget.siteid);
+                                            }        
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(24)
                                   ),
-                                  child: ListTile(
-                                    leading: Icon(Icons.calendar_today, color: biruImran, size: _responsiveFontSize(),),
-                                    title: Text(
-                                      isDateSelected
-                                          ? 'Selected Date: ${BoardDateFormat('dd MMMM yyyy').format(selectedDate[0]!)}'
-                                          : 'Choose Date',
-                                      style: TextStyle(
-                                        color: !isDateSelected ? biruImran2 : biruImran
-                                      )
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Checkbox(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                          activeColor: biruImran,
+                                          value: showInactiveSKU, 
+                                          onChanged: (value){
+                                            setState(() {
+                                              showInactiveSKU = value!;
+                                              //refresh the van details
+                                              vanDetails.clear();
+                                              fetchDataForVan(
+                                                widget.siteid,
+                                                selectedVanId!,
+                                                selectedDate[0]!,
+                                                _token);
+                                              debugPrint('Show Inactive SKU : $showInactiveSKU');
+                                            });
+                                          }
+                                        ),
+                                        Expanded(
+                                          child: AutoSizeText(
+                                            maxLines: 1,
+                                            minFontSize: 1,
+                                            'Show Inactive BAT SKU', style: TextStyle(color: biruImran),),
+                                        ),
+                                      ],
                                     ),
-                                    trailing:
-                                    !isDateSelected ? null :
-                                    IconButton(onPressed: () {
-                                      setState(() {
-                                        isDateSelected = false;
-                                        selectedVanId = '';
-                                      });
-                                    }, icon: Icon(Icons.close, color: biruImran,)),
-                                    onTap: () async {
-                                      final values = await showCalendarDatePicker2Dialog(
-                                        context: context,
-                                        config: config,
-                                        dialogSize: Size(screenWidth * 0.6, screenHeight * 0.2),
-                                        borderRadius: BorderRadius.circular(15),
-                                        value: selectedDate,
-                                        dialogBackgroundColor: biruImran,
-                                      );
-                                      if (values != null) {
-                                        debugPrint(values.toString());
-                                        setState(() {
-                                          selectedVanId = '';
-                                          vanDetails.clear();
-                                          isDateSelected = true;
-                                          selectedDate[0] = values[0];
-                                        });
-                                        fetchData(selectedDate[0]!, widget.siteid);
-                                      }
-                                                
-                                    },
-                                  ),
-                                ),
+                                  )
+                                ],
                               ),
                             ),
-                        
                             if (vans.isNotEmpty && isDateSelected)
                               SingleChildScrollView(
+                                controller: ScrollController(),
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: vans
-                                      .map((van) => Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                            child: VanWidget(
-                                              vanId: van['id'] ?? 'N/A',
-                                              status: van['status'] ?? 'N/A',
-                                              siteId: widget.siteid,
-                                              selectedDate: selectedDate[0]!,
-                                              token: _token,
-                                              fetchDataForVan: fetchDataForVan,
-                                              onCloseCalendar: () {
-                                                controller.close();
-                                              },
-                                              clearVanDetails: () async {
-                                                await clearVanDetails();
-                                              },
-                                              
-                                              isSelected: van['id'] == selectedVanId,
-                                              // isSelected: false,
-                
-                                              onVanSelected: (vanId) {
-                                                setState(() {
-                                                  selectedVanId = vanId;
-                                                });
-                                              },
-                                            ),
-                                          ))
-                                      .toList(),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: vans
+                                            .map((van) => Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                  child: VanWidget(
+                                                    vanId: van['id'] ?? 'N/A',
+                                                    status: van['status'] ?? 'N/A',
+                                                    siteId: widget.siteid,
+                                                    selectedDate: selectedDate[0]!,
+                                                    token: _token,
+                                                    fetchDataForVan: fetchDataForVan,
+                                                    onCloseCalendar: () {
+                                                      controller.close();
+                                                    },
+                                                    clearVanDetails: () async {
+                                                      await clearVanDetails();
+                                                    },
+                                                    
+                                                    isSelected: van['id'] == selectedVanId,
+                                                    // isSelected: false,
+                                                    
+                                                    onVanSelected: (vanId) {
+                                                      setState(() {
+                                                        selectedVanId = vanId;
+                                                      });
+                                                    },
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ),
+                                    
+                                  ],
                                 ),
                               ),
                         

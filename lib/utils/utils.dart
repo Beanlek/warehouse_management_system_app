@@ -37,6 +37,15 @@ const String REJECTED ='Rejected';
 const String ALLOTTED ='Allotted';
 const String EXPIRED ='Expired';
 
+Map<String, String> TI_filter =
+{
+  '': 'All',
+  'received': 'Received',
+  'partially received': 'Partially Received',
+  'in transit': 'In Transit',
+  'pending_wa_ack': 'Pending Without Acknowledge',
+};
+
 // transferinout status
 const String TIO_RECEIVED ='received';
 const String TIO_PARTIALLY_RECEIVED ='partially received';

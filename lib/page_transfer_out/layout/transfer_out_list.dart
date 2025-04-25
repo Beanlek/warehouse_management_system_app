@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:warehouse/page_transfer_out/layout/transfer_out_create.dart';
 import 'package:warehouse/page_transfer_out/layout/transfer_out_detail.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
@@ -73,108 +74,6 @@ class _TransferOutListingState extends State<TransferOutListing> {
     }
   }
 
-  Future<void> fetchAPI(String? token) async {
-    if (token == null) {
-      Navigator.pushNamed(context, AppRoutes.login);
-      FloatingSnackBar(
-          message: 'Token Expired. Please login back to the system.',
-          context: context);
-      return;
-    }
-    final String? _domainName = await TokenUtil.getDomainName();
-    
-    String _mainBody = 'transferOut';
-    String _subDirectory = '/api/tin_tout/transfer_out/list';
-    
-    final String domain = _domainName!.substring(_domainName.lastIndexOf('/t')+1, _domainName.length);
-    String domainName = _domainName;
-
-    String url = '$domainName$_subDirectory';
-    final uri = Uri.parse(url);
-
-    Map<String, String> params = {
-      'limit_rows': '20',
-      'page': (_currentPage + 1).toString(),
-
-      if(selectedFilter != ALL)
-        'status': "selected\%Filter"
-    };
-
-    debugPrint("stringDate: $stringDate");
-    debugPrint("domain: $domain");
-
-    debugPrint('selectedFilter: $selectedFilter');
-    debugPrint('params: $params');
-    debugPrint('_currentPage: $_currentPage');
-
-    final newUri = Uri.https(domain, _subDirectory, params);
-    final newUri2 = uri.replace(queryParameters: params);
-    debugPrint(newUri.toString());
-    debugPrint(newUri2.toString());
-
-    final request = http.Request(
-      'GET',
-      newUri,
-    )..headers.addAll(
-        {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-    request.body = jsonEncode(params);
-    http.StreamedResponse response = await request.send();
-
-    String stringResponse = await response.stream.bytesToString();
-
-    if (response.statusCode == 500) {
-      const errMsg = 'This may due to server hickups. Please wait for a while.';
-
-      FloatingSnackBar(
-          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
-          context: context);
-
-      Navigator.of(context).pop();
-    }
-
-    else if (response.statusCode == 200) {
-
-      debugPrint("RESPONSE STRING :: ${stringResponse.toString()}");
-
-      try {
-        final json = jsonDecode(stringResponse);
-
-        debugPrint("RESPONSE JSON :: ${json.toString()}");
-        
-        final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
-        int count = json[_mainBody]['count'];
-
-        if (count == 0) {
-          count = 1;
-        }
-
-        _numPages = (count / 20).round();
-        if (_numPages < (count / 20)) {
-          _numPages++;
-        }
-
-        setState(() {
-          transferOuts = List<Map<String, dynamic>>.from(wms_van_ids).toList();
-        });
-      } catch (e) {
-        debugPrint('Failed to parse JSON: $e');
-      }
-    } else {
-      debugPrint(
-          'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-      debugPrint('Error Body: ${stringResponse}');
-      Navigator.pushNamed(context, AppRoutes.login);
-      FloatingSnackBar(
-          message: 'Token Expired. Please login back to the system.',
-          context: context);
-    }
-  }
-
   Future<void> fetchAPINew(String? token) async {
     if (token == null) {
       Navigator.pushNamed(context, AppRoutes.login);
@@ -197,7 +96,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
       'page': (_currentPage + 1).toString(),
 
       if(selectedFilter != ALL)
-        'status': 'partially received'
+        'status': selectedFilter
     };
 
     debugPrint("stringDate: $stringDate");
@@ -355,20 +254,54 @@ class _TransferOutListingState extends State<TransferOutListing> {
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: EdgeInsets.only(left: 20, top: 24.0, right: 20),
-                child: RichText(
-                  text: TextSpan(
-                      text: 'Home ',
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.of(context).pop();
-                        },
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        color: textColorTertiary,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                          text: 'Home ',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).pop();
+                            },
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                            color: textColorTertiary,
+                          ),
+                          children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: biruImran,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
                       ),
-                      children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
+                      child: Text(
+                        'Create Transfer Out',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: white,
+                        ),
+                      ),
+                      onPressed: () {
+                        debugPrint("You're a frog now");
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TransferOutCreate()
+                        ));
+                      },
+                    )
+                  ],
                 ),
               ),
             ),
@@ -462,10 +395,9 @@ class _TransferOutListingState extends State<TransferOutListing> {
                 controller: _paginatorController,
                 numberPages: _numPages,
                 onPageChange: (index) async {
-                  setState(() {
-                    transferOuts.clear();
-                    _currentPage = index;
-                  });
+                  transferOuts.clear();
+                  _currentPage = index;
+                  
                   await fetchAPINew(_token);
                 },
                 config: NumberPaginatorUIConfig(
@@ -495,10 +427,17 @@ class _TransferOutListingState extends State<TransferOutListing> {
   }
 
   Color colorCheck(String _status) {
-    if (_status == 'acknowledged') {
-      return hijauImran2;
-    } else {
-      return colorMerah;
+    switch (_status){
+      case 'received':
+        return hijauImran2;
+      case 'partially received':
+        return category4Color;
+      case 'in transit':
+        return biruImran;
+      case 'pending_approval':
+        return colorOrenAiman;
+      default:
+        return biruImran;
     }
   }
 
@@ -657,8 +596,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
     
     required String remark,
   }) {
-    DateTime dateTimeParsed =
-        DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
+    DateTime dateTimeParsed = DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
     String dateCreatedAt = _myFormat!.format(dateTimeParsed);
 
     if (_currentPage != 0) {
@@ -735,23 +673,26 @@ class _TransferOutListingState extends State<TransferOutListing> {
                               ),
                             ),
                           ),
-                          RichText(
-                            text: TextSpan(
-                                text: 'From Site ',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  color: black,
-                                  fontSize: 16.0,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: fromSiteId,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18.0,
-                                    ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: RichText(
+                              text: TextSpan(
+                                  text: 'From Site ',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                    fontSize: 16.0,
                                   ),
-                                ]),
+                                  children: [
+                                    TextSpan(
+                                      text: fromSiteId,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18.0,
+                                      ),
+                                    ),
+                                  ]),
+                            ),
                           ),
                           RichText(
                             text: TextSpan(
@@ -773,38 +714,69 @@ class _TransferOutListingState extends State<TransferOutListing> {
                           ),
                         ],
                       ),
-                      subtitle: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      subtitle: Column(
                         children: [
-                          AutoSizeText(
-                            titleCheck(TYPE),
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: black,
-                              fontSize: 18.0,
-                            ),
-                          ),
-                          RichText(
-                            textAlign: TextAlign.end,
-                            text: TextSpan(
-                                text: 'Created At\n',
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AutoSizeText(
+                                titleCheck(TYPE),
+                                maxLines: 1,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w300,
+                                  fontWeight: FontWeight.normal,
                                   color: black,
-                                  fontSize: 15.0,
+                                  fontSize: 18.0,
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text: dateCreatedAt,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
+                              ),
+                              RichText(
+                                textAlign: TextAlign.end,
+                                text: TextSpan(
+                                    text: 'Created At\n',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      color: black,
                                       fontSize: 15.0,
                                     ),
+                                    children: [
+                                      TextSpan(
+                                        text: dateCreatedAt,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
                               ),
+                            ],
                           ),
+
+                          Divider(),
+
+                          Opacity(
+                            opacity: .65,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Remark: ',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                  ),
+                                ),
+                                AutoSizeText(
+                                  remark,
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                  ),
+                                  wrapWords: false,
+                                  maxLines: 2,
+                                  minFontSize: 1,
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
