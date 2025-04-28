@@ -25,6 +25,7 @@ const String RETURN_ORDER = 'return_order';
 const String TRANSFER_IN = 'transfer_in';
 const String TRANSFER_OUT = 'transfer_out';
 const String TRANSFER_INOUT = 'all_tin_tout';
+const String TRANSFER_IN_CREATE = 'transfer_in_create';
 
 const String ALL = 'All';
 const String ACKNOWLEDGED = 'Acknowledged';
@@ -102,6 +103,8 @@ String titleCheck(String _recordType) {
           return 'Transfer Out';
         case TRANSFER_INOUT:
           return 'Transfer In / Out';
+        case TRANSFER_IN_CREATE:
+          return 'Transfer In Create';
         default:
           return '-';
       }

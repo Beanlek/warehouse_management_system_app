@@ -13,6 +13,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/page_transfer_in/layout/transfer_in_detail.dart';
+import 'package:warehouse/page_transfer_in/transfer_in_create.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
@@ -64,99 +65,6 @@ class _TransferInListingState extends State<TransferInListing> {
       await fetchAPI(_token);
     }
   }
-
-  // Future<void> fetchAPI(String? token) async {
-  //   if (token == null) {
-  //     Navigator.pushNamed(context, AppRoutes.login);
-  //     FloatingSnackBar(
-  //         message: 'Token Expired. Please login back to the system.',
-  //         context: context);
-  //     return;
-  //   }
-  //   String _mainBody = 'wms_acknowledgment';
-  //   String _subDirectory = '/api/tin_tout/transfer_in/list';
-  //   //'/api/wms/android-list';
-
-  //   // debugPrint('fetch Unacknowledged API');
-  //   final String? _domainName = await TokenUtil.getDomainName();
-  //   String domainName = _domainName!;
-
-  //   String url = '$domainName$_subDirectory';
-  //   final uri = Uri.parse(url);
-
-  //   Map<String, String> params = {
-  //     'page': (_currentPage + 1).toString(),
-  //     'limit_rows': '20',
-  //     //'type': TYPE,
-  //     'status': filters.keys.firstWhere(
-  //       (key) => filters[key] == selectedFilter,
-  //       orElse: () => 'received',
-  //     ),
-  //   };
-
-  //   debugPrint("stringDate: $stringDate");
-
-  //   debugPrint('selectedFilter: $selectedFilter');
-  //   debugPrint('_currentPage: $_currentPage');
-
-  //   final newUri = uri.replace(queryParameters: params);
-  //   debugPrint('The new URI is : ${newUri.toString()}');
-
-  //   final request = http.Request(
-  //     'GET',
-  //     newUri,
-  //   )..headers.addAll(
-  //       {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //     );
-
-  //   request.body = jsonEncode(params);
-  //   http.StreamedResponse response = await request.send();
-
-  //   String stringResponse = await response.stream.bytesToString();
-
-  //   if (response.statusCode == 500) {
-  //     const errMsg = 'This may due to server hickups. Please wait for a while.';
-
-  //     FloatingSnackBar(
-  //         message: '${titleCheck(TYPE)} encounter an error. $errMsg',
-  //         context: context);
-
-  //     Navigator.of(context).pop();
-  //   } else if (response.statusCode == 200) {
-  //     try {
-  //       final json = jsonDecode(stringResponse);
-  //       final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
-  //       transferInLists = List.from(wms_van_ids);
-  //       int count = json[_mainBody]['count'];
-
-  //       if (count == 0) {
-  //         count = 1;
-  //       }
-
-  //       _numPages = (count / 20).round();
-  //       if (_numPages < (count / 20)) {
-  //         _numPages++;
-  //       }
-
-  //       setState(() {
-  //         transferIns = List<Map<String, dynamic>>.from(wms_van_ids).toList();
-  //       });
-  //     } catch (e) {
-  //       debugPrint('Failed to parse JSON: $e');
-  //     }
-  //   } else {
-  //     debugPrint(
-  //         'Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
-  //     debugPrint('Error Body: ${stringResponse}');
-  //     Navigator.pushNamed(context, AppRoutes.login);
-  //     FloatingSnackBar(
-  //         message: 'Token Expired. Please login back to the system.',
-  //         context: context);
-  //   }
-  // }
 
   Future<void> fetchAPI(String? token) async {
     if (token == null) {
@@ -369,7 +277,14 @@ class _TransferInListingState extends State<TransferInListing> {
                       ),
                     ),
                     onPressed: () {
-                      debugPrint("You're a frog now");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TransferInCreateView(
+
+                            ),
+                        ),
+                      );
                     },
                   )
                 ],
@@ -720,8 +635,11 @@ class _TransferInListingState extends State<TransferInListing> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => TransferInDetailView(
+                              createdAt: createdAt,
                               transferInId: transferInId,
                               status: status,
+                              tid: tid,
+                              type: type,
                             ),
                           ),
                         ) ?? false;

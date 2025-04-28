@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -14,22 +15,31 @@ import 'package:warehouse/utils/utils.dart';
 
 import '../../data/models/stock_item.dart';
 import '../../data/models/transfer_in.dart';
+import '../../page_transfer_inout/layout/transfer_inout_detail.dart';
+
+const String TYPE = TRANSFER_IN;
 
 class TransferInDetailView extends StatefulWidget {
-  const TransferInDetailView(
-      {super.key,
-      required this.transferInId,
-      required this.status,});
+  const TransferInDetailView({
+    super.key,
+    required this.tid,
+    required this.type,
+    required this.status,
+    required this.createdAt,
+    required this.transferInId,
+  });
 
-  final String transferInId;
+  final String tid;
+  final String type;
   final String status;
+  final String createdAt;
+  final String transferInId;
 
   @override
   State<TransferInDetailView> createState() => _TransferInDetailViewState();
 }
 
 class _TransferInDetailViewState extends State<TransferInDetailView> {
-
   TransferIn? transferInData;
   List<StockItem> receivedList = [];
   List<StockItem> unreceivedList = [];
@@ -44,7 +54,7 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
     getToken().then((_) {
       fetchAPI(_token);
     });
-    //checkStatus(widget.status);
+    checkStatus(widget.status);
   }
 
   @override
@@ -52,27 +62,47 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
     super.dispose();
   }
 
-  // void checkStatus(String status) {
-  //   if (status == 'pending_wa_ack') {
-  //     showDialog(
-  //       context: context, 
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: Text('The Transfer In is Pending Acknowledgment'),
-  //           content: Text('You can Aknowledge the Transfer In from Transfer In/Out Acknowledgement Screen.'),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: Text('OK'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   }
-  // }
+  void checkStatus(String status) {
+    if (status == 'pending_wa_ack') {
+      Future.delayed(Duration.zero, () {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Pending Acknowledgement'),
+              content: Text(
+                  'You can acknowledge this transfer in Transfer In/Out Acknowledgement screen.\n Do you want to proceed?'),
+              actions: [
+                TextButton(
+                  child: Text('No', style: TextStyle(color: Colors.grey)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('Yes', style: TextStyle(color: biruImran)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TransferInOutDetailView(
+                                type: widget.type,
+                                createdAt: widget.createdAt,
+                                status: widget.status,
+                                transferId: widget.tid,
+                              )),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      });
+    }
+  }
 
   Future<void> getToken() async {
     final String? token = await TokenUtil.getToken();
@@ -111,17 +141,21 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
 
       statusCode = response.statusCode!;
 
-      if (statusCode == 200 || statusCode == 201) { //if status ok, update the data
+      if (statusCode == 200 || statusCode == 201) {
+        //if status ok, update the data
         final jsonData = response.data;
 
         setState(() {
-          transferInData = TransferIn.fromJson(jsonData['transfer_in']); //occupy the transfer in data
-          receivedList = (jsonData['received'] as List) //occupy the received list data
-              .map((e) => StockItem.fromJson(e))
-              .toList();
-          unreceivedList = (jsonData['unreceived'] as List) //occupy the unreceived list data
-              .map((e) => StockItem.fromJson(e))
-              .toList();
+          transferInData = TransferIn.fromJson(
+              jsonData['transfer_in']); //occupy the transfer in data
+          receivedList =
+              (jsonData['received'] as List) //occupy the received list data
+                  .map((e) => StockItem.fromJson(e))
+                  .toList();
+          unreceivedList =
+              (jsonData['unreceived'] as List) //occupy the unreceived list data
+                  .map((e) => StockItem.fromJson(e))
+                  .toList();
         });
 
         try {
@@ -188,21 +222,53 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
             ),
             body: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  createDetailsTable(
-                    transferInData?.id ?? '',
-                    transferInData?.siteId ?? '',
-                    transferInData?.type ?? '',
-                    transferInData?.refId ?? '',
-                    transferInData?.date ?? '',
-                    transferInData?.status ?? '',
-                    transferInData?.remark ?? '',
-                    transferInData?.createdBy ?? '',
-                  ),
-                  createSKUTable(receivedList),
-                  createSKUTable(unreceivedList),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                          text: TextSpan(
+                              text: 'Home ',
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.pop(context, false);
+                                  Navigator.pop(context, false);
+                                },
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
+                                color: textColorTertiary,
+                              ),
+                              children: [
+                                TextSpan(
+                                    text: '> ${titleCheck(TYPE)}',
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.pop(context);
+                                      }),
+                                TextSpan(text: '> ${widget.transferInId}'),
+                              ]),
+                        ),
+                      ),
+                    ),
+                    createDetailsTable(
+                      transferInData?.id ?? '',
+                      transferInData?.siteId ?? '',
+                      transferInData?.type ?? '',
+                      transferInData?.refId ?? '',
+                      transferInData?.date ?? '',
+                      transferInData?.status ?? '',
+                      transferInData?.remark ?? '',
+                      transferInData?.createdBy ?? '',
+                    ),
+                    createSKUTable('Received', receivedList),
+                    createSKUTable('Unreceived', unreceivedList),
+                  ],
+                ),
               ),
             )));
   }
@@ -311,41 +377,53 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
       color: Colors.grey[200],
       child: Row(
         children: const [
-          Expanded(flex: 2, child: Text('SKU ID', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text('UOM ID', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text('Fresh', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text('Damaged', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text('Old', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text('Recalled', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              flex: 2,
+              child: Text('SKU ID',
+                  style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              child: Text('UOM ID',
+                  style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              child:
+                  Text('Fresh', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              child: Text('Damaged',
+                  style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              child:
+                  Text('Old', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(
+              child: Text('Recalled',
+                  style: TextStyle(fontWeight: FontWeight.bold))),
         ],
       ),
     );
   }
 
   Widget _buildTableRow(StockItem item) {
-  List quantities = item.quantity;
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    decoration: BoxDecoration(
-      border: Border(
-        bottom: BorderSide(color: Colors.grey[300]!),
+    List quantities = item.quantity;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[300]!),
+        ),
       ),
-    ),
-    child: Row(
-      children: [
-        Expanded(flex: 2, child: Text(item.skuId)),
-        Expanded(child: Text(item.uomId)),
-        Expanded(child: Text('${quantities[0]}')),
-        Expanded(child: Text('${quantities[1]}')),
-        Expanded(child: Text('${quantities[2]}')),
-        Expanded(child: Text('${quantities[3]}')),
-      ],
-    ),
-  );
-}
+      child: Row(
+        children: [
+          Expanded(flex: 2, child: Text(item.skuId)),
+          Expanded(child: Text(item.uomId)),
+          Expanded(child: Text('${quantities[0]}')),
+          Expanded(child: Text('${quantities[1]}')),
+          Expanded(child: Text('${quantities[2]}')),
+          Expanded(child: Text('${quantities[3]}')),
+        ],
+      ),
+    );
+  }
 
-
-  Widget createSKUTable(List itemList) {
+  Widget createSKUTable(String title, List itemList) {
     return ExpansionTile(
       showTrailingIcon: false,
       tilePadding: EdgeInsets.all(0),
@@ -364,7 +442,7 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Uneceived',
+              title,
               style: TextStyle(
                 fontSize: 22.0,
                 fontWeight: FontWeight.bold,
@@ -381,16 +459,22 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildTableHeader(),
-              const SizedBox(height: 8),
-              ...itemList.map((item) => _buildTableRow(item)),
-            ],
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.4,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildTableHeader(),
+                  const SizedBox(height: 8),
+                  ...itemList.map((item) => _buildTableRow(item)),
+                ],
+              ),
+            ),
           ),
         ),
       ],
     );
   }
-
 }
