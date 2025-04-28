@@ -1,20 +1,25 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, no_leading_underscores_for_local_identifiers
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
+import 'package:floating_snackbar/floating_snackbar.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:nb_utils/nb_utils.dart';
-import 'package:warehouse/models/warehouse.dart';
+import 'package:warehouse/data/models/transfer_out_inventory.dart';
+import 'package:warehouse/data/models/warehouse.dart';
 
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/stock_recon/widget/dialog_widget.dart';
 import 'package:warehouse/utils/utils.dart';
+import 'package:warehouse/widgets/global_dialog.dart';
 
 
 class TransferOutCreate extends StatefulWidget {
@@ -33,24 +38,38 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
   FocusNode remarkFocusnode = FocusNode();
 
   int activeStep = 0;
-  bool _isLoading = false;
+  bool isLoading = true;
+  bool isExpanded = false;
 
   List<Warehouse> sourceSitesWarehouse = [];
   List<Warehouse> destinationSitesWarehouse = [];
+
   Warehouse selectedSourceSite = Warehouse(id: '', name: '');
   Warehouse selectedDestinationSite = Warehouse(id: '', name: '');
+
+  List<TOInventory> toInventory = [];
+  Map<String, dynamic> brandToInventory = {};
   
-  String? _token;
+  String? token;
+  String errMsg = "Unknown error";
 
   Future<void> _getToken() async {
-    final String? token = await TokenUtil.getToken();
-    setState(() {
-      _token = token!;
-      // showPickLists = true;
+    await TokenUtil.getToken().then((v) async {
+      token = v;
+
+      if (token != null) {
+        await fetchSites(token).whenComplete(() {
+          setState(() {
+            isLoading = false;
+          });
+        });
+      } else {
+        FloatingSnackBar(message: 'Session ended. Please log in again.', context: context);
+
+        Navigator.of(context).pop();
+      }
     });
-    if (token != null) {
-      await fetchSites(_token);
-    }
+
   }
 
   Future<void> fetchSites(String? token) async {
@@ -77,8 +96,232 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
     } else {
       debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
       debugPrint('Error Body: ${response.body}');
+
       Navigator.pushNamed(context, AppRoutes.login);
     }
+  }
+
+  Future<int> fetchTables(String? token, {
+    required Warehouse selectedSite
+  }) async {
+    var statusCode = 505;
+    final String? domainName = await TokenUtil.getDomainName();
+    final dio = Dio();
+
+    String url = '${domainName}/api/tin_tout/transfer_out/inventory/${selectedSite.id}';
+    debugPrint("URL??? :: ${url.toString()}");
+    try {
+      
+      await dio.get(
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }),
+
+        url,
+
+      ).then((response) {
+        statusCode = response.statusCode!;
+
+        if (statusCode == 200 || statusCode == 201) {
+          debugPrint("RESPONSE DATA :: ${response.data.toString()}");
+          
+          final List<Map<String,dynamic>> inventoryRaw = List.from(response.data['inventory'] as List);
+
+          toInventory = inventoryRaw.map((sku) => TOInventory.fromJson(sku) ).toList();
+
+          debugPrint('fetch API completed');
+
+        } else if(statusCode == 404) {
+
+          // Inventory empty for site
+          final json = jsonDecode(response.data);
+          errMsg = json['errmsg'];
+
+          debugPrint('INVENTORY EMPTY :: ${errMsg}');
+
+        } else if(response.data == 'Forbidden') {
+
+          debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
+          debugPrint('Error Body: ${response.data}');
+
+          FloatingSnackBar(
+              message: 'Token Expired. Please login back to the system.',
+              context: context);
+          
+          Navigator.pushNamed(context, AppRoutes.login);
+        } else {
+          debugPrint("${statusCode.toString()} :: ${response.data.toString()}");
+          errMsg = 'This may due to server hickups. Please wait for a while.';
+
+          FloatingSnackBar(
+              message: 'Encountered an error. $errMsg', context: context);
+
+          Navigator.of(context).pop();
+        }
+
+      }).timeout(Duration(seconds: 5));
+
+    } on TimeoutException {
+      debugPrint("ERROR TIMEOUT :: Action took a long time to run (5 seconds).");
+      errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: 'Encountered an error. $errMsg', context: context);
+
+      Navigator.of(context).pop();
+
+    } on DioException catch (e) {
+      debugPrint("ERROR DIO STATUSCODE :: ${statusCode.toString()}");
+      debugPrint("ERROR DIO :: ${e.toString()}");
+
+      final String eString = e.toString();
+
+      if (eString.contains('404')) {
+        statusCode = 404;
+        errMsg = "Inventory empty for ${selectedSite.id}";
+
+        debugPrint('INVENTORY EMPTY :: ${errMsg}');
+
+      } else {
+        errMsg = 'This may due to server hickups. Please wait for a while.';
+
+        FloatingSnackBar(
+            message: 'Encountered an error. $errMsg', context: context);
+
+        Navigator.of(context).pop();
+
+      }
+      
+
+    } catch (e) {
+      debugPrint("ERROR CATCH :: ${e.toString()}");
+      errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: 'Encountered an error. $errMsg', context: context);
+
+      Navigator.of(context).pop();
+    }
+
+    return statusCode;
+  }
+
+  Future<void> sortBrands() async {
+    for (var item in toInventory) {
+      String brand = item.brand;
+
+      if (!brandToInventory.containsKey(brand)) {
+        brandToInventory.addEntries({brand : {} }.entries);
+        
+        brandToInventory[brand].addEntries({'name' : item.name }.entries);
+        brandToInventory[brand].addEntries({'rows' : [] }.entries);
+      }
+
+      brandToInventory[brand]['rows']!.add(item);
+    }
+  }
+
+  // ---TABLE SKU----
+  Widget _buildTableHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      color: Colors.grey[200],
+      child: Row(
+        children: const [
+          Expanded(flex: 2, child: Text('CODE', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text('SKU ID', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 1, child: Text('UOM ID', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text('Fresh', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text('Damaged', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text('Old', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text('Recalled', style: TextStyle(fontWeight: FontWeight.bold))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableRow(TOInventory item) {
+    final quantities = item.quantity;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[300]!),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(flex: 2, child: Text(item.shortCode)),
+          Expanded(flex: 2, child: Text(item.skuId)),
+          Expanded(flex: 1, child: Text(item.uomId)),
+          Expanded(flex: 2, child: Text('${quantities[0]}')),
+          Expanded(flex: 2, child: Text('${quantities[1]}')),
+          Expanded(flex: 2, child: Text('${quantities[2]}')),
+          Expanded(flex: 2, child: Text('${quantities[3]}')),
+        ],
+      ),
+    );
+  }
+
+  Widget createSKUTable({
+    required List<dynamic> itemList,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          _buildTableHeader(),
+          const SizedBox(height: 8),
+          ...itemList.map((item) => _buildTableRow(item)),
+        ],
+      ),
+    );
+  }
+
+  ExpansionPanelRadio  principalRows({
+    required String brand,
+    required String name,
+    required List<dynamic> items,
+  }) {
+
+    return ExpansionPanelRadio(
+      value: brand,
+      canTapOnHeader: true,
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return Card(
+          color: biruImran,
+          margin: const EdgeInsets.all(8.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  brand,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: white,
+                  ),
+                ),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+
+      body: createSKUTable(itemList: items),
+    );
   }
 
   @override
@@ -86,7 +329,7 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
     super.initState();
     _getToken().whenComplete(() {
       setState(() {
-        _isLoading = false;
+        isLoading = false;
       });
     });
   }
@@ -238,19 +481,49 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                       splashColor: white,
                                       onTap: () async {
                                         setState(() {
-                                          siteSelect = !siteSelect;
-                                          site.select = siteSelect;
-
-                                          if (siteSelect) {
-                                            selectedSourceSite = Warehouse.from(site);
-                                          } else {
-                                            selectedDestinationSite.clear();
-                                            selectedSourceSite.clear();
-                                          }
+                                          isLoading = true;
                                         });
+                                        
+                                        await Future.delayed(Duration(seconds: 1)).whenComplete(() async {
+                                          await fetchTables(token, selectedSite: site).then((v) async{
+                                            if (v == 404) {
+                                              await showDialog(context: context,
+                                                builder: (context) {
+                                                  return DialogNotice(
+                                                    title: errMsg,
+                                                    notice: 'Please select a different site.'
+                                                  );
+                                                }
+                                              );
 
-                                        debugPrint('SITE SELECT :: ${siteSelect.toString()}');
-                                        debugPrint('SITE SELECTEDSITE :: ${selectedSourceSite.toString()}');
+                                            } else {
+                                              setState(() {
+                                                siteSelect = !siteSelect;
+                                                site.select = siteSelect;
+
+                                                if (siteSelect) {
+                                                  selectedSourceSite = Warehouse.from(site);
+                                                } else {
+                                                  selectedDestinationSite.clear();
+                                                  selectedSourceSite.clear();
+                                                }
+                                              });
+
+                                              debugPrint('SITE SELECT :: ${siteSelect.toString()}');
+                                              debugPrint('SITE SELECTEDSITE :: ${selectedSourceSite.toString()}');
+                                              
+                                              await sortBrands();
+
+                                            }
+                                            
+                                          });
+
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                        });
+                                        
+                                        
                                       },
                                       child: Material(
                                         elevation: 3,
@@ -302,25 +575,51 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                 InkWell(
                                   splashColor: biruImran,
                                   onTap: () async {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    await showDialog(context: context,
+                                      builder: (context) {
+                                        return DialogActionConfirmation(
+                                          title: 'Reselecting Source Site',
+                                          notice: 'Are you sure you want to reselect Source Site? Progress will be lost.',
+                                          buttonConfirmText: 'Reselect',
+                                        );
+                                      }
+                                    ).then((v) {
+                                      v = v ?? false;
+
+                                      if (v) {
+                                        setState(() {
+                                          for (var site in sourceSitesWarehouse) {
+                                            final siteID = site.id;
+
+                                            if (siteID == selectedSourceSite.id) {
+                                              site.select = false;
+                                              break;
+                                            } 
+                                          }
+
+                                          selectedSourceSite.select = false;
+                                          selectedSourceSite.clear();
+
+                                          selectedDestinationSite.clear();
+                                          for (var site in destinationSitesWarehouse) {
+                                            site.select = false;
+                                          }
+
+                                          toInventory.clear();
+                                          brandToInventory.clear();
+                                          remarkController.text = 'No Remarks.';
+
+                                        });
+                                        
+                                      }
+                                    });
+
                                     
                                     setState(() {
-                                      for (var site in sourceSitesWarehouse) {
-                                        final siteID = site.id;
-
-                                        if (siteID == selectedSourceSite.id) {
-                                          site.select = false;
-                                          break;
-                                        } 
-                                      }
-
-                                      selectedSourceSite.select = false;
-                                      selectedSourceSite.clear();
-
-                                      selectedDestinationSite.clear();
-                                      for (var site in destinationSitesWarehouse) {
-                                        site.select = false;
-                                      }
-
+                                      isLoading = false;
                                     });
 
                                   },
@@ -407,10 +706,13 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                   
                                       var cardColor = siteSelect ? biruImran4 : biruImran;
                                       var fontColor = siteSelect ? biruImran : white;
+
+                                      final isSourceSite = siteID == selectedSourceSite.id; 
                                       
                                       return InkWell(
                                         splashColor: white,
-                                        onTap: () async {
+                                        onTap: isSourceSite ? null : () async {
+                                          
                                           setState(() {
                                             siteSelect = !siteSelect;
                                             site.select = siteSelect;
@@ -424,46 +726,51 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
 
                                           debugPrint('SITE SELECT :: ${siteSelect.toString()}');
                                           debugPrint('SITE SELECTEDSITE :: ${selectedDestinationSite.toString()}');
+
+
                                         },
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius: BorderRadius.circular(24),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(24),
-                                              border: Border.all(color: fontColor, width: 1),
-                                              color: cardColor
-                                            ),// Set card color
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(16.0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: AutoSizeText(
-                                                      siteID,
-                                                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: fontColor,
+                                        child: Opacity(
+                                          opacity: isSourceSite ? .3 : 1,
+                                          child: Material(
+                                            elevation: 3,
+                                            borderRadius: BorderRadius.circular(24),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(24),
+                                                border: Border.all(color: fontColor, width: 1),
+                                                color: cardColor
+                                              ),// Set card color
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(16.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        siteID,
+                                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: fontColor,
+                                                        ),
+                                                      
+                                                        maxLines: 1,
+                                                        minFontSize: 1,
                                                       ),
-                                                    
-                                                      maxLines: 1,
-                                                      minFontSize: 1,
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                    child: AutoSizeText(
-                                                      siteName,
-                                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                                                        color: fontColor,
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        siteName,
+                                                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                                          color: fontColor,
+                                                        ),
+                                                      
+                                                        maxLines: 2,
+                                                        minFontSize: 1,
+                                                        wrapWords: false,
                                                       ),
-                                                    
-                                                      maxLines: 2,
-                                                      minFontSize: 1,
-                                                      wrapWords: false,
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -534,8 +841,8 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                   )
                               ),
 
-                            // DESTINATION SITE
-                            if(selectedDestinationSite.isNotEmpty)
+                            // REMARK
+                            if(selectedSourceSite.isNotEmpty)
                               ListTile(
                                 dense: true,
                                 title: Column(
@@ -576,6 +883,20 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                   ),
                                 )
                               ),
+
+                            //TODO SKU TABLE
+                            if(selectedSourceSite.isNotEmpty)
+                              // createSKUTable(itemList: brandToInventory["FLICKS"]["rows"]!, title: 'Inventory')
+                              ExpansionPanelList.radio(
+                                children: brandToInventory.entries.map((inventory) {
+                                  final brand = inventory.key;
+                                  final name = inventory.value["name"];
+                                  final items = inventory.value["rows"];
+                                  
+                                  return principalRows(brand: brand, name: name, items: items);
+                                  
+                                }).toList(),
+                              )
                           ],
                         ),
                       )
@@ -591,7 +912,7 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
           
           
         
-          _isLoading ? Opacity(opacity: 0.5,child: Container(
+          isLoading ? Opacity(opacity: 0.5,child: Container(
               color: white,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -601,15 +922,9 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        final isSame = destinationSitesWarehouse[0] == sourceSitesWarehouse[0];
-        final site1 = destinationSitesWarehouse[0];
-        final site2 = sourceSitesWarehouse[0];
-
-        debugPrint("IS THE SAME?? :: ${isSame.toString()}");
-        debugPrint("SITE 1?? :: ${site1.toString()}");
-        debugPrint("SITE 2?? :: ${site2.toString()}");
-      }),
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //   debugPrint("TOINVENTORY LENGTH :: ${toInventory.length.toString()}");
+      // }),
       
       ));
   }

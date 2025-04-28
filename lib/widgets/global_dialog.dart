@@ -128,6 +128,92 @@ class DialogNotice extends StatelessWidget {
   }
 }
 
+class DialogActionConfirmation extends StatelessWidget {
+  DialogActionConfirmation({
+    super.key,
+    required this.title,
+    required this.notice,
+    this.buttonConfirmText = 'Confirm',
+    this.buttonCancelText = 'Cancel',
+  });
+
+  final String title;
+  final String notice;
+  String buttonConfirmText;
+  String buttonCancelText;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return AlertDialog(
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: biruImran,
+              fontSize: 22.0,
+            ),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            notice,
+            style: const TextStyle(
+              fontWeight: FontWeight.normal,
+              color: black,
+              fontSize: 18.0,
+            ),
+          ),
+        ],
+      ),
+
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: SizedBox(
+            width: 150,
+            child: TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: colorMerah,
+              ),
+              child: Text(
+                buttonCancelText,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 150,
+          child: TextButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: hijauImran,
+            ),
+            child: Text(
+              buttonConfirmText,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class DialogExitConfirmation extends StatelessWidget {
   DialogExitConfirmation({
     super.key,

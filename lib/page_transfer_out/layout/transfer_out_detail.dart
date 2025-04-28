@@ -401,7 +401,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
                                         ),
                                         _buildInfoContainer(
                                           'Status',
-                                          (choosedTransferIn['status'] as String).capitalize(),
+                                          (choosedTransferIn['status'].toString()).capitalize(),
                                           Icons.assignment_turned_in_outlined,
                                         ),
                                       ],
@@ -411,7 +411,7 @@ class _TransferOutDetailViewState extends State<TransferOutDetailView> {
                                 
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0), 
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [

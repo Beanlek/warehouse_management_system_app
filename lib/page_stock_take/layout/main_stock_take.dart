@@ -129,7 +129,7 @@ class _StockTakeState extends State<StockTake> {
           }
         });
         // Handle the response data as needed
-        debugPrint(status);
+        debugPrint(status.toString());
       } else {
         debugPrint('Failed to call API. Status code: ${response.statusCode}');
         debugPrint('Error Body: ${response.body}');

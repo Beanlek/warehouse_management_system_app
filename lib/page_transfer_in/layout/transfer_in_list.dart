@@ -724,7 +724,7 @@ class _TransferInListingState extends State<TransferInListing> {
                               status: status,
                             ),
                           ),
-                        );
+                        ) ?? false;
                         if (tempRefresh) {
                           setState(() {
                             transferIns.clear();
