@@ -23,10 +23,10 @@ class _LoginViewState extends State<LoginView>
   late AnimationController _controller;
   late Animation<double> _animation;
 
-  // final TextEditingController _usernameController = TextEditingController(text: 'wms_intern');
-  // final TextEditingController _passwordController = TextEditingController(text: 'amast@123');
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController(text: 'SADMFirdaus');
+  final TextEditingController _passwordController = TextEditingController(text: 'Fardaus2172001!');
+  // final TextEditingController _usernameController = TextEditingController();
+  // final TextEditingController _passwordController = TextEditingController();
 
   final FocusNode _usernameFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();

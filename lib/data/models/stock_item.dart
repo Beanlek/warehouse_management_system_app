@@ -28,4 +28,32 @@ class StockItem {
       unreceivedQuantity: [0,0,0,0]
     );
   }
+
+  Map<String, dynamic> toPostJsonReceived() {
+    return {
+      "principalname": principalName,
+      "sku_id": skuId,
+      "uom_id": uomId,
+      "quantity": [
+        quantity[0],
+        quantity[1],
+        quantity[2],
+        quantity[3],
+      ],
+    };
+  }
+
+  Map<String, dynamic> toPostJsonUnreceived() {
+    return {
+      "principalname": principalName,
+      "sku_id": skuId,
+      "uom_id": uomId,
+      "quantity": [
+        unreceivedQuantity[0],
+        0,
+        0,
+        0
+      ],
+    };
+  }
 }

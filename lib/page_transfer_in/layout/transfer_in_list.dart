@@ -629,20 +629,38 @@ class _TransferInListingState extends State<TransferInListing> {
                       splashColor: white,
                       titleAlignment: ListTileTitleAlignment.titleHeight,
                       onTap: () async {
-                        debugPrint(transferInId);
+                        debugPrint('Status: $status');
                         bool tempRefresh = false;
-                        tempRefresh = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TransferInDetailView(
-                              createdAt: createdAt,
-                              transferInId: transferInId,
-                              status: status,
-                              tid: tid,
-                              type: type,
+
+                        if (status.toLowerCase() == 'in transit') {
+                          // Navigate to different page for in transit items
+                          tempRefresh = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransferInCreateView(
+                                site: siteId,
+                                type: type.capitalize(),
+                                refId: refId,
+                                remark: comment,
+                              ),
                             ),
-                          ),
-                        ) ?? false;
+                          ) ?? false;
+                        } else {
+                          // Regular detail view for other statuses
+                          tempRefresh = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransferInDetailView(
+                                createdAt: createdAt,
+                                transferInId: transferInId,
+                                status: status,
+                                tid: tid,
+                                type: type,
+                              ),
+                            ),
+                          ) ?? false;
+                        }
+
                         if (tempRefresh) {
                           setState(() {
                             transferIns.clear();
@@ -651,6 +669,29 @@ class _TransferInListingState extends State<TransferInListing> {
                           await fetchAPI(_token);
                         }
                       },
+                      // onTap: () async {
+                      //   debugPrint(transferInId);
+                      //   bool tempRefresh = false;
+                      //   tempRefresh = await Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => TransferInDetailView(
+                      //         createdAt: createdAt,
+                      //         transferInId: transferInId,
+                      //         status: status,
+                      //         tid: tid,
+                      //         type: type,
+                      //       ),
+                      //     ),
+                      //   ) ?? false;
+                      //   if (tempRefresh) {
+                      //     setState(() {
+                      //       transferIns.clear();
+                      //       tempRefresh = false;
+                      //     });
+                      //     await fetchAPI(_token);
+                      //   }
+                      // },
                       leading: CircleAvatar(
                         maxRadius: 10,
                         backgroundColor: Colors.transparent,
@@ -702,7 +743,7 @@ class _TransferInListingState extends State<TransferInListing> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AutoSizeText(
-                                titleCheck(TYPE),
+                                type,
                                 maxLines: 1,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.normal,

@@ -27,16 +27,24 @@ const String TYPE = TRANSFER_IN;
 const String TITLE = TRANSFER_IN_CREATE;
 
 class TransferInCreateView extends StatefulWidget {
-  const TransferInCreateView({
-    super.key,
-  });
+  String? site;
+  String? type;
+  String? refId;
+  String? remark;
+
+  TransferInCreateView(
+      {super.key, this.site, this.type, this.refId, this.remark});
 
   @override
   State<TransferInCreateView> createState() => _TransferInCreateViewState();
 }
 
 class _TransferInCreateViewState extends State<TransferInCreateView> {
+  final Map<String, Map<String, TextEditingController>> controllers = {};
+
   List<Warehouse> sourceSitesWarehouse = [];
+
+  bool isSwapped = false;
 
   List<String> refrerenceTypes = ['Stock Arrival', 'Transfer'];
   Warehouse selectedSourceSite = Warehouse(id: '', name: '');
@@ -67,17 +75,48 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
   String? _token;
 
   @override
+  // void initState() {
+  //   super.initState();
+  //   _getToken().whenComplete(() {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   });
+  // }
   void initState() {
     super.initState();
     _getToken().whenComplete(() {
       setState(() {
         _isLoading = false;
+        // Use provided parameters if available
+        if (widget.site != null && widget.site!.isNotEmpty) {
+          selectedSourceSite.id = widget.site!;
+        }
+        if (widget.type != null && widget.type!.isNotEmpty) {
+          selectedReferenceType = widget.type!;
+        }
+        if (widget.refId != null && widget.refId!.isNotEmpty) {
+          selectectedTransferOut.id = widget.refId!;
+          // Fetch transfer details if refId is provided
+          fetchTransferOutDetails();
+        }
+        if (widget.remark != null && widget.remark!.isNotEmpty) {
+          remark = widget.remark!;
+          selectectedTransferOut.remark = widget.remark ?? '';
+        }
+        fetchTransferOuts();
       });
     });
   }
 
   @override
   void dispose() {
+    // Clean up controllers
+    controllers.values.forEach((controllerMap) {
+      controllerMap.values.forEach((controller) {
+        controller.dispose();
+      });
+    });
     super.dispose();
   }
 
@@ -85,10 +124,63 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     final String? token = await TokenUtil.getToken();
     setState(() {
       _token = token!;
-      // showPickLists = true;
     });
     if (token != null) {
       await fetchSites(_token);
+      // After fetching sites, set the selected site if provided
+      if (widget.site != null && widget.site!.isNotEmpty) {
+        for (var site in sourceSitesWarehouse) {
+          if (site.id == widget.site) {
+            site.select = true;
+            selectedSourceSite = Warehouse.from(site);
+            break;
+          }
+        }
+      }
+    }
+  }
+  // Future<void> _getToken() async {
+  //   final String? token = await TokenUtil.getToken();
+  //   setState(() {
+  //     _token = token!;
+  //     // showPickLists = true;
+  //   });
+  //   if (token != null) {
+  //     await fetchSites(_token);
+  //   }
+  // }
+
+  void swapFreshWithUnreceived() {
+    isSwapped = !isSwapped;
+
+    if (isSwapped) {
+      setState(() {
+        for (var sku in transferSkus) {
+          int temp = sku.quantity[0];
+          sku.quantity[0] = sku.unreceivedQuantity[0];
+          sku.unreceivedQuantity[0] = temp;
+
+          if (controllers.containsKey(sku.skuId)) {
+            controllers[sku.skuId]!['fresh']?.text = sku.quantity[0].toString();
+            controllers[sku.skuId]!['unreceived']?.text =
+                sku.unreceivedQuantity[0].toString();
+          }
+        }
+      });
+    } else {
+      // On untoggle: restore original values from transferOutDetails
+      brandSku.clear();
+      fetchTransferOutDetails().then((_) {
+        for (var sku in transferSkus) {
+          // Update controllers with original values
+          if (controllers.containsKey(sku.skuId)) {
+            controllers[sku.skuId]!['fresh']?.text = sku.quantity[0].toString();
+            controllers[sku.skuId]!['unreceived']?.text =
+                sku.unreceivedQuantity[0].toString();
+          }
+        }
+        //sortBrands();
+      });
     }
   }
 
@@ -185,12 +277,12 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
         if (json['skus'] != null) {
           final List<dynamic> skusRaw = json['skus'] as List;
           setState(() {
-            //remember to remove the take(10) when you want to show all skus
+            //TODO: remember to remove the take(10) when you want to show all skus
             skus = skusRaw
-                // .where((sku) =>
-                //     sku['principalname'] == 'BIKA' ||
-                //     sku['principalname'] == 'ZUS' ||
-                //     sku['principalname'] == 'CARABAO')
+                .where((sku) =>
+                    sku['principalname'] == 'BIKA' ||
+                    sku['principalname'] == 'ZUS' ||
+                    sku['principalname'] == 'CARABAO')
                 .map((sku) => Sku.fromJson(sku))
                 .toList();
             sortBrands();
@@ -235,24 +327,22 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
           final List<dynamic> refIdsRaw = json['transferOut']['rows'] as List;
 
           setState(() {
-            var temp = refIdsRaw.map((refId) => TransferOut.fromJson(refId)).toList();
-            if (temp.isNotEmpty){
-              transferOuts = temp;
-            }
-            else{
-              transferOuts.add(TransferOut(
-                id: '',
-                date: '',
-                status: '',
-                fromSiteId: '',
-                createdBy: '',
-                createdAt: '',
-                remark: '',
-                selected: false,
-              ));
+            var temp =
+                refIdsRaw.map((refId) => TransferOut.fromJson(refId)).toList();
+            if (temp.isEmpty) {
+              // Only clear and show dialog if no data
               selectedReferenceType = '';
-              errMsg = "No Unreceived Transfer, select 'Stock Arrival' to proceed with receiving";
-              showDialog(
+              errMsg =
+                  "No Unreceived Transfer, select 'Stock Arrival' to proceed with receiving";
+              // Remove the showDialog from here - will be handled in the UI
+            }
+            transferOuts = temp; // Always update transferOuts
+            _isLoading = false;
+          });
+
+          // Show dialog outside setState if needed
+          if (transferOuts.isEmpty) {
+            showDialog(
               context: context,
               builder: (BuildContext context) {
                 return DialogNotice(
@@ -261,13 +351,7 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                 );
               },
             );
-            }
-            //transferOuts = refIdsRaw.map((refId) => TransferOut.fromJson(refId)).toList();
-            _isLoading = false;
-          });
-          debugPrint('fetch API completed');
-        } else {
-          debugPrint('No transfer outs found in response');
+          }
         }
       } else {
         debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
@@ -277,11 +361,14 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
       }
     } catch (e) {
       debugPrint('Failed to fetch or parse refIds: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   Future<void> sortBrands() async {
-    debugPrint('SortTTTTTTTA');
     List items = [];
     if (selectedReferenceType == 'Transfer') {
       items = transferSkus;
@@ -299,7 +386,6 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
       }
 
       brandSku[brand]['rows']!.add(item);
-      debugPrint(brandSku[brand]['rows'].toString());
     }
   }
 
@@ -312,35 +398,57 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     return sb.toString();
   }
 
-  bool validatePayload() {
+  void validatePayload() {
     List<Sku> receivingSkusList =
         skus.where((sku) => sku.hasValidReceivedValues()).toList();
     List<Sku> nonReceivingSkusList =
         skus.where((sku) => sku.hasValidUnreceivedValues()).toList();
 
-    if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
-      StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
-      return true;
+    if (selectedReferenceType == 'Stock Arrival') {
+      if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
+        StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return DialogNotice(
+              title: 'Missing Information',
+              notice:
+                  'Please fill in the SKU quantity for Stock Arrival before proceeding.',
+            );
+          },
+        );
+      }
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Please make sure to fill at least one SKU.'),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-      return false;
+      StockTransferPayload();
     }
+  }
+
+  void StockTransferPayload() {
+    String typeId = 'tr';
+    String siteId = selectedSourceSite.id;
+    String type = 'transfer';
+    String refId = selectectedTransferOut.id;
+    String remark = this.remark;
+
+    String receiving = '''[
+    ${transferSkus.map((sku) => jsonEncode(sku.toPostJsonReceived())).join(',')}]''';
+
+    String nonReceiving = '''[
+    ${transferSkus.map((sku) => jsonEncode(sku.toPostJsonUnreceived())).join(',')}]''';
+
+    String payload = '''{
+    "type_id": "$typeId",
+    "site_id": "$siteId",
+    "type": "$type",
+    "ref_id": "$refId",
+    "remark": "$remark",
+    "receivingSkus": $receiving,
+    "nonReceivingSkus": $nonReceiving
+  }''';
+
+    createTransfer(payload);
+    debugPrint('Payload: $payload');
   }
 
   void StockArrivalPayload(
@@ -369,11 +477,11 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     "nonReceivingSkus": $nonReceivingSkus
   }''';
 
-    submitStockArrival(payload);
+    createTransfer(payload);
     debugPrint('Payload: $payload');
   }
 
-  Future<void> submitStockArrival(String payload) async {
+  Future<void> createTransfer(String payload) async {
     setState(() {
       _isLoading = true;
     });
@@ -397,14 +505,19 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
       );
 
       if (response.statusCode == 200) {
-        errMsg = 'Please enter remarks';
+        errMsg = 'You have successfully created transfer in';
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return DialogNotice(
-              title: 'Missing Information',
-              notice: errMsg,
+            return DialogActionSuccess(
+              title: 'Success!',
+              subtitle: errMsg,
             );
+          },
+        ).whenComplete(
+          () {
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppRoutes.homepage, (route) => false);
           },
         );
       } else {
@@ -449,11 +562,12 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                   onWillPop: () async {
                     bool willPop = false;
                     willPop = await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DialogConfirmation();
-                      },
-                    ) ?? false;
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DialogConfirmation();
+                          },
+                        ) ??
+                        false;
                     return willPop;
                   },
                   child: Padding(
@@ -462,96 +576,39 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                    text: 'Home ',
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.pop(context, false);
-                                        Navigator.pop(context, false);
-                                      },
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Poppins',
-                                      color: textColorTertiary,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                          text: '> ${titleCheck(TYPE)}',
-                                          recognizer: TapGestureRecognizer()
-                                            ..onTap = () {
-                                              Navigator.pop(context);
-                                            }),
-                                      TextSpan(
-                                          text: '> ${titleCheck(TITLE)}',
-                                          style: TextStyle(
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'Poppins',
-                                            color: textColorTertiary,
-                                          )),
-                                    ]),
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: biruImran,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0,
-                                    vertical: 8.0,
-                                  ),
-                                ),
-                                child: Text(
-                                  'Submit',
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                  text: 'Home ',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.pop(context, false);
+                                      Navigator.pop(context, false);
+                                    },
                                   style: TextStyle(
-                                    fontSize: 16.0,
+                                    fontSize: 24.0,
                                     fontWeight: FontWeight.w500,
-                                    color: white,
+                                    fontFamily: 'Poppins',
+                                    color: textColorTertiary,
                                   ),
-                                ),
-                                onPressed: () {
-                                  if (selectedReferenceType ==
-                                      'Stock Arrival') {
-                                    //parse to Stock Arrival Payload)
-                                    if (poId.isEmpty) {
-                                      errMsg = 'Please enter PO ID';
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return DialogNotice(
-                                            title: 'Missing Information',
-                                            notice: errMsg,
-                                          );
-                                        },
-                                      );
-                                    } else if (remark.isEmpty) {
-                                      errMsg = 'Please enter remarks';
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return DialogNotice(
-                                            title: 'Missing Information',
-                                            notice: errMsg,
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      validatePayload();
-                                    }
-                                  } else {
-                                    //parse to Transfer Payload
-                                    // TransferPayload();
-                                    debugPrint('Transfer Payload BOOM!');
-                                  }
-                                },
-                              ),
-                            ],
+                                  children: [
+                                    TextSpan(
+                                        text: '> ${titleCheck(TYPE)}',
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.pop(context);
+                                          }),
+                                    TextSpan(
+                                        text: '> ${titleCheck(TITLE)}',
+                                        style: TextStyle(
+                                          fontSize: 24.0,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Poppins',
+                                          color: textColorTertiary,
+                                        )),
+                                  ]),
+                            ),
                           ),
                         ),
                         Expanded(
@@ -826,27 +883,63 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                                             return InkWell(
                                               splashColor: white,
                                               onTap: () async {
-                                                if (selectedReferenceType ==
-                                                    '') {
-                                                  transferOuts.clear();
-                                                  brandSku.clear();
-                                                  transferSkus.clear();
-                                                  selectectedTransferOut
-                                                      .clear();
-                                                }
                                                 setState(() {
                                                   if (selectedReferenceType ==
                                                       types) {
+                                                    // Clear everything when deselecting
                                                     selectedReferenceType = '';
+                                                    transferOuts.clear();
+                                                    brandSku.clear();
+                                                    transferSkus.clear();
+                                                    selectectedTransferOut
+                                                        .clear();
+                                                    controllers
+                                                        .clear(); // Clear text controllers
                                                   } else {
+                                                    // Clear previous data before setting new type
+                                                    transferOuts.clear();
+                                                    brandSku.clear();
+                                                    transferSkus.clear();
+                                                    selectectedTransferOut
+                                                        .clear();
+                                                    controllers
+                                                        .clear(); // Clear text controllers
                                                     selectedReferenceType =
                                                         types;
+
+                                                    // Fetch data immediately based on new type
+                                                    if (types == 'Transfer') {
+                                                      fetchTransferOuts();
+                                                    } else if (types ==
+                                                        'Stock Arrival') {
+                                                      fetchSkus();
+                                                    }
                                                   }
                                                 });
 
                                                 debugPrint(
                                                     'types SELECT :: $selectedReferenceType');
                                               },
+                                              // onTap: () async {
+                                              //   if (selectedReferenceType =='') {
+                                              //     transferOuts.clear();
+                                              //     brandSku.clear();
+                                              //     transferSkus.clear();
+                                              //     selectectedTransferOut.clear();
+                                              //   }
+                                              //   setState(() {
+                                              //     if (selectedReferenceType ==
+                                              //         types) {
+                                              //       selectedReferenceType = '';
+                                              //     } else {
+                                              //       selectedReferenceType =
+                                              //           types;
+                                              //     }
+                                              //   });
+
+                                              //   debugPrint(
+                                              //       'types SELECT :: $selectedReferenceType');
+                                              // },
                                               child: Material(
                                                 elevation: 3,
                                                 borderRadius:
@@ -902,6 +995,119 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                             ),
                           ),
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            (selectedReferenceType == 'Transfer')
+                                ? ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: biruImran,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      isSwapped
+                                          ? 'Reset Table'
+                                          : 'No All SKU Condition Received',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: white,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      swapFreshWithUnreceived();
+                                    },
+                                  )
+                                : SizedBox.shrink(),
+                            SizedBox(width: 16),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: biruImran,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 8.0,
+                                ),
+                              ),
+                              child: Text(
+                                'Create Transfer In',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: white,
+                                ),
+                              ),
+                              onPressed: () {
+                                debugPrint('button pressed');
+                                if (selectedReferenceType == 'Stock Arrival') {
+                                  debugPrint('the type is stock arrival');
+                                  //parse to Stock Arrival Payload)
+                                  if (poId.isEmpty) {
+                                    errMsg = 'Please enter PO ID';
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DialogNotice(
+                                          title: 'Missing Information',
+                                          notice: errMsg,
+                                        );
+                                      },
+                                    );
+                                  } else if (remark.isEmpty) {
+                                    errMsg = 'Please enter remarks';
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DialogNotice(
+                                          title: 'Missing Information',
+                                          notice: errMsg,
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    validatePayload();
+                                  }
+                                } else {
+                                  //Transfer case
+                                  if (selectectedTransferOut.id == '') {
+                                    errMsg = 'Please select reference id';
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DialogNotice(
+                                          title: 'Missing Information',
+                                          notice: errMsg,
+                                        );
+                                      },
+                                    );
+                                  } else if (remark.isEmpty) {
+                                    errMsg = 'Please enter remarks';
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DialogNotice(
+                                          title: 'Missing Information',
+                                          notice: errMsg,
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    validatePayload();
+                                  }
+                                }
+                              },
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -1092,11 +1298,20 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
   }
 
   Widget qtyTextFieldTransfer(StockItem item, String field, String value) {
+    final String key = '${item.skuId}-$field';
+
+    if (!controllers.containsKey(item.skuId)) {
+      controllers[item.skuId] = {};
+    }
+    if (!controllers[item.skuId]!.containsKey(field)) {
+      controllers[item.skuId]![field] = TextEditingController(text: value);
+    }
+
     return Expanded(
       child: SizedBox(
         height: 40,
         child: TextFormField(
-          initialValue: value,
+          controller: controllers[item.skuId]![field],
           keyboardType: TextInputType.number,
           onChanged: (value) {
             setState(() {
@@ -1342,6 +1557,8 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
 
                               selectectedTransferOut.selected = false;
                               selectectedTransferOut.clear();
+                              transferSkus.clear();
+                              brandSku.clear();
                             });
                           },
                           child: Material(
@@ -1456,7 +1673,7 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
             return principalRowsTransfer(
                 brand: brand, name: name, items: items);
           }).toList(),
-        )
+        ),
       ],
     );
   }
@@ -1558,10 +1775,10 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
         return StockArrival();
       case 'Transfer':
         // Fetch SKUs only when Transfer is first selected
-        if (transferOuts.isEmpty) {
-          debugPrint('transferOuts is empty');
-          fetchTransferOuts();
-        }
+        // if (transferOuts.isEmpty) {
+        //   debugPrint('transferOuts is empty');
+        //   fetchTransferOuts();
+        // }
         return StockTransfer();
     }
 
