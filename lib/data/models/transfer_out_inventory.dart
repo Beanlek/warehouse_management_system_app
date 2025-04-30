@@ -23,7 +23,7 @@ class TOInventory {
     required this.shortCode,
     required this.name,
     required this.quantity,
-    this.quantityInput = const [0,0,0,0,0,0,0],
+    required this.quantityInput,
     required this.availableSkuConversion,
   });
 
@@ -51,6 +51,9 @@ class TOInventory {
       name : json['name'] ?? 'NA',
       quantity : List.from(quantityRaw),
       availableSkuConversion : List.from(availableSkuConversionRaw),
+
+      // ----FIXED UNTIL USER INPUT----
+      quantityInput : [0,0,0,0,0,0,0],
     );
   }
 
@@ -81,6 +84,8 @@ class TOInventory {
       name: other.name,
       quantity: other.quantity,
       availableSkuConversion: other.availableSkuConversion,
+      
+      quantityInput : [0,0,0,0,0,0,0],
     );
   }
 
@@ -95,7 +100,9 @@ class TOInventory {
     shortCode.isNotEmpty ||
     name.isNotEmpty ||
     quantity.isNotEmpty ||
-    availableSkuConversion.isNotEmpty;
+    availableSkuConversion.isNotEmpty ||
+
+    quantityInput != [0,0,0,0,0,0,0];
 
   bool get isEmpty => !isNotEmpty;
 }

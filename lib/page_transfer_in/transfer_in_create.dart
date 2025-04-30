@@ -453,7 +453,7 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                       builder: (BuildContext context) {
                         return DialogConfirmation();
                       },
-                    );
+                    ) ?? false;
                     return willPop;
                   },
                   child: Padding(

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/utils/utils.dart';
 
 class DialogDone extends StatelessWidget {
@@ -61,6 +62,70 @@ class DialogDone extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class DialogActionSuccess extends StatelessWidget {
+  DialogActionSuccess({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    this.buttonConfirmText = 'Okay',
+  });
+
+  final String title;
+  final String subtitle;
+  String buttonConfirmText;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return AlertDialog(
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: biruImran,
+              fontSize: 22.0,
+            ),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.normal,
+              color: black,
+              fontSize: 18.0,
+            ),
+          ),
+        ],
+      ),
+
+      actions: [
+        SizedBox(
+          width: 150,
+          child: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: hijauImran,
+            ),
+            child: Text(
+              buttonConfirmText,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

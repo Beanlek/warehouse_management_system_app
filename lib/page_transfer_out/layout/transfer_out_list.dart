@@ -13,7 +13,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/page_transfer_out/layout/transfer_out_create.dart';
-import 'package:warehouse/page_transfer_out/layout/transfer_out_detail.dart';
+// import 'package:warehouse/page_transfer_out/layout/transfer_out_detail.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
@@ -628,25 +628,31 @@ class _TransferOutListingState extends State<TransferOutListing> {
                     child: ListTile(
                       splashColor: white,
                       titleAlignment: ListTileTitleAlignment.titleHeight,
-                      onTap: () async { debugPrint(id);
-                        bool tempRefresh = false;
-                        tempRefresh = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TransferOutDetailView(
-                                transferOutId: id,
-                                status: status,
-                                createdAt: dateCreatedAt,
-                              ),
-                          ),
-                        );
-                        if (tempRefresh) {
-                          setState(() {
-                            transferOuts.clear();
-                            tempRefresh = false;
-                          });
-                          await fetchAPINew(_token);
-                        }
+                      onTap: () async {
+                        
+                        // TODO transfer out details
+                        
+                        // debugPrint(id);
+                        // bool tempRefresh = false;
+                        // tempRefresh = await Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => TransferOutDetailView(
+                        //         transferOutId: id,
+                        //         status: status,
+                        //         createdAt: dateCreatedAt,
+                        //       ),
+                        //   ),
+                        // );
+                        // if (tempRefresh) {
+                        //   setState(() {
+                        //     transferOuts.clear();
+                        //     tempRefresh = false;
+                        //   });
+                        //   await fetchAPINew(_token);
+                        // }
+
+                        
                       },
                       leading: CircleAvatar(
                         maxRadius: 10,

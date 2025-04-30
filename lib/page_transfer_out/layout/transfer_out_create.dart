@@ -219,7 +219,157 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
       }
 
       brandToInventory[brand]['rows']!.add(item);
+
+      if (brandToInventory[brand]['rows'].length == 1) {
+        debugPrint("IS IT THE SAME??? :: ${brandToInventory[brand]['rows'][0].toString()}");
+        debugPrint("IS IT THE SAME??? :: ${item.toString()}");
+      }
     }
+  }
+
+  Future<int> createTo() async {
+    var statusCode = 505;
+    final String? domainName = await TokenUtil.getDomainName();
+    final dio = Dio();
+
+    String url = '${domainName}/api/tin_tout/transfer_out/create';
+    debugPrint("URL??? :: ${url.toString()}");
+
+    const timeoutSec = 100;
+
+    const key_fromSiteId = 'from_site_id';
+    const key_toSiteId = 'to_site_id';
+    const key_remark = 'remark';
+    const key_skus = 'skus';
+    const key_skuId = 'sku_id';
+    const key_uomId = 'uom_id';
+    const key_quantity = 'quantity';
+
+    var skus = brandToInventory.values
+      .expand((e) => e['rows'].map(
+        (t) {
+          if (t.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString())) > 0) {
+            return {
+              key_skuId : t.skuId,
+              key_uomId : t.uomId,
+              key_quantity : [
+                int.parse(t.quantityInput[0].toString()),
+                int.parse(t.quantityInput[1].toString()),
+                int.parse(t.quantityInput[2].toString()),
+                int.parse(t.quantityInput[3].toString()),
+              ],
+            };
+          }
+        }
+      )).toList();
+
+    skus.removeWhere((t) => t == null);
+
+
+    var payload = {
+      key_fromSiteId : selectedSourceSite.id,
+      key_toSiteId : selectedDestinationSite.id,
+      key_remark : remarkController.text.trim(),
+      key_skus : skus,
+    };
+
+    // {
+    //   "from_site_id": "7X",
+    //   "to_site_id": "SB",
+    //   "remark": "remarknospaceworksplease",
+    //   "skus": [
+    //     {"sku_id": "CLIPPER", "uom_id": "PK", "quantity": [570, 0, 0, 0]},
+    //     {"sku_id": "FIXEDFLAME", "uom_id": "PK", "quantity": [0, 0, 0, 30]}
+    //   ]
+    // }
+
+    debugPrint('PAYLOAD??? :: ${payload}');
+    debugPrint('PAYLOAD SKUS??? :: ${skus}');
+    
+    try {
+      
+      await dio.post(
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }),
+
+        url,
+        data: payload
+
+      ).then((response) async {
+        statusCode = response.statusCode!;
+
+        if (statusCode == 200 || statusCode == 201) {
+          debugPrint("RESPONSE DATA :: ${response.data.toString()}");
+
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return DialogActionSuccess(
+                title: 'Success',
+                subtitle: 'Transfer Out successfully created.',
+              );
+            },
+          ).whenComplete(() {
+            Navigator.pushNamed(context, AppRoutes.homepage);
+          });
+
+        } else if(response.data == 'Forbidden') {
+
+          debugPrint('Failed to fetch API. Status code: ${response.statusCode}');
+          debugPrint('Error Body: ${response.data}');
+
+          FloatingSnackBar(
+              message: 'Token Expired. Please login back to the system.',
+              context: context);
+          
+          Navigator.pushNamed(context, AppRoutes.login);
+        } else {
+          debugPrint("${statusCode.toString()} :: ${response.data.toString()}");
+          errMsg = 'Failed to create Transfer Out. ${response.data.toString()}';
+
+          FloatingSnackBar(
+              message: 'Encountered an error. $errMsg', context: context);
+        }
+
+      }).timeout(Duration(seconds: timeoutSec));
+
+    } on TimeoutException {
+      debugPrint("ERROR TIMEOUT :: Action took a long time to run (${timeoutSec.toString()} seconds).");
+      errMsg = 'Failed to create Transfer Out. Action took a long time to run (${timeoutSec.toString()} seconds).';
+
+      FloatingSnackBar(
+          message: 'Encountered an error. $errMsg', context: context);
+
+    } on DioException catch (e) {
+      debugPrint("ERROR DIO STATUSCODE :: ${e.response!.statusCode.toString()}");
+      debugPrint("ERROR DIO :: ${e.response.toString()}");
+
+      statusCode = e.response!.statusCode ?? 505;
+      errMsg = e.response!.data['errMsg'] ?? 'Failed to create Transfer Out.';
+      
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DialogNotice(
+            title: 'Error',
+            notice: errMsg,
+          );
+        },
+      );
+      
+    } catch (e) {
+      debugPrint("ERROR CATCH :: ${e.toString()}");
+      errMsg = 'Failed to create Transfer Out. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: 'Encountered an error. $errMsg', context: context);
+
+    }
+
+    return statusCode;
   }
 
   // ---TABLE SKU----
@@ -242,7 +392,6 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
   }
 
   Widget _buildTableRow(TOInventory item) {
-    final quantities = item.quantity;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -251,15 +400,38 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
           bottom: BorderSide(color: Colors.grey[300]!),
         ),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(flex: 2, child: Text(item.shortCode)),
-          Expanded(flex: 2, child: Text(item.skuId)),
-          Expanded(flex: 1, child: Text(item.uomId)),
-          Expanded(flex: 2, child: Text('${quantities[0]}')),
-          Expanded(flex: 2, child: Text('${quantities[1]}')),
-          Expanded(flex: 2, child: Text('${quantities[2]}')),
-          Expanded(flex: 2, child: Text('${quantities[3]}')),
+          Row(
+            children: [
+              Expanded(flex: 2, child: Text(item.shortCode)),
+              Expanded(flex: 2, child: Text(item.skuId)),
+              Expanded(flex: 1, child: Text(item.uomId)),
+              Expanded(flex: 2, child: Text('${item.quantity[0]}')),
+              Expanded(flex: 2, child: Text('${item.quantity[1]}')),
+              Expanded(flex: 2, child: Text('${item.quantity[2]}')),
+              Expanded(flex: 2, child: Text('${item.quantity[3]}')),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(flex: 2, child: SizedBox()),
+              Expanded(flex: 2, child: SizedBox()),
+              Expanded(flex: 1, child: SizedBox()),
+              Expanded(flex: 2, child: Padding( padding: const EdgeInsets.only(right: 8.0),
+                child: qtyTextField(item, 'fresh', value: item.quantityInput[0].toString()),
+              )),
+              Expanded(flex: 2, child: Padding( padding: const EdgeInsets.only(right: 8.0),
+                child: qtyTextField(item, 'damaged', value: item.quantityInput[1].toString()),
+              )),
+              Expanded(flex: 2, child: Padding( padding: const EdgeInsets.only(right: 8.0),
+                child: qtyTextField(item, 'old', value: item.quantityInput[2].toString()),
+              )),
+              Expanded(flex: 2, child: Padding( padding: const EdgeInsets.only(right: 8.0),
+                child: qtyTextField(item, 'recalled', value: item.quantityInput[3].toString()),
+              )),
+            ],
+          ),
         ],
       ),
     );
@@ -276,6 +448,57 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
           const SizedBox(height: 8),
           ...itemList.map((item) => _buildTableRow(item)),
         ],
+      ),
+    );
+  }
+
+  Widget qtyTextField(TOInventory item, String field, {
+    required String value
+  }) {
+    return SizedBox(
+      height: 40,
+      child: TextFormField(
+        initialValue: value,
+        keyboardType: TextInputType.number,
+        onChanged: (value) {
+          setState(() {
+            int parsedValue = int.tryParse(value) ?? 0;
+            switch (field) {
+              case 'fresh':
+                item.quantityInput[0] = parsedValue;
+                break;
+              case 'damaged':
+                item.quantityInput[1] = parsedValue;
+                break;
+              case 'old':
+                item.quantityInput[2] = parsedValue;
+                break;
+              case 'recalled':
+                item.quantityInput[3] = parsedValue;
+            }
+            debugPrint('TOINVENTORY QUANTITY INPUT??? :: ${item.skuId}, $field: ${parsedValue.toString()}');
+            debugPrint('TOINVENTORY QUANTITY INPUT ALL??? :: ${item.quantityInput.toString()}');
+          });
+        },
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.blue,
+              width: 2,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -337,8 +560,8 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector( onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-        appBar: PreferredSize(
+      child: Scaffold(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(70),
         child: AppBar(
           centerTitle: true,
@@ -380,43 +603,113 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 20, top: 24.0, right: 20),
-                      child: RichText(
-                          text: TextSpan(
-                            text: 'Home ',
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: 'Home ',
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return DialogConfirmation(toHome: true,);
+                                    },
+                                  );
+                                },
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
+                                color: textColorTertiary,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: '> Transfer Out ',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogConfirmation();
+                                        },
+                                      );
+                                    },
+                                ),
+                                TextSpan(
+                                  text: '> Create',
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: biruImran,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
+                              ),
+                            ),
+                            child: Text(
+                              'Submit',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                                color: white,
+                              ),
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              var totalQuantity = brandToInventory.values
+                                .expand((e) => e["rows"])
+                                .fold(0, (total, data) => total + (data.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString()))) as int);
+                              
+                              debugPrint("TOTAL QUANTITY??? :: ${totalQuantity.toString()}");
+                              
+                              bool proceed = false;
+                              if (selectedSourceSite.isEmpty) {
+                                errMsg = 'Please select a source site.';
+                              } else if(selectedDestinationSite.isEmpty) {
+                                errMsg = 'Please select a destination site.';
+                              } else if(remarkController.text.isEmpty) {
+                                errMsg = 'Please enter remark.';
+                              } else if(totalQuantity <= 0) {
+                                errMsg = 'Please fill up at least one row.';
+                              } else {
+                                proceed = true;
+                              }
+
+                              if (proceed) {
+                                await createTo();
+                                debugPrint('Transfer Payload BOOM!');
+                                
+                              } else {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return DialogConfirmation(toHome: true,);
-                                  },
-                                );
-                              },
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                              color: textColorTertiary,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: '> Transfer Out ',
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogConfirmation();
-                                      },
+                                    return DialogNotice(
+                                      title: 'Missing Information',
+                                      notice: errMsg,
                                     );
                                   },
-                              ),
-                              TextSpan(
-                                text: '> Create',
-                              ),
-                            ],
+                                );
+
+                              }
+
+                              setState(() {
+                                isLoading = false;
+                              });
+                            },
                           ),
-                        ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -884,16 +1177,15 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                 )
                               ),
 
-                            //TODO SKU TABLE
+                            // SKU TABLE
                             if(selectedSourceSite.isNotEmpty)
                               // createSKUTable(itemList: brandToInventory["FLICKS"]["rows"]!, title: 'Inventory')
                               ExpansionPanelList.radio(
                                 children: brandToInventory.entries.map((inventory) {
                                   final brand = inventory.key;
                                   final name = inventory.value["name"];
-                                  final items = inventory.value["rows"];
                                   
-                                  return principalRows(brand: brand, name: name, items: items);
+                                  return principalRows(brand: brand, name: name, items: inventory.value["rows"]);
                                   
                                 }).toList(),
                               )
