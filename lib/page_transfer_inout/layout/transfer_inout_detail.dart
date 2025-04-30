@@ -25,13 +25,17 @@ class TransferInOutDetailView extends StatefulWidget {
     required this.transferId,
     required this.type,
     required this.status,
-    required this.createdAt
+    required this.createdAt,
+
+    this.doublePop = false,
   });
 
   final String transferId;
   final String type;
   final String status;
   final String createdAt;
+
+  final bool doublePop;
 
   @override
   State<TransferInOutDetailView> createState() => _TransferInOutDetailViewState();
@@ -164,6 +168,9 @@ class _TransferInOutDetailViewState extends State<TransferInOutDetailView> {
       
       else if (response.statusCode == 200) {
         debugPrint('at 200 : ${response.statusCode}');
+        if (widget.doublePop) {
+          Navigator.pop(context, true);
+        }
         Navigator.pop(context, true);
         FloatingSnackBar(
           message: '${reference_id} is acknowledged.',

@@ -56,4 +56,16 @@ class StockItem {
       ],
     };
   }
+
+  factory StockItem.from(StockItem other) {
+    return StockItem(
+      sequence: other.sequence,
+      skuId: other.skuId,
+      uomId: other.uomId,
+      quantity: other.quantity,
+      name: other.name,
+      principalName: other.principalName,
+      unreceivedQuantity: other.unreceivedQuantity,
+    );
+  }
 }

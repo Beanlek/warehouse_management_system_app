@@ -13,6 +13,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/page_transfer_out/layout/transfer_out_create.dart';
+import 'package:warehouse/page_transfer_out/layout/transfer_out_detail.dart';
 // import 'package:warehouse/page_transfer_out/layout/transfer_out_detail.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
@@ -36,6 +37,7 @@ class _TransferOutListingState extends State<TransferOutListing> {
     TIO_PARTIALLY_RECEIVED,
     TIO_IN_TRANSIT,
     TIO_PENDING_APPROVAL,
+    TIO_PENDING_WA_ACK,
   ];
 
   String selectedFilter = ALL;
@@ -595,8 +597,8 @@ class _TransferOutListingState extends State<TransferOutListing> {
     
     required String remark,
   }) {
-    DateTime dateTimeParsed = DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
-    String dateCreatedAt = _myFormat!.format(dateTimeParsed);
+    // DateTime dateTimeParsed = DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
+    // String dateCreatedAt = _myFormat!.format(dateTimeParsed);
 
     if (_currentPage != 0) {
       index = index + (20 * _currentPage);
@@ -629,30 +631,25 @@ class _TransferOutListingState extends State<TransferOutListing> {
                       splashColor: white,
                       titleAlignment: ListTileTitleAlignment.titleHeight,
                       onTap: () async {
-                        
-                        // TODO transfer out details
-                        
-                        // debugPrint(id);
-                        // bool tempRefresh = false;
-                        // tempRefresh = await Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => TransferOutDetailView(
-                        //         transferOutId: id,
-                        //         status: status,
-                        //         createdAt: dateCreatedAt,
-                        //       ),
-                        //   ),
-                        // );
-                        // if (tempRefresh) {
-                        //   setState(() {
-                        //     transferOuts.clear();
-                        //     tempRefresh = false;
-                        //   });
-                        //   await fetchAPINew(_token);
-                        // }
-
-                        
+                        debugPrint(id);
+                        bool tempRefresh = false;
+                        tempRefresh = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TransferOutDetailView(
+                              id: id,
+                              status: status,
+                              createdAt: createdAt,
+                            ),
+                          ),
+                        ) ?? false;
+                        if (tempRefresh) {
+                          setState(() {
+                            transferOuts.clear();
+                            tempRefresh = false;
+                          });
+                          await fetchAPINew(_token);
+                        }
                       },
                       leading: CircleAvatar(
                         maxRadius: 10,
@@ -733,25 +730,39 @@ class _TransferOutListingState extends State<TransferOutListing> {
                                   fontSize: 18.0,
                                 ),
                               ),
-                              RichText(
-                                textAlign: TextAlign.end,
-                                text: TextSpan(
-                                    text: 'Created At\n',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      color: black,
-                                      fontSize: 15.0,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: dateCreatedAt,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  RichText(
+                                    textAlign: TextAlign.end,
+                                    text: TextSpan(
+                                        text: 'Created At\n',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          color: black,
                                           fontSize: 15.0,
                                         ),
+                                        children: [
+                                          TextSpan(
+                                            text: date,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15.0,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
                                   ),
+                                  AutoSizeText(
+                                    'Created by: $createdBy',
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: black,
+                                      fontSize: 14.0,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

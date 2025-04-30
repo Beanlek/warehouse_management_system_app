@@ -13,10 +13,11 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:warehouse/page_transfer_in/layout/transfer_in_detail.dart';
-import 'package:warehouse/page_transfer_in/transfer_in_create.dart';
+import 'package:warehouse/page_transfer_in/layout/transfer_in_create.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
+import 'package:warehouse/widgets/global_dialog.dart';
 
 const String TYPE = TRANSFER_IN;
 
@@ -379,10 +380,9 @@ class _TransferInListingState extends State<TransferInListing> {
                       controller: _paginatorController,
                       numberPages: _numPages,
                       onPageChange: (index) async {
-                        setState(() {
-                          transferIns.clear();
-                          _currentPage = index;
-                        });
+                        transferIns.clear();
+                        _currentPage = index;
+                        
                         await fetchAPI(_token);
                       },
                       config: NumberPaginatorUIConfig(
@@ -630,43 +630,57 @@ class _TransferInListingState extends State<TransferInListing> {
                       titleAlignment: ListTileTitleAlignment.titleHeight,
                       onTap: () async {
                         debugPrint('Status: $status');
-                        bool tempRefresh = false;
 
-                        if (status.toLowerCase() == 'in transit') {
-                          // Navigate to different page for in transit items
-                          tempRefresh = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransferInCreateView(
-                                site: siteId,
-                                type: type.capitalize(),
-                                refId: refId,
-                                remark: comment,
-                              ),
-                            ),
-                          ) ?? false;
+                        if (status == TIO_PENDING_APPROVAL) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogNotice(
+                                title: 'Require HQAdmin Approval first',
+                                notice: "Please request approval from HQAdmin for ${transferInId}",
+                              );
+                            },
+                          );
                         } else {
-                          // Regular detail view for other statuses
-                          tempRefresh = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TransferInDetailView(
-                                createdAt: createdAt,
-                                transferInId: transferInId,
-                                status: status,
-                                tid: tid,
-                                type: type,
-                              ),
-                            ),
-                          ) ?? false;
-                        }
+                          bool tempRefresh = false;
 
-                        if (tempRefresh) {
-                          setState(() {
-                            transferIns.clear();
-                            tempRefresh = false;
-                          });
-                          await fetchAPI(_token);
+                          if (status.toLowerCase() == 'in transit') {
+                            // Navigate to different page for in transit items
+                            tempRefresh = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TransferInCreateView(
+                                  site: siteId,
+                                  type: type.capitalize(),
+                                  refId: refId,
+                                  remark: comment,
+                                ),
+                              ),
+                            ) ?? false;
+                          } else {
+                            // Regular detail view for other statuses
+                            tempRefresh = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TransferInDetailView(
+                                  createdAt: createdAt,
+                                  transferInId: transferInId,
+                                  status: status,
+                                  tid: tid,
+                                  type: type,
+                                ),
+                              ),
+                            ) ?? false;
+                          }
+
+                          if (tempRefresh) {
+                            setState(() {
+                              transferIns.clear();
+                              tempRefresh = false;
+                            });
+                            await fetchAPI(_token);
+                          }
+
                         }
                       },
                       // onTap: () async {
@@ -740,10 +754,9 @@ class _TransferInListingState extends State<TransferInListing> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AutoSizeText(
-                                type,
+                                type.capitalize(),
                                 maxLines: 1,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.normal,

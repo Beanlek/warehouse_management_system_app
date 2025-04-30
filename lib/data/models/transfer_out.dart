@@ -3,6 +3,7 @@ class TransferOut {
   String date;
   String status;
   String fromSiteId;
+  String toSiteId;
   String createdBy;
   String createdAt;
   String remark;
@@ -13,6 +14,7 @@ class TransferOut {
     required this.date,
     required this.status,
     required this.fromSiteId,
+    required this.toSiteId,
     required this.createdBy,
     required this.createdAt,
     required this.remark,
@@ -25,6 +27,7 @@ class TransferOut {
       date: json['date'] ?? '',
       status: json['status'] ?? '',
       fromSiteId: json['from_site_id'] ?? '',
+      toSiteId: json['to_site_id'] ?? '',
       createdBy: json['created_by'] ?? '',
       createdAt: json['created_at'] ?? '',
       remark: json['remark'] ?? '',
@@ -36,6 +39,7 @@ class TransferOut {
     date = '';
     status = '';
     fromSiteId = '';
+    toSiteId = '';
     createdBy = '';
     createdAt = '';
     remark = '';
@@ -48,6 +52,7 @@ class TransferOut {
       date: other.date,
       status: other.status,
       fromSiteId: other.fromSiteId,
+      toSiteId: other.toSiteId,
       createdBy: other.createdBy,
       createdAt: other.createdAt,
       remark: other.remark,

@@ -21,6 +21,7 @@ dependencies:
   fan_carousel_image_slider: ^1.0.1
   floating_snackbar: ^1.0.3+1
   two_dimensional_scrollables: ^0.3.3
+  font_awesome_flutter: ^10.7.0
 
   flutter:
     sdk: flutter

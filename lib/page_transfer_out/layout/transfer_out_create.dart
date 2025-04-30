@@ -128,9 +128,20 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
           
           final List<Map<String,dynamic>> inventoryRaw = List.from(response.data['inventory'] as List);
 
-          toInventory = inventoryRaw.map((sku) => TOInventory.fromJson(sku) ).toList();
+          toInventory = inventoryRaw.take(20).map((sku) {
+            final inv = TOInventory.fromJson(sku);
+            if (inv.quantity.reduce((a,b) => int.parse(a.toString()) + int.parse(b.toString())) > 0 ) {
+              return inv;
+              
+            } else {
+              inv.clear();
+              return inv;
+            }
+          } ).toList();
 
-          debugPrint('fetch API completed');
+          toInventory.removeWhere((t) => t.isEmpty);
+
+          debugPrint('COMPLETE :: ${toInventory.toString()}');
 
         } else if(statusCode == 404) {
 
@@ -220,10 +231,10 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
 
       brandToInventory[brand]['rows']!.add(item);
 
-      if (brandToInventory[brand]['rows'].length == 1) {
-        debugPrint("IS IT THE SAME??? :: ${brandToInventory[brand]['rows'][0].toString()}");
-        debugPrint("IS IT THE SAME??? :: ${item.toString()}");
-      }
+      // if (brandToInventory[brand]['rows'].length == 1) {
+      //   debugPrint("IS IT THE SAME??? :: ${brandToInventory[brand]['rows'][0].toString()}");
+      //   debugPrint("IS IT THE SAME??? :: ${item.toString()}");
+      // }
     }
   }
 
@@ -603,112 +614,42 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 20, top: 24.0, right: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: 'Home ',
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Home ',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DialogConfirmation(toHome: true,);
+                                },
+                              );
+                            },
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                            color: textColorTertiary,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: '> Transfer Out ',
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return DialogConfirmation(toHome: true,);
+                                      return DialogConfirmation();
                                     },
                                   );
                                 },
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                                color: textColorTertiary,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: '> Transfer Out ',
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return DialogConfirmation();
-                                        },
-                                      );
-                                    },
-                                ),
-                                TextSpan(
-                                  text: '> Create',
-                                ),
-                              ],
                             ),
-                          ),
-
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: biruImran,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
-                              ),
+                            TextSpan(
+                              text: '> Create',
                             ),
-                            child: Text(
-                              'Submit',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w500,
-                                color: white,
-                              ),
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              var totalQuantity = brandToInventory.values
-                                .expand((e) => e["rows"])
-                                .fold(0, (total, data) => total + (data.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString()))) as int);
-                              
-                              debugPrint("TOTAL QUANTITY??? :: ${totalQuantity.toString()}");
-                              
-                              bool proceed = false;
-                              if (selectedSourceSite.isEmpty) {
-                                errMsg = 'Please select a source site.';
-                              } else if(selectedDestinationSite.isEmpty) {
-                                errMsg = 'Please select a destination site.';
-                              } else if(remarkController.text.isEmpty) {
-                                errMsg = 'Please enter remark.';
-                              } else if(totalQuantity <= 0) {
-                                errMsg = 'Please fill up at least one row.';
-                              } else {
-                                proceed = true;
-                              }
-
-                              if (proceed) {
-                                await createTo();
-                                debugPrint('Transfer Payload BOOM!');
-                                
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return DialogNotice(
-                                      title: 'Missing Information',
-                                      notice: errMsg,
-                                    );
-                                  },
-                                );
-
-                              }
-
-                              setState(() {
-                                isLoading = false;
-                              });
-                            },
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -1193,7 +1134,75 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                         ),
                       )
                     )
-                  )
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: biruImran,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                      ),
+                      child: Text(
+                        'Create Transfer Out',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: white,
+                        ),
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        var totalQuantity = brandToInventory.values
+                          .expand((e) => e["rows"])
+                          .fold(0, (total, data) => total + (data.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString()))) as int);
+                        
+                        debugPrint("TOTAL QUANTITY??? :: ${totalQuantity.toString()}");
+                        
+                        bool proceed = false;
+                        if (selectedSourceSite.isEmpty) {
+                          errMsg = 'Please select a source site.';
+                        } else if(selectedDestinationSite.isEmpty) {
+                          errMsg = 'Please select a destination site.';
+                        } else if(remarkController.text.isEmpty) {
+                          errMsg = 'Please enter remark.';
+                        } else if(totalQuantity <= 0) {
+                          errMsg = 'Please fill up at least one row.';
+                        } else {
+                          proceed = true;
+                        }
+                    
+                        if (proceed) {
+                          await createTo();
+                          debugPrint('Transfer Payload BOOM!');
+                          
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogNotice(
+                                title: 'Missing Information',
+                                notice: errMsg,
+                              );
+                            },
+                          );
+                    
+                        }
+                    
+                        setState(() {
+                          isLoading = false;
+                        });
+                      },
+                    ),
+                  ),
                   
                   
                   
@@ -1215,7 +1224,8 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
       ),
 
       // floatingActionButton: FloatingActionButton(onPressed: () {
-      //   debugPrint("TOINVENTORY LENGTH :: ${toInventory.length.toString()}");
+      //   debugPrint("TOINVENTORY ??? :: ${toInventory[20].toString()}");
+      //   debugPrint("TOINVENTORY ??? :: ${toInventory[20].isEmpty.toString()}");
       // }),
       
       ));

@@ -3,10 +3,12 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import 'package:warehouse/routes/routes.dart';
@@ -72,7 +74,7 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
             return AlertDialog(
               title: Text('Pending Acknowledgement'),
               content: Text(
-                  'You can acknowledge this transfer in Transfer In/Out Acknowledgement screen.\n Do you want to proceed?'),
+                  'You can acknowledge ${widget.transferInId} Transfer In/Out Acknowledgement screen.\n Do you want to proceed?'),
               actions: [
                 TextButton(
                   child: Text('No', style: TextStyle(color: Colors.grey)),
@@ -88,10 +90,12 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => TransferInOutDetailView(
-                                type: widget.type,
+                                type: TYPE,
                                 createdAt: widget.createdAt,
                                 status: widget.status,
                                 transferId: widget.tid,
+                          
+                                doublePop: true
                               )),
                     );
                   },
@@ -255,6 +259,66 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
                         ),
                       ),
                     ),
+
+                    if(widget.status == TIO_PENDING_WA_ACK)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 12.0),
+                        child: InkWell(
+                          onTap:() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TransferInOutDetailView(
+                                  transferId: widget.transferInId,
+                                  type: TYPE,
+                                  
+                                  status: widget.status,
+                                  createdAt: widget.createdAt,
+                          
+                                  doublePop: true
+                                )
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                            color: biruImran2, borderRadius: BorderRadius.circular(24)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Icon(
+                                      FontAwesomeIcons.info,
+                                      color: whiteColor,
+                                    )
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: AutoSizeText(
+                                      "Acknowledge ${widget.transferInId} Transfer In/Out Acknowledgement screen.",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: whiteColor),
+                                      minFontSize: 1,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Icon(
+                                      FontAwesomeIcons.arrowRight,
+                                      color: whiteColor,
+                                    )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    
                     createDetailsTable(
                       transferInData?.id ?? '',
                       transferInData?.siteId ?? '',

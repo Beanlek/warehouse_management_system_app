@@ -14,5 +14,6 @@ analyzer:
     must_be_immutable: ignore
     file_names: ignore
     curly_braces_in_flow_control_structures: ignore
+    avoid_function_literals_in_foreach_calls: ignore
 
 include: package:flutter_lints/flutter.yaml

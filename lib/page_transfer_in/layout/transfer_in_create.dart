@@ -19,9 +19,9 @@ import 'package:http/http.dart' as http;
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
 
-import '../data/models/transfer_out.dart';
-import '../data/models/warehouse.dart';
-import '../widgets/global_dialog.dart';
+import '../../data/models/transfer_out.dart';
+import '../../data/models/warehouse.dart';
+import '../../widgets/global_dialog.dart';
 
 const String TYPE = TRANSFER_IN;
 const String TITLE = TRANSFER_IN_CREATE;
@@ -53,6 +53,7 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     date: '',
     status: '',
     fromSiteId: '',
+    toSiteId: '',
     createdBy: '',
     createdAt: '',
     remark: '',
@@ -277,12 +278,12 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
         if (json['skus'] != null) {
           final List<dynamic> skusRaw = json['skus'] as List;
           setState(() {
-            //TODO: remember to remove the take(10) when you want to show all skus
+            //remember to remove the take(10) when you want to show all skus
             skus = skusRaw
-                .where((sku) =>
-                    sku['principalname'] == 'BIKA' ||
-                    sku['principalname'] == 'ZUS' ||
-                    sku['principalname'] == 'CARABAO')
+                // .where((sku) =>
+                //     sku['principalname'] == 'BIKA' ||
+                //     sku['principalname'] == 'ZUS' ||
+                //     sku['principalname'] == 'CARABAO')
                 .map((sku) => Sku.fromJson(sku))
                 .toList();
             sortBrands();
@@ -995,118 +996,121 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            (selectedReferenceType == 'Transfer')
-                                ? ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: biruImran,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              (selectedReferenceType == 'Transfer')
+                                  ? ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: biruImran,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                          vertical: 8.0,
+                                        ),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0,
-                                        vertical: 8.0,
+                                      child: Text(
+                                        isSwapped
+                                            ? 'Reset Table'
+                                            : 'No All SKU Condition Received',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: white,
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      isSwapped
-                                          ? 'Reset Table'
-                                          : 'No All SKU Condition Received',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: white,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      swapFreshWithUnreceived();
-                                    },
-                                  )
-                                : SizedBox.shrink(),
-                            SizedBox(width: 16),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: biruImran,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 8.0,
-                                ),
-                              ),
-                              child: Text(
-                                'Create Transfer In',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: white,
-                                ),
-                              ),
-                              onPressed: () {
-                                debugPrint('button pressed');
-                                if (selectedReferenceType == 'Stock Arrival') {
-                                  debugPrint('the type is stock arrival');
-                                  //parse to Stock Arrival Payload)
-                                  if (poId.isEmpty) {
-                                    errMsg = 'Please enter PO ID';
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogNotice(
-                                          title: 'Missing Information',
-                                          notice: errMsg,
-                                        );
+                                      onPressed: () {
+                                        swapFreshWithUnreceived();
                                       },
-                                    );
-                                  } else if (remark.isEmpty) {
-                                    errMsg = 'Please enter remarks';
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogNotice(
-                                          title: 'Missing Information',
-                                          notice: errMsg,
-                                        );
-                                      },
-                                    );
+                                    )
+                                  : SizedBox.shrink(),
+                              SizedBox(width: 16),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: biruImran,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 8.0,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Create Transfer In',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: white,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  debugPrint('button pressed');
+                                  if (selectedReferenceType == 'Stock Arrival') {
+                                    debugPrint('the type is stock arrival');
+                                    //parse to Stock Arrival Payload)
+                                    if (poId.isEmpty) {
+                                      errMsg = 'Please enter PO ID';
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogNotice(
+                                            title: 'Missing Information',
+                                            notice: errMsg,
+                                          );
+                                        },
+                                      );
+                                    } else if (remark.isEmpty) {
+                                      errMsg = 'Please enter remarks';
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogNotice(
+                                            title: 'Missing Information',
+                                            notice: errMsg,
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      validatePayload();
+                                    }
                                   } else {
-                                    validatePayload();
+                                    //Transfer case
+                                    if (selectectedTransferOut.id == '') {
+                                      errMsg = 'Please select reference id';
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogNotice(
+                                            title: 'Missing Information',
+                                            notice: errMsg,
+                                          );
+                                        },
+                                      );
+                                    } else if (remark.isEmpty) {
+                                      errMsg = 'Please enter remarks';
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogNotice(
+                                            title: 'Missing Information',
+                                            notice: errMsg,
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      validatePayload();
+                                    }
                                   }
-                                } else {
-                                  //Transfer case
-                                  if (selectectedTransferOut.id == '') {
-                                    errMsg = 'Please select reference id';
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogNotice(
-                                          title: 'Missing Information',
-                                          notice: errMsg,
-                                        );
-                                      },
-                                    );
-                                  } else if (remark.isEmpty) {
-                                    errMsg = 'Please enter remarks';
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogNotice(
-                                          title: 'Missing Information',
-                                          notice: errMsg,
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    validatePayload();
-                                  }
-                                }
-                              },
-                            )
-                          ],
+                                },
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -1298,7 +1302,7 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
   }
 
   Widget qtyTextFieldTransfer(StockItem item, String field, String value) {
-    final String key = '${item.skuId}-$field';
+    // final String key = '${item.skuId}-$field';
 
     if (!controllers.containsKey(item.skuId)) {
       controllers[item.skuId] = {};

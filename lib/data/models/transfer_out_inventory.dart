@@ -63,12 +63,37 @@ class TOInventory {
     subCategory = '';
     skuId = '';
     skuName = '';
-    sequence = -1;
     uomId = '';
     shortCode = '';
     name = '';
-    quantity = [];
-    availableSkuConversion = [];
+
+    sequence = -1;
+
+    quantity.clear();
+    availableSkuConversion.clear();
+
+    quantityInput = [0,0,0,0,0,0,0];
+  }
+
+  @override
+  String toString() {
+    return '''
+      brand = ${brand.toString()}
+      category = ${category.toString()}
+      subCategory = ${subCategory.toString()}
+      skuId = ${skuId.toString()}
+      skuName = ${skuName.toString()}
+      uomId = ${uomId.toString()}
+      shortCode = ${shortCode.toString()}
+      name = ${name.toString()}
+
+      sequence = ${sequence.toString()}
+
+      quantity = ${quantity.toString()}
+      availableSkuConversion = ${availableSkuConversion.toString()}
+
+      quantityInput = ${quantityInput.toString()}
+    ''';
   }
 
   factory TOInventory.from(TOInventory other) {
@@ -90,19 +115,33 @@ class TOInventory {
   }
 
   bool get isNotEmpty =>
-    brand.isNotEmpty ||
-    category.isNotEmpty ||
-    subCategory.isNotEmpty ||
-    skuId.isNotEmpty ||
-    skuName.isNotEmpty ||
+    (
+      brand.isNotEmpty ||
+      category.isNotEmpty ||
+      subCategory.isNotEmpty ||
+      skuId.isNotEmpty ||
+      skuName.isNotEmpty ||
+      uomId.isNotEmpty ||
+      shortCode.isNotEmpty ||
+      name.isNotEmpty 
+    ) ||
+    (
+      brand != '' ||
+      category != '' ||
+      subCategory != '' ||
+      skuId != '' ||
+      skuName != '' ||
+      uomId != '' ||
+      shortCode != '' ||
+      name != ''
+    ) ||
+    
     sequence >= 0 ||
-    uomId.isNotEmpty ||
-    shortCode.isNotEmpty ||
-    name.isNotEmpty ||
+
     quantity.isNotEmpty ||
     availableSkuConversion.isNotEmpty ||
 
-    quantityInput != [0,0,0,0,0,0,0];
+    quantityInput == [0,0,0,0,0,0,0];
 
   bool get isEmpty => !isNotEmpty;
 }
