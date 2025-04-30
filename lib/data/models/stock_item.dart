@@ -3,12 +3,18 @@ class StockItem {
   final String skuId;
   final String uomId;
   final List<int> quantity;
+  String name;
+  String principalName;
+  List<int> unreceivedQuantity;
 
   StockItem({
     required this.sequence,
     required this.skuId,
     required this.uomId,
     required this.quantity,
+    this.name = '',
+    this.principalName = '',
+    required this.unreceivedQuantity,
   });
 
   factory StockItem.fromJson(Map<String, dynamic> json) {
@@ -17,6 +23,9 @@ class StockItem {
       skuId: json['sku_id'] ?? '',
       uomId: json['uom_id'] ?? '',
       quantity: List<int>.from(json['quantity'] ?? []),
+      name: json['name'] ?? '',
+      principalName: json['principalname'] ?? '',
+      unreceivedQuantity: [0,0,0,0]
     );
   }
 }

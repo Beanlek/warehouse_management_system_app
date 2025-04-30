@@ -49,7 +49,7 @@ class _TransferInListingState extends State<TransferInListing> {
   void initState() {
     super.initState();
     selectedFilter = filters.values.first;
-    _myFormat = DateFormat('dd-MM-yyyy').add_Hms();
+    _myFormat = DateFormat('dd-MM-yyyy');
     stringDate = the_date_format.format(currentDate);
 
     _getToken();
@@ -595,7 +595,7 @@ class _TransferInListingState extends State<TransferInListing> {
     String? comment,
   ) {
     DateTime dateTimeParsed =
-        DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
+        DateTime.parse(createdAt);
     String dateCreatedAt = _myFormat!.format(dateTimeParsed);
 
     if (_currentPage != 0) {
