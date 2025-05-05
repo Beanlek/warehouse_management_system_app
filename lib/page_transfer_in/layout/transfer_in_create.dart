@@ -45,6 +45,8 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
   List<Warehouse> sourceSitesWarehouse = [];
 
   bool isSwapped = false;
+  
+  bool _skusInitialized = false;
 
   List<String> refrerenceTypes = ['Stock Arrival', 'Transfer'];
   Warehouse selectedSourceSite = Warehouse(id: '', name: '');
@@ -258,6 +260,7 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
   }
 
   Future<void> fetchSkus() async {
+    debugPrint('FETCH SKUS CALLED!');
     setState(() {
       _isLoading = true;
     });
@@ -277,18 +280,31 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
         final json = jsonDecode(response.body);
         if (json['skus'] != null) {
           final List<dynamic> skusRaw = json['skus'] as List;
-          setState(() {
-            //remember to remove the take(10) when you want to show all skus
-            skus = skusRaw
-                // .where((sku) =>
-                //     sku['principalname'] == 'BIKA' ||
-                //     sku['principalname'] == 'ZUS' ||
-                //     sku['principalname'] == 'CARABAO')
-                .map((sku) => Sku.fromJson(sku))
-                .toList();
-            sortBrands();
-            _isLoading = false;
-          });
+
+            // Then in fetchSkus():
+            if (!_skusInitialized) {
+              setState(() {
+                skus = skusRaw
+                  .map((sku) => Sku.fromJson(sku))
+                  .toList();
+                sortBrands();
+                _skusInitialized = true;
+                _isLoading = false;
+              });
+            }
+          // setState(() {
+          //   //remember to remove the take(10) when you want to show all skus
+          //   skus = skusRaw
+          //   //TODO: REMOVE THIS!!
+          //       .where((sku) =>
+          //           sku['principalname'] == 'BIKA' ||
+          //           sku['principalname'] == 'ZUS' ||
+          //           sku['principalname'] == 'CARABAO')
+          //       .map((sku) => Sku.fromJson(sku))
+          //       .toList();
+          //   sortBrands();
+          //   _isLoading = false;
+          // });
           debugPrint('fetch API completed');
         } else {
           debugPrint('No SKUs found in response');
@@ -399,31 +415,132 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     return sb.toString();
   }
 
-  void validatePayload() {
-    List<Sku> receivingSkusList =
-        skus.where((sku) => sku.hasValidReceivedValues()).toList();
-    List<Sku> nonReceivingSkusList =
-        skus.where((sku) => sku.hasValidUnreceivedValues()).toList();
+  // void validatePayload() {
+  //   List<Sku> receivingSkusList =
+  //       skus.where((sku) => sku.hasValidReceivedValues()).toList();
+  //   List<Sku> nonReceivingSkusList =
+  //       skus.where((sku) => sku.hasValidUnreceivedValues()).toList();
 
-    if (selectedReferenceType == 'Stock Arrival') {
-      if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
-        StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return DialogNotice(
-              title: 'Missing Information',
-              notice:
-                  'Please fill in the SKU quantity for Stock Arrival before proceeding.',
-            );
-          },
-        );
-      }
+  //   if (selectedReferenceType == 'Stock Arrival') {
+  //     if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
+  //       StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
+  //     } else {
+  //       showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return DialogNotice(
+  //             title: 'Missing Information',
+  //             notice:
+  //                 'Please fill in the SKU quantity for Stock Arrival before proceeding.',
+  //           );
+  //         },
+  //       );
+  //     }
+  //   } else {
+  //     StockTransferPayload();
+  //   }
+  // }
+
+//   
+// bool validatePayload() {
+//     List<Sku> receivingSkusList =
+//       skus.where((sku) => sku.hasValidReceivedValues()).toList();
+//   List<Sku> nonReceivingSkusList =
+//       skus.where((sku) => sku.hasValidUnreceivedValues()).toList();
+
+//   if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
+//     StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
+//     return true;
+//     }
+//     else{
+//       showDialog(
+//         context: context,
+//         builder: (BuildContext context) {
+//           return AlertDialog(
+//             title: Text('Error'),
+//             content: Text('Please make sure to fill at least one SKU.'),
+//             actions: [
+//               TextButton(
+//                 child: Text('OK'),
+//                 onPressed: () {
+//                   Navigator.of(context).pop();
+//                 },
+//               ),
+//             ],
+//           );
+//         },
+//       );
+//      return false; 
+//     }
+//   }
+
+bool validatePayload() {
+  debugPrint('\n=== Starting Payload Validation ===');
+  debugPrint('Reference Type: $selectedReferenceType');
+
+  if (selectedReferenceType == 'Stock Arrival') {
+    List<Sku> receivingSkusList = skus.where((sku) {
+      bool isValid = sku.hasValidReceivedValues();
+      debugPrint('''
+SKU ${sku.skuId} receiving validation:
+  fresh: ${sku.fresh}
+  damaged: ${sku.damaged}
+  old: ${sku.old}
+  recalled: ${sku.recalled}
+  isValid: $isValid
+''');
+      return isValid;
+    }).toList();
+
+    List<Sku> nonReceivingSkusList = skus.where((sku) {
+      bool isValid = sku.hasValidUnreceivedValues();
+      debugPrint('''
+SKU ${sku.skuId} unreceived validation:
+  unreceived: ${sku.unreceived}
+  isValid: $isValid
+''');
+      return isValid;
+    }).toList();
+
+    debugPrint('''
+Validation Results:
+  Total SKUs: ${skus.length}
+  Valid Receiving SKUs: ${receivingSkusList.length}
+  Valid Non-receiving SKUs: ${nonReceivingSkusList.length}
+''');
+
+    if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
+      debugPrint('Validation successful - Processing payload');
+      StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
+      return true;
     } else {
-      StockTransferPayload();
+      debugPrint('Validation failed - No valid SKUs found');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Please make sure to fill at least one SKU.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return false;
     }
+  } else {
+    debugPrint('Processing Transfer payload');
+    StockTransferPayload();
+    return true;
   }
+}
+
 
   void StockTransferPayload() {
     String typeId = 'tr';
@@ -452,23 +569,51 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     debugPrint('Payload: $payload');
   }
 
-  void StockArrivalPayload(
-      List<Sku> receivingSkusList, List<Sku> nonReceivingSkusList) {
-    String typeId = 'ad';
-    String siteId = selectedSourceSite.id;
-    String type = 'stock arrival';
-    String refId = poId;
-    String remark = this.remark;
+  // void StockArrivalPayload(
+  //     List<Sku> receivingSkusList, List<Sku> nonReceivingSkusList) {
+  //   String typeId = 'ad';
+  //   String siteId = selectedSourceSite.id;
+  //   String type = 'stock arrival';
+  //   String refId = poId;
+  //   String remark = this.remark;
 
-    String receivingSkus = receivingSkusList.isNotEmpty
-        ? '[${receivingSkusList.map((sku) => jsonEncode(sku.toPostJsonReceived())).join(',')}]'
-        : '[]'; // Ensure to create an empty array if no valid receiving SKUs
+  //   String receivingSkus = receivingSkusList.isNotEmpty
+  //       ? '[${receivingSkusList.map((sku) => jsonEncode(sku.toPostJsonReceived())).join(',')}]'
+  //       : '[]'; // Ensure to create an empty array if no valid receiving SKUs
 
-    String nonReceivingSkus = nonReceivingSkusList.isNotEmpty
-        ? '[${nonReceivingSkusList.map((sku) => jsonEncode(sku.toPostJsonUnreceived())).join(',')}]'
-        : '[]'; // Ensure to create an empty array if no non-receiving SKUs
+  //   String nonReceivingSkus = nonReceivingSkusList.isNotEmpty
+  //       ? '[${nonReceivingSkusList.map((sku) => jsonEncode(sku.toPostJsonUnreceived())).join(',')}]'
+  //       : '[]'; // Ensure to create an empty array if no non-receiving SKUs
 
-    String payload = '''{
+  //   String payload = '''{
+  //   "type_id": "$typeId",
+  //   "site_id": "$siteId",
+  //   "type": "$type",
+  //   "ref_id": "$refId",
+  //   "remark": "$remark",
+  //   "receivingSkus": $receivingSkus,
+  //   "nonReceivingSkus": $nonReceivingSkus
+  // }''';
+
+  //   createTransfer(payload);
+  //   debugPrint('Payload: $payload');
+  // }
+  void StockArrivalPayload(List<Sku> receivingSkusList, List<Sku> nonReceivingSkusList) {
+  String typeId = 'ad';
+  String siteId = selectedSourceSite.id;
+  String type = 'stock arrival';
+  String refId = poId;
+  String remark = this.remark;
+
+  String receivingSkus = receivingSkusList.isNotEmpty
+      ? '[${receivingSkusList.map((sku) => jsonEncode(sku.toPostJsonReceived())).join(',')}]'
+      : '[]';
+
+  String nonReceivingSkus = nonReceivingSkusList.isNotEmpty
+      ? '[${nonReceivingSkusList.map((sku) => jsonEncode(sku.toPostJsonUnreceived())).join(',')}]'
+      : '[]';
+
+  String payload = '''{
     "type_id": "$typeId",
     "site_id": "$siteId",
     "type": "$type",
@@ -478,9 +623,9 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     "nonReceivingSkus": $nonReceivingSkus
   }''';
 
-    createTransfer(payload);
-    debugPrint('Payload: $payload');
-  }
+  debugPrint('Payload: $payload');
+  createTransfer(payload);
+}
 
   Future<void> createTransfer(String payload) async {
     setState(() {
@@ -1247,59 +1392,146 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
   }
 
   Widget qtyTextField(Sku item, String field) {
-    return Expanded(
-      child: SizedBox(
-        height: 40,
-        child: TextField(
-          keyboardType: TextInputType.number,
-          onChanged: (value) {
-            setState(() {
-              int parsedValue = int.tryParse(value) ?? 0;
+  // Create a controller if it doesn't exist
+  if (!controllers.containsKey(item.skuId)) {
+    controllers[item.skuId] = {};
+  }
+  if (!controllers[item.skuId]!.containsKey(field)) {
+    controllers[item.skuId]![field] = TextEditingController();
+  }
+
+  return Expanded(
+    child: SizedBox(
+      height: 40,
+      child: TextField(
+        controller: controllers[item.skuId]![field],
+        keyboardType: TextInputType.number,
+        onChanged: (value) {
+          setState(() {
+            int parsedValue = int.tryParse(value) ?? 0;
+            debugPrint('Before update - SKU ${item.skuId}: field=$field, value=${
               switch (field) {
-                case 'fresh':
-                  item.fresh = parsedValue;
-                  break;
-                case 'damaged':
-                  item.damaged = parsedValue;
-                  break;
-                case 'old':
-                  item.old = parsedValue;
-                  break;
-                case 'recalled':
-                  item.recalled = parsedValue;
-                case 'unreceived':
-                  item.unreceived = parsedValue;
-                  break;
+                'fresh' => item.fresh,
+                'damaged' => item.damaged,
+                'old' => item.old,
+                'recalled' => item.recalled,
+                'unreceived' => item.unreceived,
+                _ => null
               }
-              debugPrint(
-                  'SKU ID: ${item.skuId}, $field: ${parsedValue.toString()}');
-            });
-          },
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: field == 'unreceived' ? Colors.red : Colors.grey,
-              ),
+            }');
+            
+            switch (field) {
+              case 'fresh':
+                item.fresh = parsedValue;
+                break;
+              case 'damaged':
+                item.damaged = parsedValue;
+                break;
+              case 'old':
+                item.old = parsedValue;
+                break;
+              case 'recalled':
+                item.recalled = parsedValue;
+                break;
+              case 'unreceived':
+                item.unreceived = parsedValue;
+                break;
+            }
+            
+            debugPrint('After update - SKU ${item.skuId}: field=$field, value=${
+              switch (field) {
+                'fresh' => item.fresh,
+                'damaged' => item.damaged,
+                'old' => item.old,
+                'recalled' => item.recalled,
+                'unreceived' => item.unreceived,
+                _ => null
+              }
+            }');
+          });
+        },
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: field == 'unreceived' ? Colors.red : Colors.grey,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: field == 'unreceived' ? Colors.red : Colors.grey,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: field == 'unreceived' ? Colors.red : Colors.blue,
-                width: 2,
-              ),
-            ),
-            fillColor: field == 'unreceived' ? Colors.red[50] : null,
-            filled: field == 'unreceived',
           ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: field == 'unreceived' ? Colors.red : Colors.grey,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: field == 'unreceived' ? Colors.red : Colors.blue,
+              width: 2,
+            ),
+          ),
+          fillColor: field == 'unreceived' ? Colors.red[50] : null,
+          filled: field == 'unreceived',
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+  // Widget qtyTextField(Sku item, String field) {
+  //   return Expanded(
+  //     child: SizedBox(
+  //       height: 40,
+  //       child: TextField(
+  //         keyboardType: TextInputType.number,
+  //         onChanged: (value) {
+  //           setState(() {
+  //             int parsedValue = int.tryParse(value) ?? 0;
+  //             switch (field) {
+  //               case 'fresh':
+  //                 item.fresh = parsedValue;
+  //                 break;
+  //               case 'damaged':
+  //                 item.damaged = parsedValue;
+  //                 break;
+  //               case 'old':
+  //                 item.old = parsedValue;
+  //                 break;
+  //               case 'recalled':
+  //                 item.recalled = parsedValue;
+  //                 break;
+  //               case 'unreceived':
+  //                 item.unreceived = parsedValue;
+  //                 break;
+  //             }
+  //             debugPrint(
+  //                 'SKU ID: ${item.skuId}, $field: ${parsedValue.toString()}');
+  //           });
+  //         },
+  //         decoration: InputDecoration(
+  //           contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+  //           border: OutlineInputBorder(
+  //             borderSide: BorderSide(
+  //               color: field == 'unreceived' ? Colors.red : Colors.grey,
+  //             ),
+  //           ),
+  //           enabledBorder: OutlineInputBorder(
+  //             borderSide: BorderSide(
+  //               color: field == 'unreceived' ? Colors.red : Colors.grey,
+  //             ),
+  //           ),
+  //           focusedBorder: OutlineInputBorder(
+  //             borderSide: BorderSide(
+  //               color: field == 'unreceived' ? Colors.red : Colors.blue,
+  //               width: 2,
+  //             ),
+  //           ),
+  //           fillColor: field == 'unreceived' ? Colors.red[50] : null,
+  //           filled: field == 'unreceived',
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget qtyTextFieldTransfer(StockItem item, String field, String value) {
     // final String key = '${item.skuId}-$field';

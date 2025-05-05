@@ -435,58 +435,120 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
     );
   }
 
-  Widget _buildTableHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.grey[200],
-      child: Row(
-        children: const [
-          Expanded(
-              flex: 2,
-              child: Text('SKU ID',
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(
-              child: Text('UOM ID',
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(
-              child:
-                  Text('Fresh', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(
-              child: Text('Damaged',
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(
-              child:
-                  Text('Old', style: TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(
-              child: Text('Recalled',
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTableHeader() {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(vertical: 8),
+  //     color: Colors.grey[200],
+  //     child: Row(
+  //       children: const [
+  //         Expanded(
+  //             flex: 2,
+  //             child: Text('SKU ID',
+  //                 style: TextStyle(fontWeight: FontWeight.bold))),
+  //         Expanded(
+  //             child: Text('UOM ID',
+  //                 style: TextStyle(fontWeight: FontWeight.bold))),
+  //         Expanded(
+  //             child:
+  //                 Text('Fresh', style: TextStyle(fontWeight: FontWeight.bold))),
+  //         Expanded(
+  //             child: Text('Damaged',
+  //                 style: TextStyle(fontWeight: FontWeight.bold))),
+  //         Expanded(
+  //             child:
+  //                 Text('Old', style: TextStyle(fontWeight: FontWeight.bold))),
+  //         Expanded(
+  //             child: Text('Recalled',
+  //                 style: TextStyle(fontWeight: FontWeight.bold))),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildTableRow(StockItem item) {
-    List quantities = item.quantity;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!),
+  // Widget _buildTableRow(StockItem item, bool? isUnreceived) {
+  //   List quantities = item.quantity;
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(vertical: 8),
+  //     decoration: BoxDecoration(
+  //       border: Border(
+  //         bottom: BorderSide(color: Colors.grey[300]!),
+  //       ),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Expanded(flex: 2, child: Text(item.skuId)),
+  //         Expanded(child: Text(item.uomId)),
+  //         Expanded(child: Text('${quantities[0]}')),
+  //         Expanded(child: Text('${quantities[1]}')),
+  //         Expanded(child: Text('${quantities[2]}')),
+  //         Expanded(child: Text('${quantities[3]}')),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildTableHeader(String title) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    color: Colors.grey[200],
+    child: Row(
+      children: [
+        const Expanded(
+          flex: 2,
+          child: Text('SKU ID', style: TextStyle(fontWeight: FontWeight.bold)),
         ),
+        const Expanded(
+          child: Text('UOM ID', style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        if (title != 'Unreceived') ...[
+          const Expanded(
+            child: Text('Fresh', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          const Expanded(
+            child: Text('Damaged', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          const Expanded(
+            child: Text('Old', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          const Expanded(
+            child: Text('Recalled', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ] else ...[
+          const Expanded(
+            child: Text('Quantity', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ],
+    ),
+  );
+}
+
+Widget _buildTableRow(StockItem item, String title) {
+  List quantities = item.quantity;
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    decoration: BoxDecoration(
+      border: Border(
+        bottom: BorderSide(color: Colors.grey[300]!),
       ),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(item.skuId)),
-          Expanded(child: Text(item.uomId)),
+    ),
+    child: Row(
+      children: [
+        Expanded(flex: 2, child: Text(item.skuId)),
+        Expanded(child: Text(item.uomId)),
+        if (title != 'Unreceived') ...[
           Expanded(child: Text('${quantities[0]}')),
           Expanded(child: Text('${quantities[1]}')),
           Expanded(child: Text('${quantities[2]}')),
           Expanded(child: Text('${quantities[3]}')),
+        ] else ...[
+          Expanded(child: Text('${quantities[0]}')),
         ],
-      ),
-    );
-  }
-
+      ],
+    ),
+  );
+}
+  
   Widget createSKUTable(String title, List itemList) {
     return ExpansionTile(
       showTrailingIcon: false,
@@ -530,9 +592,9 @@ class _TransferInDetailViewState extends State<TransferInDetailView> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildTableHeader(),
+                  _buildTableHeader(title),
                   const SizedBox(height: 8),
-                  ...itemList.map((item) => _buildTableRow(item)),
+                  ...itemList.map((item) => _buildTableRow(item, title)),
                 ],
               ),
             ),

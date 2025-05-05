@@ -128,7 +128,7 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
           
           final List<Map<String,dynamic>> inventoryRaw = List.from(response.data['inventory'] as List);
 
-          toInventory = inventoryRaw.take(20).map((sku) {
+          toInventory = inventoryRaw.map((sku) {
             final inv = TOInventory.fromJson(sku);
             if (inv.quantity.reduce((a,b) => int.parse(a.toString()) + int.parse(b.toString())) > 0 ) {
               return inv;
