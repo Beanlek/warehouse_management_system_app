@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,6 @@ class HomepageV2 extends StatefulWidget {
 }
 
 class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
-
   @override
   void initState() {
     debugPrint('homepage initstate');
@@ -47,14 +47,11 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     bool _tokenStatus = false;
 
     tokenFuture = _completer.future;
-    
+
     _getAppVersion();
 
-    
-    if(_completer.isCompleted == false) {
-
+    if (_completer.isCompleted == false) {
       _getTokenAndFetchCount(_completer).whenComplete(() {
-
         tokenFuture.then((value) {
           setState(() {
             _tokenStatus = value;
@@ -69,9 +66,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
               message: 'Token Expired. Please login back to the system.',
               context: context,
             );
-          }
-
-          else {
+          } else {
             setState(() {
               launchLoading = false;
             });
@@ -79,7 +74,6 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         });
       });
     }
-    
 
     super.initState();
   }
@@ -90,7 +84,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
   }
 
   Future<void> _getTokenAndFetchCount(Completer _completer) async {
-    if(_completer.isCompleted) {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('_getTokenAndFetchCount initiated');
@@ -98,8 +92,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     final String? _username = await TokenUtil.getUsername();
 
     if (_token == null) {
-      if (_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
 
@@ -116,13 +109,13 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     tokenFuture = _completer.future;
     bool _tokenStatus = false;
 
-    
     DateTime tokenExpiryTimeParsed;
 
     debugPrint('refresh initiated : ${_tokenStatus}');
 
     final String? tokenExpiryTime = await TokenUtil.getTokenExpiryTime();
-    tokenExpiryTimeParsed = DateTime.parse(tokenExpiryTime!).add(Duration(hours: int.parse('-4')));
+    tokenExpiryTimeParsed =
+        DateTime.parse(tokenExpiryTime!).add(Duration(hours: int.parse('-4')));
 
     setState(() {
       launchLoading = true;
@@ -131,15 +124,12 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
 
     debugPrint('refresh _getTokenAndFetchCount initiated');
 
-    if(_completer.isCompleted == false) {
-
+    if (_completer.isCompleted == false) {
       if (DateTime.now().isAfter(tokenExpiryTimeParsed)) {
         _completer.complete(false);
-      }
-      else {
+      } else {
         await _getTokenAndFetchCount(_completer);
       }
-      
 
       tokenFuture.then((value) {
         debugPrint('refresh tokenFuture initiated');
@@ -155,25 +145,105 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
             message: 'Token Expired. Please login back to the system.',
             context: context,
           );
-        }
-
-        else {
+        } else {
           launchLoading = false;
         }
       });
     }
   }
 
-  
+  Future<void> deleteDraft() async {
+  if (token == null) {
+    Navigator.pushNamed(context, AppRoutes.login);
+    FloatingSnackBar(
+      message: 'Token Expired. Please login back to the system.',
+      context: context,
+    );
+    return;
+  }
+
+  final String? _domainName = await TokenUtil.getDomainName();
+  String url = '${_domainName}/api/wms/warehouse_stock_take/delete_draft';
+  final Dio dio = Dio();
+
+  const String _mainBody = 'deletedDraft';
+
+  try {
+    final response = await dio.get(
+      url,
+      options: Options(headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      }),
+    ).timeout(const Duration(seconds: 3));
+
+    int statusCode = response.statusCode ?? 0;
+
+    if (statusCode == 200 || statusCode == 201) {
+      final json = response.data;
+
+      debugPrint("RESPONSE JSON :: ${json.toString()}");
+
+      try {
+        final List<dynamic> deletedDrafts = json[_mainBody];
+        int count = deletedDrafts.length;
+
+        debugPrint('Deleted drafts count: $count');
+        debugPrint('Deleted drafts list: $deletedDrafts');
+
+      } catch (e) {
+        debugPrint('Failed to parse JSON: $e');
+      }
+    } else if (statusCode == 401 || statusCode == 403) {
+      Navigator.pushNamed(context, AppRoutes.login);
+      FloatingSnackBar(
+        message: 'Token Expired. Please login back to the system.',
+        context: context,
+      );
+      return;
+    } else {
+      debugPrint('Failed to delete drafts. Status code: $statusCode');
+      debugPrint('Error Body: ${response.data}');
+      FloatingSnackBar(
+        message: 'Delete draft failed with status code: $statusCode',
+        context: context,
+      );
+    }
+  } on TimeoutException {
+    const errMsg = 'This may be due to server hiccups. Please wait for a while.';
+    FloatingSnackBar(
+      message: 'Delete draft encountered an error. $errMsg',
+      context: context,
+    );
+    Navigator.of(context).pop();
+  } on DioException catch (e) {
+    debugPrint("Dio ERROR :: ${e.toString()}");
+    const errMsg = 'This may be due to server hiccups. Please wait for a while.';
+    FloatingSnackBar(
+      message: 'Delete draft encountered an error. $errMsg',
+      context: context,
+    );
+    Navigator.of(context).pop();
+  } catch (e) {
+    debugPrint("ERROR :: ${e.toString()}");
+    const errMsg = 'This may be due to server hiccups. Please wait for a while.';
+    FloatingSnackBar(
+      message: 'Delete draft encountered an error. $errMsg',
+      context: context,
+    );
+    Navigator.of(context).pop();
+  }
+}
+
+
   Future<void> _getUserDetails(Completer _completer) async {
-    if(_completer.isCompleted) {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('_getUserDetails initiated');
-    
+
     if (token == null) {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
 
@@ -206,13 +276,10 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         userDetails = Map<String, dynamic>.from(json);
         realUsername = userDetails['user']['name'];
       });
-      
-      
-      if(_completer.isCompleted == false)
-        _completer.complete(true);
+
+      if (_completer.isCompleted == false) _completer.complete(true);
     } else {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
     }
   }
 
@@ -221,13 +288,12 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
   }
 
   Future<void> fetchReconCount(String? token, Completer _completer) async {
-    if(_completer.isCompleted) {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('fetchReconCount initiated');
     if (token == null) {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
     final String? domainName = await TokenUtil.getDomainName();
@@ -245,30 +311,28 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       setState(() {
         reconCount = data['data']['count'];
       });
-      await fetchPickListCount(token,_completer);
+      await fetchPickListCount(token, _completer);
       // await _getUserDetails(_completer);
     } else {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
     }
   }
 
   Future<void> fetchPickListCount(String? token, Completer _completer) async {
-    if(_completer.isCompleted) {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('fetchPickListCount initiated');
     if (token == null) {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
     String _mainBody = 'picklists';
     String _subDirectory = '/api/picklist/android/list';
-    
+
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
-    
+
     String url = '$domainName$_subDirectory?limit_rows=1';
     final uri = Uri.parse(url);
 
@@ -281,30 +345,29 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       setState(() {
         picklistCount = data[_mainBody]['count'];
       });
-      await fetchSalesOrderCount(token,_completer);
+      await fetchSalesOrderCount(token, _completer);
     } else {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
     }
   }
 
   Future<void> fetchSalesOrderCount(String? token, Completer _completer) async {
-    if(_completer.isCompleted) {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('fetchSalesOrderCount initiated');
     if (token == null) {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
     String _mainBody = 'pre_sales_order';
     String _subDirectory = '/api/sale/order/list/all';
-    
+
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
-    
-    String url = '$domainName$_subDirectory?limit_rows=1&status=sent%20for%20picking';
+
+    String url =
+        '$domainName$_subDirectory?limit_rows=1&status=sent%20for%20picking';
     final uri = Uri.parse(url);
 
     final response =
@@ -316,29 +379,28 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       setState(() {
         salesOrderCount = data[_mainBody]['count'];
       });
-      await fetchReturnOrderCount(token,_completer);
+      await fetchReturnOrderCount(token, _completer);
     } else {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
     }
   }
 
-  Future<void> fetchReturnOrderCount(String? token, Completer _completer) async {
-    if(_completer.isCompleted) {
+  Future<void> fetchReturnOrderCount(
+      String? token, Completer _completer) async {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('fetchReturnOrderCount initiated');
     if (token == null) {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
     String _mainBody = 'pre_sales_order_return';
     String _subDirectory = '/api/sale/order/return/list';
-    
+
     final String? _domainName = await TokenUtil.getDomainName();
     String domainName = _domainName!;
-    
+
     String url = '$domainName$_subDirectory?limit_rows=1';
     final uri = Uri.parse(url);
 
@@ -353,19 +415,17 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       });
       await _getUserDetails(_completer);
     } else {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
     }
   }
 
   Future<void> fetchData(String? token, Completer _completer) async {
-    if(_completer.isCompleted) {
+    if (_completer.isCompleted) {
       return;
     }
     debugPrint('fetchData initiated');
     if (token == null) {
-      if(_completer.isCompleted == false)
-        _completer.complete(false);
+      if (_completer.isCompleted == false) _completer.complete(false);
       return;
     }
     String _mainBody = 'wms_acknowledgment';
@@ -384,23 +444,22 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
       TRANSFER_IN,
       TRANSFER_OUT,
     ];
-    
+
     final String? domainName = await TokenUtil.getDomainName();
     DateTime currentDate = DateTime.now();
     String formattedDate2 = DateFormat('yyyy-MM-dd').format(currentDate);
     debugPrint('formattedDate2:: $formattedDate2');
-
 
     for (var i = 0; i < (recordType.length) + 3; i++) {
       String rootUrl = '$domainName$_subDirectory?limit_rows=1';
       String url = rootUrl;
 
       if (i < recordType.length) {
-
-        if (i == 3) url = '${rootUrl}&type=${recordType[i]}&allotment_date=${formattedDate2}&status=unacknowledged';
-
-        else url = '${rootUrl}&type=${recordType[i]}&status=unacknowledged';
-
+        if (i == 3)
+          url =
+              '${rootUrl}&type=${recordType[i]}&allotment_date=${formattedDate2}&status=unacknowledged';
+        else
+          url = '${rootUrl}&type=${recordType[i]}&status=unacknowledged';
       } else if (i == recordType.length) {
         url = '${domainName}${_vanReqDirectory}?limit_rows=0&status=pending';
       } else if (i == recordType.length + 2) {
@@ -420,107 +479,117 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         setState(() {
           switch (i) {
             case 0:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotPlanCount = data[_mainBody]["count"];
               break;
             case 1:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotBalanceCount = data[_mainBody]["count"];
               break;
             case 2:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotAdditionalCount = data[_mainBody]["count"];
               break;
             case 3:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               marketReturnCount = data[_mainBody]["count"];
               break;
             case 4:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               mrReturnOrderCount = data[_mainBody]["count"];
               break;
             case 5:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               allotRequestCount = data[_mainBody]["count"];
               break;
             case 6:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               adhocReturnCount = data[_mainBody]["count"];
               break;
             case 7:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               transferInCount = data[_mainBody]["count"];
               break;
             case 8:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               transferOutCount = data[_mainBody]["count"];
               break;
             case 9:
-              debugPrint("case $i: ${url} ${data[_vanReqBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_vanReqBody]["count"].toString()}");
 
               adhocRequestCount = data[_vanReqBody]["count"];
               break;
             case 10:
-              debugPrint("case $i: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case $i: ${url} ${data[_mainBody]["count"].toString()}");
 
               totalListing = data[_mainBody]["count"];
               break;
             default:
-             // FOR ACKNOWLDEGE COUNT ONLY
-              debugPrint("case default: acknowledgedCount: ${url} ${data[_mainBody]["count"].toString()}");
-              debugPrint("case default: pendingCount: ${url} ${data[_mainBody]["count"].toString()}");
+              // FOR ACKNOWLDEGE COUNT ONLY
+              debugPrint(
+                  "case default: acknowledgedCount: ${url} ${data[_mainBody]["count"].toString()}");
+              debugPrint(
+                  "case default: pendingCount: ${url} ${data[_mainBody]["count"].toString()}");
 
               acknowledgedCount = data[_mainBody]["count"];
               pendingCount = totalListing - acknowledgedCount;
               break;
 
-              // api/wms/android-list?limit_rows=1&type=allot_plan&status=unacknowledged 5
-              // api/wms/android-list?limit_rows=1&type=allot_balance&status=unacknowledged 22
-              // api/wms/android-list?limit_rows=1&type=allot_additional&status=unacknowledged 6
-              // api/wms/android-list?limit_rows=1&type=market_return&allotment_date=2024-11-22&status=unacknowledged 0
-              // api/wms/android-list?limit_rows=1&type=return_order&status=unacknowledged 1
-              // api/wms/android-list?limit_rows=1&type=adhoc_request&status=unacknowledged 1
-              // api/wms/android-list?limit_rows=1&type=adhoc_return&status=unacknowledged 0
-              // api/wms/android-list?limit_rows=1&type=transfer_in&status=unacknowledged 1
-              // api/wms/android-list?limit_rows=1&type=transfer_out&status=unacknowledged 2
-              // api/wms/android-list?limit_rows=1 117
-              // acknowledgedCount: api/wms/android-list?limit_rows=1&status=acknowledged 63
-              // pendingCount: api/wms/android-list?limit_rows=1&status=acknowledged 63
-
+            // api/wms/android-list?limit_rows=1&type=allot_plan&status=unacknowledged 5
+            // api/wms/android-list?limit_rows=1&type=allot_balance&status=unacknowledged 22
+            // api/wms/android-list?limit_rows=1&type=allot_additional&status=unacknowledged 6
+            // api/wms/android-list?limit_rows=1&type=market_return&allotment_date=2024-11-22&status=unacknowledged 0
+            // api/wms/android-list?limit_rows=1&type=return_order&status=unacknowledged 1
+            // api/wms/android-list?limit_rows=1&type=adhoc_request&status=unacknowledged 1
+            // api/wms/android-list?limit_rows=1&type=adhoc_return&status=unacknowledged 0
+            // api/wms/android-list?limit_rows=1&type=transfer_in&status=unacknowledged 1
+            // api/wms/android-list?limit_rows=1&type=transfer_out&status=unacknowledged 2
+            // api/wms/android-list?limit_rows=1 117
+            // acknowledgedCount: api/wms/android-list?limit_rows=1&status=acknowledged 63
+            // pendingCount: api/wms/android-list?limit_rows=1&status=acknowledged 63
           }
         });
         await fetchReconCount(token, _completer);
       } else {
-        if(_completer.isCompleted == false)
-          _completer.complete(false);
+        if (_completer.isCompleted == false) _completer.complete(false);
       }
     }
-    
-
-    
   }
 
-
-  Widget drawerItem(IconData icon, String title,void Function()? navigateTo) {
+  Widget drawerItem(IconData icon, String title, void Function()? navigateTo) {
     return SizedBox(
       height: 60,
       width: widthScreen * 0.5,
       child: ListTile(
-        leading: Icon(icon, color: biruImran4,),
-        title: Text(title, style: TextStyle(
+        leading: Icon(
+          icon,
           color: biruImran4,
-          fontWeight: FontWeight.normal,
-          fontSize: 24
-        ),),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+              color: biruImran4, fontWeight: FontWeight.normal, fontSize: 24),
+        ),
         onTap: navigateTo,
       ),
     );
@@ -529,25 +598,29 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
   TableRow accountTile(String title, String data) {
     TextStyle _thisStyle(double _fontSize, FontWeight _fontWeight) {
       return TextStyle(
-        color: biruImran4,
-        fontWeight: _fontWeight,
-        fontSize: _fontSize
-      );
+          color: biruImran4, fontWeight: _fontWeight, fontSize: _fontSize);
     }
 
-    return TableRow(
-      children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: SizedBox( height: 50, child: Text(title, textAlign: TextAlign.end, style: _thisStyle(18, FontWeight.w300),)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: AutoSizeText(data, maxLines: 1, style: _thisStyle(20, FontWeight.normal),
-                    ),
-          )
-      ]
-    );
+    return TableRow(children: [
+      Padding(
+        padding: const EdgeInsets.only(right: 12.0),
+        child: SizedBox(
+            height: 50,
+            child: Text(
+              title,
+              textAlign: TextAlign.end,
+              style: _thisStyle(18, FontWeight.w300),
+            )),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(left: 12.0),
+        child: AutoSizeText(
+          data,
+          maxLines: 1,
+          style: _thisStyle(20, FontWeight.normal),
+        ),
+      )
+    ]);
   }
 
   Widget showAccountProfileWidget() {
@@ -560,26 +633,25 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
 
     return Center(
       child: SizedBox(
-        width: widthScreen * 0.45,
-        child: Table(
-          border: TableBorder(
-            verticalInside: BorderSide(
-                width: 1, color: biruImran2, style: BorderStyle.solid),
-          ),
-          columnWidths: {
-            0: FractionColumnWidth(0.3),
-            1: FractionColumnWidth(0.7)
-          },
-          children: [
-            accountTile('ID', userID ),
-            accountTile('Name', userName.capitalize()),
-            accountTile('Role', userRole),
-            accountTile('Phone', userPhone),
-            accountTile('Email', userEmail),
-            // accountTile('Sites', sites),
-          ],
-        )
-      ),
+          width: widthScreen * 0.45,
+          child: Table(
+            border: TableBorder(
+              verticalInside: BorderSide(
+                  width: 1, color: biruImran2, style: BorderStyle.solid),
+            ),
+            columnWidths: {
+              0: FractionColumnWidth(0.3),
+              1: FractionColumnWidth(0.7)
+            },
+            children: [
+              accountTile('ID', userID),
+              accountTile('Name', userName.capitalize()),
+              accountTile('Role', userRole),
+              accountTile('Phone', userPhone),
+              accountTile('Email', userEmail),
+              // accountTile('Sites', sites),
+            ],
+          )),
     );
   }
 
@@ -588,25 +660,28 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
 
     return Center(
       child: SizedBox(
-        width: widthScreen * 0.45,
-        child: Table(
-          border: TableBorder(
-            verticalInside: BorderSide(
-                width: 1, color: biruImran2, style: BorderStyle.solid),
-          ),
-          columnWidths: {
-            0: FractionColumnWidth(0.3),
-            1: FractionColumnWidth(0.7)
-          },
-          children: sites.asMap().entries.map((site) {
-            return accountTile('Site', site.value);
-          }).toList()
-        )
-      ),
+          width: widthScreen * 0.45,
+          child: Table(
+              border: TableBorder(
+                verticalInside: BorderSide(
+                    width: 1, color: biruImran2, style: BorderStyle.solid),
+              ),
+              columnWidths: {
+                0: FractionColumnWidth(0.3),
+                1: FractionColumnWidth(0.7)
+              },
+              children: sites.asMap().entries.map((site) {
+                return accountTile('Site', site.value);
+              }).toList())),
     );
   }
 
-  Widget stockMovementTile(String tileImage, String title, int count, void Function() navigateToPage,) {
+  Widget stockMovementTile(
+    String tileImage,
+    String title,
+    int count,
+    void Function() navigateToPage,
+  ) {
     // count = count*100;
 
     return Padding(
@@ -628,10 +703,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  biruImran,
-                  colorFirst
-                ],
+                colors: [biruImran, colorFirst],
               ),
             ),
             child: Padding(
@@ -640,35 +712,38 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox( width: 200, height: 100, child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          child: Image.asset(
-                            tileImage,
-                            color: Colors.white,
-                            // width: 110,
-                            // height: 110,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          child: Text(
-                            count < 1000 ?
-                              '${count}' :
-                              NumberFormat.compact().format(count),
-                            style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                  SizedBox(
+                      width: 200,
+                      height: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              child: Image.asset(
+                                tileImage,
+                                color: Colors.white,
+                                // width: 110,
+                                // height: 110,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  )),
+                          Expanded(
+                            child: SizedBox(
+                              child: Text(
+                                count < 1000
+                                    ? '${count}'
+                                    : NumberFormat.compact().format(count),
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
                   // SizedBox(height: 35),
                   Expanded(
                     child: SizedBox(
@@ -699,14 +774,13 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24.0),
-            color: Colors.transparent
-          ),
+              borderRadius: BorderRadius.circular(24.0),
+              color: Colors.transparent),
         ),
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     DateTime currentDate = DateTime.now();
@@ -722,19 +796,19 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(150.0),
           child: AppBarWidget(
-              formattedDate: formattedDate,
-              appVersion: appVersion ?? 'unknown',
-              scaffoldKey: scaffoldKey,
-            ),
+            formattedDate: formattedDate,
+            appVersion: appVersion ?? 'unknown',
+            scaffoldKey: scaffoldKey,
+          ),
         ),
-        drawer:
-        
-        Drawer(
+        drawer: Drawer(
           width: widthScreen * 0.6,
           backgroundColor: biruImran,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 50),
-            child: Column( mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
@@ -782,9 +856,12 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                     ),
                   ],
                 ),
-                Divider(color: biruImran2, height: 48,),
-                
-                Expanded( child: RawScrollbar(
+                Divider(
+                  color: biruImran2,
+                  height: 48,
+                ),
+                Expanded(
+                    child: RawScrollbar(
                   radius: Radius.circular(10),
                   thickness: 2,
                   thumbColor: biruImran3,
@@ -798,80 +875,71 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         drawerItem(Icons.phone, 'Contact Us', () async {
-                              
                           await launchURL().whenComplete(() {
                             setState(() {
                               scaffoldKey.currentState!.closeDrawer();
                             });
                           });
                         }),
-                        
                         Stack(
                           children: [
                             Positioned(
                               right: 0,
                               top: 5,
                               child: Icon(
-                                showAccountProfile ?
-                                Icons.arrow_drop_down :
-                                Icons.arrow_drop_up,
-                                
-                                color: biruImran4, size: 40,
+                                showAccountProfile
+                                    ? Icons.arrow_drop_down
+                                    : Icons.arrow_drop_up,
+                                color: biruImran4,
+                                size: 40,
                               ),
                             ),
-                              
                             drawerItem(Icons.person, 'Account Profile', () {
                               setState(() {
                                 showAccountProfile = !showAccountProfile;
                                 debugPrint(showAccountProfile.toString());
                               });
                             }),
-                              
                           ],
                         ),
-                              
-                        showAccountProfile ?
-                        SizedBox() :
-                        showAccountProfileWidget(),
-                              
+                        showAccountProfile
+                            ? SizedBox()
+                            : showAccountProfileWidget(),
                         Stack(
                           children: [
                             Positioned(
                               right: 0,
                               top: 5,
                               child: Icon(
-                                showAllowedSites ?
-                                Icons.arrow_drop_down :
-                                Icons.arrow_drop_up,
-                                
-                                color: biruImran4, size: 40,
+                                showAllowedSites
+                                    ? Icons.arrow_drop_down
+                                    : Icons.arrow_drop_up,
+                                color: biruImran4,
+                                size: 40,
                               ),
                             ),
-                              
                             drawerItem(Icons.house, 'Allowed Sites', () {
                               setState(() {
                                 showAllowedSites = !showAllowedSites;
                                 debugPrint(showAllowedSites.toString());
                               });
                             }),
-                              
                           ],
                         ),
-                              
-                        showAllowedSites ?
-                        SizedBox() :
-                        showAllowedSitesWidget(),
-                              
-                        
+                        showAllowedSites
+                            ? SizedBox()
+                            : showAllowedSitesWidget(),
                       ],
                     ),
                   ),
                 )),
-                
-                Divider(color: biruImran2, height: 48,),
+                Divider(
+                  color: biruImran2,
+                  height: 48,
+                ),
                 drawerItem(Icons.logout, 'Log Out', () async {
                   bool _confirmLogout = false;
-          
+
                   _confirmLogout = await showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -885,8 +953,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            LoginView(),
+                        builder: (context) => LoginView(),
                       ),
                     );
                   }
@@ -895,696 +962,759 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
             ),
           ),
         ),
-        
-        
-        body:
-        launchLoading == false ?
-        RefreshIndicator(
-          color: colorFirst,
-          edgeOffset: 10,
-          onRefresh: _refresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // Action Summary
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: const Text(
-                            'Actions Summary',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 25,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        SizedBox(
-                          height: 45,
-                          child: IconButton(
-                            icon: Icon(
-                              showActionSummary
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
-                              size: 40,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                // debugPrint(showActionSummary);
-                                showActionSummary = !showActionSummary;
-                                // debugPrint(showActionSummary);
-                              });
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    showActionSummary
-                        ? actionSummary(
-                            pendingCount: pendingCount,
-                            acknowledgedCount: acknowledgedCount,
-                            totalListing: totalListing)
-                        : InkWell(
-                            onTap: () {
-                              setState(() {
-                                showActionSummary = !showActionSummary;
-                              });
-                            },
-                            child: Center(
-                              child: Text(
-                                'Show more',
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w300,
-                                  color: textColorTertiary,
-                                ),
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-
-                // Stock Movement
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12.0),
-                          child: SizedBox(
-                            child: AutoSizeText(
-                              maxLines: 1,
-                              'Stock Movement',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 25,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(
-                          width: 5,
-                        ),
-
-                        SizedBox(
-                          height: 45,
-                          child: IconButton(
-                            icon: Icon(
-                                showStockMovement
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                size: 40),
-                            onPressed: () {
-                              setState(() {
-                                showStockMovement = !showStockMovement;
-                              });
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    showStockMovement
-                        ?
-                        
-                        Center( child: SizedBox(
-                          width: widthScreen * 0.9,
-                          height: heightScreen * 0.4,
-                          child: GridView.builder(gridDelegate: gridDelegate,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return stockMovementTile(
-                                  'assets/homepage/icon_allotmentPlan.png',
-                                  'Allotment\nMovements',
-                                  allotPlanCount + allotAdditionalCount + allotBalanceCount + allotRequestCount,
-                                  () async {
-                                    await showDialog( context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogStockMovement( title: "Allotment",
-                                          counts: [
-                                            { "allotmentPlan" : allotPlanCount },
-                                            { "allotmentBalance" : allotBalanceCount },
-                                            { "allotmentAdditional" : allotAdditionalCount },
-                                            { "allotmentRequest" : allotRequestCount },
-                                          ],
-                                          routes: [
-                                            { "allotmentPlan" : AllotmentListsLookup(allotmentType: ALLOT_PLAN,) },
-                                            { "allotmentBalance" : AllotmentListsLookup(allotmentType: ALLOT_BALANCE,) },
-                                            { "allotmentAdditional" : AllotmentListsLookup(allotmentType: ALLOT_ADDITIONAL,) },
-                                            { "allotmentRequest" : AllotmentListsLookup(allotmentType: ALLOT_REQUEST,) },
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                );
-                              } else if (index == 1) {
-                                return stockMovementTile(
-                                  'assets/homepage/icon_adhocRequest.png',
-                                  'Adhoc\nMovements',
-                                  adhocRequestCount + adhocReturnCount,
-                                  () async {
-                                    await showDialog( context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogStockMovement( title: "Adhoc",
-                                          counts: [
-                                            { "adhocRequest" : adhocRequestCount },
-                                            { "adhocReturn" : adhocReturnCount },
-                                          ],
-                                          routes: [
-                                            { "adhocRequest" : AdhocRequestListing() },
-                                            { "adhocReturn" : AdhocReturnListing() },
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                );
-                              } else if (index == 2) {
-                                return stockMovementTile(
-                                  'assets/homepage/icon_marketReturn.png',
-                                  'Market Return\nMovements',
-                                  marketReturnCount + mrReturnOrderCount,
-                                  () async {
-                                    await showDialog( context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogStockMovement( title: "Market Return",
-                                          counts: [
-                                            { "marketReturn" : marketReturnCount },
-                                            { "mrReturnOrder" : mrReturnOrderCount },
-                                          ],
-                                          routes: [
-                                            { "marketReturn" : MarketReturnListing() },
-                                            { "mrReturnOrder" : MRReturnOrderListing() },
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                );
-                              } else if (index == 3) {
-                                return stockMovementTile(
-                                  'assets/homepage/icon_stockRecon.png',
-                                  'Stock\nRecon',
-                                  reconCount,
-                                  () async {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const StockReconViewListing()),
-                                  );}
-                                );
-                              } else if (index == 4) {
-                                return stockMovementTile(
-                                  'assets/homepage/icon_transferInOut.png',
-                                  'Transfer I/O \nMovements',
-                                  transferInCount + transferOutCount,
-                                  () async {
-                                    await showDialog( context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogStockMovement( title: "Transfer I/O",
-                                          counts: [
-                                            { "transferIn" : -1 },
-                                            { "transferOut" : -1 },
-                                            { "transferInOutAcknowledgement" : transferInCount + transferOutCount },
-                                          ],
-                                          routes: [
-                                            { "transferIn" : TransferInListing() },
-                                            { "transferOut" : TransferOutListing() },
-                                            { "transferInOutAcknowledgement" : TransferInOutListing() },
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                );
-                              } else {
-                                return SizedBox();
-                              }
-                              
-                            }
-                            
-                            ),
-                        ))
-
-
-
-                        : InkWell(
-                            onTap: () {
-                              setState(() {
-                                showStockMovement = !showStockMovement;
-                              });
-                            },
-                            child: Center(
-                              child: Text(
-                                'Show more',
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w300,
-                                  color: textColorTertiary,
-                                ),
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
+        body: launchLoading == false
+            ? RefreshIndicator(
+                color: colorFirst,
+                edgeOffset: 10,
+                onRefresh: _refresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // Action Summary
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    child: AutoSizeText(
-                                      maxLines: 1,
-                                      'Inventory Stock Take',
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: const Text(
+                                  'Actions Summary',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              SizedBox(
+                                height: 45,
+                                child: IconButton(
+                                  icon: Icon(
+                                    showActionSummary
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                    size: 40,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      // debugPrint(showActionSummary);
+                                      showActionSummary = !showActionSummary;
+                                      // debugPrint(showActionSummary);
+                                    });
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          showActionSummary
+                              ? actionSummary(
+                                  pendingCount: pendingCount,
+                                  acknowledgedCount: acknowledgedCount,
+                                  totalListing: totalListing)
+                              : InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      showActionSummary = !showActionSummary;
+                                    });
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      'Show more',
                                       style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.normal,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w300,
+                                        color: textColorTertiary,
                                       ),
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 5,
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+
+                      // Stock Movement
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12.0),
+                                child: SizedBox(
+                                  child: AutoSizeText(
+                                    maxLines: 1,
+                                    'Stock Movement',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: 45,
-                                  child: IconButton(
-                                    icon: Icon(
-                                      showInventoryStockTake
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              SizedBox(
+                                height: 45,
+                                child: IconButton(
+                                  icon: Icon(
+                                      showStockMovement
                                           ? Icons.keyboard_arrow_up
                                           : Icons.keyboard_arrow_down,
-                                      size: 40,
+                                      size: 40),
+                                  onPressed: () {
+                                    setState(() {
+                                      showStockMovement = !showStockMovement;
+                                    });
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          showStockMovement
+                              ? Center(
+                                  child: SizedBox(
+                                  width: widthScreen * 0.9,
+                                  height: heightScreen * 0.4,
+                                  child: GridView.builder(
+                                      gridDelegate: gridDelegate,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: 5,
+                                      itemBuilder: (context, index) {
+                                        if (index == 0) {
+                                          return stockMovementTile(
+                                              'assets/homepage/icon_allotmentPlan.png',
+                                              'Allotment\nMovements',
+                                              allotPlanCount +
+                                                  allotAdditionalCount +
+                                                  allotBalanceCount +
+                                                  allotRequestCount, () async {
+                                            await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DialogStockMovement(
+                                                  title: "Allotment",
+                                                  counts: [
+                                                    {
+                                                      "allotmentPlan":
+                                                          allotPlanCount
+                                                    },
+                                                    {
+                                                      "allotmentBalance":
+                                                          allotBalanceCount
+                                                    },
+                                                    {
+                                                      "allotmentAdditional":
+                                                          allotAdditionalCount
+                                                    },
+                                                    {
+                                                      "allotmentRequest":
+                                                          allotRequestCount
+                                                    },
+                                                  ],
+                                                  routes: [
+                                                    {
+                                                      "allotmentPlan":
+                                                          AllotmentListsLookup(
+                                                        allotmentType:
+                                                            ALLOT_PLAN,
+                                                      )
+                                                    },
+                                                    {
+                                                      "allotmentBalance":
+                                                          AllotmentListsLookup(
+                                                        allotmentType:
+                                                            ALLOT_BALANCE,
+                                                      )
+                                                    },
+                                                    {
+                                                      "allotmentAdditional":
+                                                          AllotmentListsLookup(
+                                                        allotmentType:
+                                                            ALLOT_ADDITIONAL,
+                                                      )
+                                                    },
+                                                    {
+                                                      "allotmentRequest":
+                                                          AllotmentListsLookup(
+                                                        allotmentType:
+                                                            ALLOT_REQUEST,
+                                                      )
+                                                    },
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
+                                        } else if (index == 1) {
+                                          return stockMovementTile(
+                                              'assets/homepage/icon_adhocRequest.png',
+                                              'Adhoc\nMovements',
+                                              adhocRequestCount +
+                                                  adhocReturnCount, () async {
+                                            await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DialogStockMovement(
+                                                  title: "Adhoc",
+                                                  counts: [
+                                                    {
+                                                      "adhocRequest":
+                                                          adhocRequestCount
+                                                    },
+                                                    {
+                                                      "adhocReturn":
+                                                          adhocReturnCount
+                                                    },
+                                                  ],
+                                                  routes: [
+                                                    {
+                                                      "adhocRequest":
+                                                          AdhocRequestListing()
+                                                    },
+                                                    {
+                                                      "adhocReturn":
+                                                          AdhocReturnListing()
+                                                    },
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
+                                        } else if (index == 2) {
+                                          return stockMovementTile(
+                                              'assets/homepage/icon_marketReturn.png',
+                                              'Market Return\nMovements',
+                                              marketReturnCount +
+                                                  mrReturnOrderCount, () async {
+                                            await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DialogStockMovement(
+                                                  title: "Market Return",
+                                                  counts: [
+                                                    {
+                                                      "marketReturn":
+                                                          marketReturnCount
+                                                    },
+                                                    {
+                                                      "mrReturnOrder":
+                                                          mrReturnOrderCount
+                                                    },
+                                                  ],
+                                                  routes: [
+                                                    {
+                                                      "marketReturn":
+                                                          MarketReturnListing()
+                                                    },
+                                                    {
+                                                      "mrReturnOrder":
+                                                          MRReturnOrderListing()
+                                                    },
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
+                                        } else if (index == 3) {
+                                          return stockMovementTile(
+                                              'assets/homepage/icon_stockRecon.png',
+                                              'Stock\nRecon',
+                                              reconCount, () async {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const StockReconViewListing()),
+                                            );
+                                          });
+                                        } else if (index == 4) {
+                                          return stockMovementTile(
+                                              'assets/homepage/icon_transferInOut.png',
+                                              'Transfer I/O \nMovements',
+                                              transferInCount +
+                                                  transferOutCount, () async {
+                                            await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DialogStockMovement(
+                                                  title: "Transfer I/O",
+                                                  counts: [
+                                                    {"transferIn": -1},
+                                                    {"transferOut": -1},
+                                                    {
+                                                      "transferInOutAcknowledgement":
+                                                          transferInCount +
+                                                              transferOutCount
+                                                    },
+                                                  ],
+                                                  routes: [
+                                                    {
+                                                      "transferIn":
+                                                          TransferInListing()
+                                                    },
+                                                    {
+                                                      "transferOut":
+                                                          TransferOutListing()
+                                                    },
+                                                    {
+                                                      "transferInOutAcknowledgement":
+                                                          TransferInOutListing()
+                                                    },
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
+                                        } else {
+                                          return SizedBox();
+                                        }
+                                      }),
+                                ))
+                              : InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      showStockMovement = !showStockMovement;
+                                    });
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      'Show more',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w300,
+                                        color: textColorTertiary,
+                                      ),
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        showInventoryStockTake =
-                                            !showInventoryStockTake;
-                                      });
-                                    },
                                   ),
-                                )
+                                ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: SizedBox(
+                                          child: AutoSizeText(
+                                            maxLines: 1,
+                                            'Inventory Stock Take',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 45,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            showInventoryStockTake
+                                                ? Icons.keyboard_arrow_up
+                                                : Icons.keyboard_arrow_down,
+                                            size: 40,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              showInventoryStockTake =
+                                                  !showInventoryStockTake;
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                showInventoryStockTake
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: ListTile(
+                                          onTap: () {
+                                            deleteDraft();
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      StockTake(
+                                                          type: 'Warehouse')),
+                                            );
+                                          },
+                                          title: Material(
+                                            elevation: 3,
+                                            borderRadius:
+                                                BorderRadius.circular(24.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(24.0),
+                                                // color: Colors.orange,
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Colors.orange,
+                                                    Color.fromARGB(
+                                                        255, 255, 186, 82)
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Flexible(
+                                                    fit: FlexFit.tight,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          24.0, 16, 24, 16),
+                                                      child: SizedBox(
+                                                        child: AutoSizeText(
+                                                          "Warehouse Stock Take",
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              color: biruImran),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Image.asset(
+                                                    "assets/homepage/icon_warehouseStockTake.png",
+                                                    width: 100,
+                                                    height: 100,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            showInventoryStockTake =
+                                                !showInventoryStockTake;
+                                          });
+                                        },
+                                        child: Center(
+                                          child: Text(
+                                            'Show more',
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w300,
+                                              color: textColorTertiary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                showInventoryStockTake
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      StockTake(
+                                                          type: 'Van EOD')),
+                                            );
+                                          },
+                                          title: Material(
+                                            elevation: 3,
+                                            borderRadius:
+                                                BorderRadius.circular(24.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(24.0),
+                                                // color: Colors.orange,
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Colors.orange,
+                                                    Color.fromARGB(
+                                                        255, 255, 186, 82)
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Flexible(
+                                                    fit: FlexFit.tight,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          24.0, 16, 24, 16),
+                                                      child: SizedBox(
+                                                        child: AutoSizeText(
+                                                          "Van EOD\nStock Take",
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              color: biruImran),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Image.asset(
+                                                    "assets/homepage/icon_vanEODStockTake.png",
+                                                    width: 100,
+                                                    height: 100,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox()
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          showInventoryStockTake
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => StockTake(type: 'Warehouse')
-                                        ),
-                                      );
-                                    },
-                                    title: Material(
-                                      elevation: 3,
-                                      borderRadius:
-                                          BorderRadius.circular(24.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(24.0),
-                                          // color: Colors.orange,
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Colors.orange,
-                                              Color.fromARGB(
-                                                  255, 255, 186, 82)
-                                            ],
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Flexible(
-                                              fit: FlexFit.tight,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        24.0, 16, 24, 16),
-                                                child: SizedBox(
-                                                  child: AutoSizeText(
-                                                    "Warehouse Stock Take",
-                                                    maxLines: 2,
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: biruImran),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Image.asset(
-                                              "assets/homepage/icon_warehouseStockTake.png",
-                                              width: 100,
-                                              height: 100,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    showInventoryStockTake = !showInventoryStockTake;
-                                  });
-                                },
-                                child: Center(
-                                  child: Text(
-                                    'Show more',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w300,
-                                      color: textColorTertiary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          showInventoryStockTake
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => StockTake(type: 'Van EOD')
-                                        ),
-                                      );
-                                    },
-                                    title: Material(
-                                      elevation: 3,
-                                      borderRadius:
-                                          BorderRadius.circular(24.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(24.0),
-                                          // color: Colors.orange,
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Colors.orange,
-                                              Color.fromARGB(
-                                                  255, 255, 186, 82)
-                                            ],
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Flexible(
-                                              fit: FlexFit.tight,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        24.0, 16, 24, 16),
-                                                child: SizedBox(
-                                                  child: AutoSizeText(
-                                                    "Van EOD\nStock Take",
-                                                    maxLines: 2,
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: biruImran),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Image.asset(
-                                              "assets/homepage/icon_vanEODStockTake.png",
-                                              width: 100,
-                                              height: 100,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox()
-                        ],
-                      ),
-                    ),
-                    
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    child: AutoSizeText(
-                                      maxLines: 1,
-                                      'Presales Order',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.normal,
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: SizedBox(
+                                          child: AutoSizeText(
+                                            maxLines: 1,
+                                            'Presales Order',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 45,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            showPresalesOrder
+                                                ? Icons.keyboard_arrow_up
+                                                : Icons.keyboard_arrow_down,
+                                            size: 40,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              showPresalesOrder =
+                                                  !showPresalesOrder;
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 5,
+                                  height: 15,
                                 ),
+                                showPresalesOrder
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const PickListView(),
+                                              ),
+                                            );
+                                          },
+                                          title: Text(
+                                            "Picking List",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Color(0xff0F75BC)),
+                                          ),
+                                          leading: Icon(
+                                            Icons.local_grocery_store,
+                                            color: biruImran,
+                                          ),
+                                          trailing: picklistCount == 0
+                                              ? null
+                                              : CircleAvatar(
+                                                  radius: 12,
+                                                  backgroundColor: colorMerah,
+                                                  child: Text(
+                                                    "${picklistCount}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: white),
+                                                  ),
+                                                ),
+                                        ),
+                                      )
+                                    : InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            showPresalesOrder =
+                                                !showPresalesOrder;
+                                          });
+                                        },
+                                        child: Center(
+                                          child: Text(
+                                            'Show more',
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w300,
+                                              color: textColorTertiary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                 SizedBox(
-                                  height: 45,
-                                  child: IconButton(
-                                    icon: Icon(
-                                      showPresalesOrder
-                                          ? Icons.keyboard_arrow_up
-                                          : Icons.keyboard_arrow_down,
-                                      size: 40,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        showPresalesOrder =
-                                            !showPresalesOrder;
-                                      });
-                                    },
-                                  ),
-                                )
+                                  height: 5,
+                                ),
+                                showPresalesOrder
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const SalesOrderView(),
+                                              ),
+                                            );
+                                          },
+                                          title: Text(
+                                            "Sales Order List",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Color(
+                                                    0xff0F75BC) // Set the font size here
+                                                ),
+                                          ),
+                                          leading: Icon(
+                                            Icons.local_offer,
+                                            color: biruImran,
+                                          ),
+                                          trailing: salesOrderCount == 0
+                                              ? null
+                                              : CircleAvatar(
+                                                  radius: 12,
+                                                  backgroundColor: colorMerah,
+                                                  child: Text(
+                                                    "${salesOrderCount}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: white),
+                                                  ),
+                                                ),
+                                        ),
+                                      )
+                                    : SizedBox(),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                showPresalesOrder
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ReturnedOrderView(),
+                                              ),
+                                            );
+                                            // FloatingSnackBar(
+                                            //     message: 'Coming soon',
+                                            //     context: context);
+                                          },
+                                          title: Text(
+                                            "Returned Order",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                color: Color(0xff0F75BC)),
+                                          ),
+                                          leading: Icon(
+                                            Icons.keyboard_return,
+                                            color: biruImran,
+                                          ),
+                                          trailing: returnOrderCount == 0
+                                              ? null
+                                              : CircleAvatar(
+                                                  radius: 12,
+                                                  backgroundColor: colorMerah,
+                                                  child: Text(
+                                                    "${returnOrderCount}",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: white),
+                                                  ),
+                                                ),
+                                        ),
+                                      )
+                                    : SizedBox(),
                               ],
                             ),
                           ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          showPresalesOrder
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const PickListView(),
-                                          ),
-                                        );
-                                      },
-                                      title: Text(
-                                        "Picking List",
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            color: Color(0xff0F75BC)
-                                        ),
-                                      ),
-                                      leading: Icon(
-                                        Icons.local_grocery_store,
-                                        color: biruImran,
-                                      ),
-
-                                      trailing: picklistCount == 0 ? null :
-                                      CircleAvatar(
-                                        radius: 12,
-                                        backgroundColor: colorMerah,
-                                        child: Text(
-                                          "${picklistCount}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: white
-                                          ),
-                                        ),
-                                      ),
-
-                                    ),
-                                )
-                              : InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    showPresalesOrder = !showPresalesOrder;
-                                  });
-                                },
-                                child: Center(
-                                  child: Text(
-                                    'Show more',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w300,
-                                      color: textColorTertiary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          showPresalesOrder
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SalesOrderView(),
-                                          ),
-                                        );
-                                      },
-                                      title: Text(
-                                        "Sales Order List",
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          color: Color(0xff0F75BC) // Set the font size here
-                                        ),
-                                      ),
-                                      leading: Icon(
-                                        Icons.local_offer,
-                                        color: biruImran,
-                                      ),
-
-                                      trailing: salesOrderCount == 0 ? null :
-                                      CircleAvatar(
-                                        radius: 12,
-                                        backgroundColor: colorMerah,
-                                        child: Text(
-                                          "${salesOrderCount}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: white
-                                          ),
-                                        ),
-                                      ),
-                                      
-                                    ),
-                                )
-                              : SizedBox(),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          showPresalesOrder
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ReturnedOrderView(),
-                                          ),
-                                        );
-                                        // FloatingSnackBar(
-                                        //     message: 'Coming soon',
-                                        //     context: context);
-                                      },
-                                      title: Text(
-                                        "Returned Order",
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          color: Color(0xff0F75BC)
-                                        ),
-                                      ),
-                                      leading: Icon(
-                                        Icons.keyboard_return,
-                                        color: biruImran,
-                                      ),
-
-                                      trailing: returnOrderCount == 0 ? null :
-                                      CircleAvatar(
-                                        radius: 12,
-                                        backgroundColor: colorMerah,
-                                        child: Text(
-                                          "${returnOrderCount}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: white
-                                          ),
-                                        ),
-                                      ),
-                                      
-                                    ),
-                                )
-                              : SizedBox(),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ) :
-        
-        Container(
-          color: white,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Center(child: CircularProgressIndicator()),
-        ),
+              )
+            : Container(
+                color: white,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Center(child: CircularProgressIndicator()),
+              ),
       ),
     );
-    
   }
 }
 
@@ -1602,7 +1732,6 @@ class actionSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Widget _actionSummaryTile(String subtitle, int count) {
       // count = count*10;
 
@@ -1622,16 +1751,16 @@ class actionSummary extends StatelessWidget {
                 SizedBox(
                   height: 80,
                   child: Text(
-                    count < 1000 ?
-                      '${count}' :
-                      NumberFormat.compact().format(count),
+                    count < 1000
+                        ? '${count}'
+                        : NumberFormat.compact().format(count),
                     style: TextStyle(
                         fontSize: 45,
                         fontWeight: FontWeight.bold,
                         color: Colors.green.shade800),
                   ),
                 ),
-                
+
                 // const SizedBox(height: 5),
                 SizedBox(
                   height: 30,
@@ -1642,21 +1771,22 @@ class actionSummary extends StatelessWidget {
                   ),
                 ),
 
-                count < 1000 ?
-                SizedBox() :
-                Text(
-                  '${count} qty',
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                      color: biruImran),
-                ),
+                count < 1000
+                    ? SizedBox()
+                    : Text(
+                        '${count} qty',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            color: biruImran),
+                      ),
               ],
             ),
           ),
         ),
       );
     }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
