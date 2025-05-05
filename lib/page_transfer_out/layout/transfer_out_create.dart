@@ -49,6 +49,11 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
 
   List<TOInventory> toInventory = [];
   Map<String, dynamic> brandToInventory = {};
+
+  final Map<String, Map<String, TextEditingController>> controllers = {};
+  String selectedPrincipal = '';
+  List<String> brandNames = [];
+  List<TOInventory> displayInventory = [];
   
   String? token;
   String errMsg = "Unknown error";
@@ -70,6 +75,34 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
       }
     });
 
+  }
+
+  Future<void> sortBrands() async {
+    debugPrint('Starting sortBrands');
+    brandNames.clear(); // Clear existing brand names
+    brandToInventory.clear(); // Clear existing brandToInventory map
+
+    for (var item in toInventory) {
+      String brand = item.brand;
+
+      // Add brand to brandNames if not already present
+      if (!brandNames.contains(brand)) {
+        brandNames.add(brand);
+      }
+    }
+
+    debugPrint('Brand names populated: $brandNames');
+    debugPrint('Number of brands: ${brandNames.length}');
+  }
+
+  void updateDisplayInventory(String principalName) {
+    displayInventory.clear();
+    for (var item in toInventory) {
+      if (item.brand == principalName) {
+        displayInventory.add(item);
+      }
+    }
+    debugPrint('Display Inventory: $displayInventory');
   }
 
   Future<void> fetchSites(String? token) async {
@@ -218,26 +251,6 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
     return statusCode;
   }
 
-  Future<void> sortBrands() async {
-    for (var item in toInventory) {
-      String brand = item.brand;
-
-      if (!brandToInventory.containsKey(brand)) {
-        brandToInventory.addEntries({brand : {} }.entries);
-        
-        brandToInventory[brand].addEntries({'name' : item.name }.entries);
-        brandToInventory[brand].addEntries({'rows' : [] }.entries);
-      }
-
-      brandToInventory[brand]['rows']!.add(item);
-
-      // if (brandToInventory[brand]['rows'].length == 1) {
-      //   debugPrint("IS IT THE SAME??? :: ${brandToInventory[brand]['rows'][0].toString()}");
-      //   debugPrint("IS IT THE SAME??? :: ${item.toString()}");
-      // }
-    }
-  }
-
   Future<int> createTo() async {
     var statusCode = 505;
     final String? domainName = await TokenUtil.getDomainName();
@@ -256,23 +269,37 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
     const key_uomId = 'uom_id';
     const key_quantity = 'quantity';
 
-    var skus = brandToInventory.values
-      .expand((e) => e['rows'].map(
-        (t) {
-          if (t.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString())) > 0) {
-            return {
-              key_skuId : t.skuId,
-              key_uomId : t.uomId,
-              key_quantity : [
-                int.parse(t.quantityInput[0].toString()),
-                int.parse(t.quantityInput[1].toString()),
-                int.parse(t.quantityInput[2].toString()),
-                int.parse(t.quantityInput[3].toString()),
-              ],
-            };
-          }
-        }
-      )).toList();
+    var skus = displayInventory.map((t) {
+      if (t.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString())) > 0) {
+        return {
+          key_skuId : t.skuId,
+          key_uomId : t.uomId,
+          key_quantity : [
+            int.parse(t.quantityInput[0].toString()),
+            int.parse(t.quantityInput[1].toString()),
+            int.parse(t.quantityInput[2].toString()),
+            int.parse(t.quantityInput[3].toString()),
+          ],
+        };
+      }
+    }).toList();
+    // var skus = brandToInventory.values
+    //   .expand((e) => e['rows'].map(
+    //     (t) {
+    //       if (t.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString())) > 0) {
+    //         return {
+    //           key_skuId : t.skuId,
+    //           key_uomId : t.uomId,
+    //           key_quantity : [
+    //             int.parse(t.quantityInput[0].toString()),
+    //             int.parse(t.quantityInput[1].toString()),
+    //             int.parse(t.quantityInput[2].toString()),
+    //             int.parse(t.quantityInput[3].toString()),
+    //           ],
+    //         };
+    //       }
+    //     }
+    //   )).toList();
 
     skus.removeWhere((t) => t == null);
 
@@ -463,56 +490,116 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
     );
   }
 
+  // Widget qtyTextField(TOInventory item, String field, {
+  //   required String value
+  // }) {
+  //   return SizedBox(
+  //     height: 40,
+  //     child: TextFormField(
+  //       initialValue: value,
+  //       keyboardType: TextInputType.number,
+  //       onChanged: (value) {
+  //         setState(() {
+  //           int parsedValue = int.tryParse(value) ?? 0;
+  //           switch (field) {
+  //             case 'fresh':
+  //               item.quantityInput[0] = parsedValue;
+  //               break;
+  //             case 'damaged':
+  //               item.quantityInput[1] = parsedValue;
+  //               break;
+  //             case 'old':
+  //               item.quantityInput[2] = parsedValue;
+  //               break;
+  //             case 'recalled':
+  //               item.quantityInput[3] = parsedValue;
+  //           }
+  //           debugPrint('TOINVENTORY QUANTITY INPUT??? :: ${item.skuId}, $field: ${parsedValue.toString()}');
+  //           debugPrint('TOINVENTORY QUANTITY INPUT ALL??? :: ${item.quantityInput.toString()}');
+  //         });
+  //       },
+  //       decoration: InputDecoration(
+  //         contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+  //         border: OutlineInputBorder(
+  //           borderSide: BorderSide(
+  //             color: Colors.grey,
+  //           ),
+  //         ),
+  //         enabledBorder: OutlineInputBorder(
+  //           borderSide: BorderSide(
+  //             color: Colors.grey,
+  //           ),
+  //         ),
+  //         focusedBorder: OutlineInputBorder(
+  //           borderSide: BorderSide(
+  //             color: Colors.blue,
+  //             width: 2,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget qtyTextField(TOInventory item, String field, {
-    required String value
-  }) {
-    return SizedBox(
-      height: 40,
-      child: TextFormField(
-        initialValue: value,
-        keyboardType: TextInputType.number,
-        onChanged: (value) {
-          setState(() {
-            int parsedValue = int.tryParse(value) ?? 0;
-            switch (field) {
-              case 'fresh':
-                item.quantityInput[0] = parsedValue;
-                break;
-              case 'damaged':
-                item.quantityInput[1] = parsedValue;
-                break;
-              case 'old':
-                item.quantityInput[2] = parsedValue;
-                break;
-              case 'recalled':
-                item.quantityInput[3] = parsedValue;
-            }
-            debugPrint('TOINVENTORY QUANTITY INPUT??? :: ${item.skuId}, $field: ${parsedValue.toString()}');
-            debugPrint('TOINVENTORY QUANTITY INPUT ALL??? :: ${item.quantityInput.toString()}');
-          });
-        },
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey,
-            ),
+  required String value
+}) {
+  // Create controllers map for this SKU if it doesn't exist
+  if (!controllers.containsKey(item.skuId)) {
+    controllers[item.skuId] = {
+      'fresh': TextEditingController(text: item.quantityInput[0].toString()),
+      'damaged': TextEditingController(text: item.quantityInput[1].toString()),
+      'old': TextEditingController(text: item.quantityInput[2].toString()),
+      'recalled': TextEditingController(text: item.quantityInput[3].toString()),
+    };
+  }
+
+  return SizedBox(
+    height: 40,
+    child: TextField(
+      controller: controllers[item.skuId]![field],
+      keyboardType: TextInputType.number,
+      onChanged: (value) {
+        setState(() {
+          int parsedValue = int.tryParse(value) ?? 0;
+          switch (field) {
+            case 'fresh':
+              item.quantityInput[0] = parsedValue;
+              break;
+            case 'damaged':
+              item.quantityInput[1] = parsedValue;
+              break;
+            case 'old':
+              item.quantityInput[2] = parsedValue;
+              break;
+            case 'recalled':
+              item.quantityInput[3] = parsedValue;
+          }
+          debugPrint('TOINVENTORY QUANTITY INPUT??? :: ${item.skuId}, $field: ${parsedValue.toString()}');
+          debugPrint('TOINVENTORY QUANTITY INPUT ALL??? :: ${item.quantityInput.toString()}');
+        });
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey,
-            ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blue,
-              width: 2,
-            ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.blue,
+            width: 2,
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   ExpansionPanelRadio  principalRows({
     required String brand,
@@ -556,6 +643,17 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
 
       body: createSKUTable(itemList: items),
     );
+  }
+
+  @override
+  void dispose() {
+    // Clean up controllers
+    controllers.values.forEach((controllerMap) {
+      controllerMap.values.forEach((controller) {
+        controller.dispose();
+      });
+    });
+    super.dispose();
   }
 
   @override
@@ -844,7 +942,22 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
 
                                           toInventory.clear();
                                           brandToInventory.clear();
+                                          selectedPrincipal = '';
+                                          displayInventory.clear();
+
+                                          for (var item in toInventory) {
+                                            item.quantityInput = [0, 0, 0, 0];
+                                          }
+
+                                          controllers.forEach((_, controllerMap) {
+                                            controllerMap.values.forEach((controller) {
+                                              controller.clear(); 
+                                              controller.dispose();
+                                            });
+                                          });
+                                          controllers.clear();
                                           remarkController.text = 'No Remarks.';
+
 
                                         });
                                         
@@ -1029,8 +1142,19 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
 
                                         selectedDestinationSite.select = false;
                                         selectedDestinationSite.clear();
+                                        selectedPrincipal = '';
+                                        displayInventory.clear();
+                                        for (var item in toInventory) {
+                                          item.quantityInput = [0, 0, 0, 0]; // Reset quantities to zero
+                                        }
+                                        controllers.forEach((_, controllerMap) {
+                                        controllerMap.values.forEach((controller) {
+                                          controller.clear(); // Clear the text
+                                          controller.dispose(); // Dispose the controller
+                                        });
                                       });
-
+                                      controllers.clear();
+                                      });
                                     },
                                     child: Material(
                                       elevation: 3,
@@ -1076,7 +1200,7 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                               ),
 
                             // REMARK
-                            if(selectedSourceSite.isNotEmpty)
+                            if(selectedSourceSite.isNotEmpty && selectedDestinationSite.isNotEmpty)
                               ListTile(
                                 dense: true,
                                 title: Column(
@@ -1119,17 +1243,54 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                               ),
 
                             // SKU TABLE
-                            if(selectedSourceSite.isNotEmpty)
-                              // createSKUTable(itemList: brandToInventory["FLICKS"]["rows"]!, title: 'Inventory')
-                              ExpansionPanelList.radio(
-                                children: brandToInventory.entries.map((inventory) {
-                                  final brand = inventory.key;
-                                  final name = inventory.value["name"];
-                                  
-                                  return principalRows(brand: brand, name: name, items: inventory.value["rows"]);
-                                  
-                                }).toList(),
-                              )
+                            if(selectedSourceSite.isNotEmpty && selectedDestinationSite.isNotEmpty)
+                              ListTile(
+                                dense: true,
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Please select principal',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(color: biruImran),
+                                    ),
+                                    Divider(
+                                      color: biruImran2,
+                                      height: 34,
+                                    )
+                                  ],
+                                ),
+                                subtitle: (brandNames.isNotEmpty)
+                                  ? DropdownButtonFormField(
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Select principal',
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      ),
+                                      items: brandNames.map((String brand) {
+                                        return DropdownMenuItem<String>(
+                                          value: brand,
+                                          child: Text(brand),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          selectedPrincipal = newValue!;
+                                          updateDisplayInventory(selectedPrincipal);
+                                        });
+                                      },
+                                    )
+                                  : Center(
+                                      child: CircularProgressIndicator(
+                                        color: biruImran,
+                                      ),
+                                    ),
+                              ),
+                              (selectedPrincipal.isNotEmpty && selectedSourceSite.isNotEmpty && selectedDestinationSite.isNotEmpty)
+                                ? createSKUTable(itemList: displayInventory)
+                                : SizedBox.shrink(),
                           ],
                         ),
                       )
@@ -1161,9 +1322,13 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                         setState(() {
                           isLoading = true;
                         });
-                        var totalQuantity = brandToInventory.values
-                          .expand((e) => e["rows"])
-                          .fold(0, (total, data) => total + (data.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString()))) as int);
+                        // var totalQuantity = brandToInventory.values
+                        //   .expand((e) => e["rows"])
+                        //   .fold(0, (total, data) => total + (data.quantityInput.reduce((a, b) => int.parse(a.toString()) + int.parse(b.toString()))) as int);
+                        
+                        var totalQuantity = displayInventory
+                          .fold(0, (total, data) => total + (data.quantityInput.reduce((a, b) => 
+                            int.parse(a.toString()) + int.parse(b.toString()))));
                         
                         debugPrint("TOTAL QUANTITY??? :: ${totalQuantity.toString()}");
                         
