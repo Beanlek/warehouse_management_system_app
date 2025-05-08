@@ -204,11 +204,11 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
           Navigator.of(context).pop();
         }
 
-      }).timeout(Duration(seconds: 5));
+      }).timeout(Duration(seconds: 10));
 
     } on TimeoutException {
-      debugPrint("ERROR TIMEOUT :: Action took a long time to run (5 seconds).");
-      errMsg = 'This may due to server hickups. Please wait for a while.';
+      debugPrint("ERROR TIMEOUT");
+      errMsg = 'Action took a long time to run (10 seconds).';
 
       FloatingSnackBar(
           message: 'Encountered an error. $errMsg', context: context);

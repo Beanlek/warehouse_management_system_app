@@ -694,7 +694,6 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                                 ),
                               ),
                             ),
-                          
                             _commentFocusNode.hasFocus ?
                             
                             Opacity(
@@ -711,168 +710,6 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                     ],
                   ),
                 ),
-            
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-
-                  child: Container( color: Theme.of(context).scaffoldBackgroundColor, 
-                    child: Padding( padding: const EdgeInsets.all(8.0),
-                      child: Column( crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox( height: 32,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      showComment = !showComment;
-                                    });
-                                  },
-                                  child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text( 'Comment',
-                                        style: TextStyle(
-                                          fontSize: _responsiveFontSize(),
-                                          fontWeight: FontWeight.bold,
-                                          color: biruImran,
-                                        ),
-                                      ),
-                                      Icon(
-                                        showComment ?
-                                          Icons.keyboard_arrow_down :
-                                          Icons.keyboard_arrow_up,
-                                        color: biruImran,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              
-                              !showComment ? SizedBox() :
-                              const SizedBox(height: 12,),
-                              
-                              !showComment ? SizedBox() :
-                              TextFormField(
-                                focusNode: _commentFocusNode,
-                                controller: _commentController,
-                                keyboardType: TextInputType.multiline,
-                                minLines: 5,
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: biruImran,
-                                      width: 2
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15.0)),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: biruImran,
-                                      width: 1
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15.0)),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: 150,
-                                height: 50,
-                                child: TextButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogExitConfirmation();
-                                      },
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    elevation: 10,
-                                    backgroundColor: biruImran4,
-                                  ),
-                                  child: const Text(
-                                    "Back",
-                                    style: TextStyle(
-                                      color: biruImran,
-                                      fontSize: 16
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                height: 50,
-                                child: TextButton(
-                                  // onPressed:() {
-                                  //   debugPrint('QUANTITY: ${_inventoryData[0]['quantity'].toString()}');
-                                  // },
-                                  onPressed: _commentController.text.isNotEmpty ? () async {
-                                    bool _confirmSave = false;
-                                      
-                                    _confirmSave = await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return DialogSaveConfirmation();
-                                      },
-                                    );
-                                      
-                                    if (_confirmSave) {
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-                                      
-                                      await acknowledgeData().whenComplete(() {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                      });
-                                    }
-                                    
-                                  } :
-                                  () {
-                                    FloatingSnackBar(
-                                      message: 'Please enter comment before saving.',
-                                      context: context,
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: _commentController.text.isNotEmpty ? hijauImran : Colors.transparent,
-                                    side: BorderSide(
-                                      color: _commentController.text.isNotEmpty ? Colors.transparent : greyColor
-                                    )
-                                  ),
-                                  child: Text(
-                                    "Save",
-                                    style: TextStyle(
-                                      color: _commentController.text.isNotEmpty ? white : greyColor,
-                                      fontSize: 16
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
@@ -898,43 +735,43 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
         
         bool _alreadyHasFilterSubCategory = false;
 
-        for (var i = 0; i < inventoryLength; i++) {
-          final sub_category = inventoryData[i]['sub_category'];
-          final quantity = [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-          ];
+        // for (var i = 0; i < inventoryLength; i++) {
+        //   final sub_category = inventoryData[i]['sub_category'];
+        //   final quantity = [
+        //     0,
+        //     0,
+        //     0,
+        //     0,
+        //     0,
+        //     0,
+        //     0,
+        //   ];
 
-          inventoryData[i]['quantity'] = List.from(quantity);
+        //   inventoryData[i]['quantity'] = List.from(quantity);
           
-          final int subCategoryLength = subCategoryFilters.length;
+        //   final int subCategoryLength = subCategoryFilters.length;
 
-          if (sub_category == null) {
-            continue;
-          }
+        //   if (sub_category == null) {
+        //     continue;
+        //   }
 
-          if (subCategoryLength > 0) {
-            for (var k = 0; k < subCategoryLength; k++) {
-              if (subCategoryFilters[k] == sub_category) {
-                _alreadyHasFilterSubCategory = true;
-                k = subCategoryLength;
-              } else {
-                _alreadyHasFilterSubCategory = false;
-              }
-            }
-          }
+        //   if (subCategoryLength > 0) {
+        //     for (var k = 0; k < subCategoryLength; k++) {
+        //       if (subCategoryFilters[k] == sub_category) {
+        //         _alreadyHasFilterSubCategory = true;
+        //         k = subCategoryLength;
+        //       } else {
+        //         _alreadyHasFilterSubCategory = false;
+        //       }
+        //     }
+        //   }
 
-          if (_alreadyHasFilterSubCategory == false) {
-            subCategoryFilters.add(sub_category);
-            subCategorySelection.add(false);
-          }
+        //   if (_alreadyHasFilterSubCategory == false) {
+        //     subCategoryFilters.add(sub_category);
+        //     subCategorySelection.add(false);
+        //   }
 
-        }
+        // }
 
         setState(() {
           _inventoryData = inventoryData;
@@ -1195,13 +1032,161 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                     },
                   ),
                 ),
-              
-                SizedBox(height:
-                  showComment ?
-                    MediaQuery.of(context).size.height*0.3
-                  :
-                    MediaQuery.of(context).size.height*0.15
-
+                Divider(
+                  color: biruImran,
+                  thickness: 1,
+                ),
+                Container( color: Theme.of(context).scaffoldBackgroundColor, 
+                  child: Padding( padding: const EdgeInsets.all(8.0),
+                    child: Column( crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox( height: 32,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    showComment = !showComment;
+                                  });
+                                },
+                                child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text( 'Comment',
+                                      style: TextStyle(
+                                        fontSize: _responsiveFontSize(),
+                                        fontWeight: FontWeight.bold,
+                                        color: biruImran,
+                                      ),
+                                    ),
+                                    Icon(
+                                      showComment ?
+                                        Icons.keyboard_arrow_down :
+                                        Icons.keyboard_arrow_up,
+                                      color: biruImran,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            
+                            !showComment ? SizedBox() :
+                            const SizedBox(height: 12,),
+                            
+                            !showComment ? SizedBox() :
+                            TextFormField(
+                              focusNode: _commentFocusNode,
+                              controller: _commentController,
+                              keyboardType: TextInputType.multiline,
+                              minLines: 5,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: biruImran,
+                                    width: 2
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15.0)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: biruImran,
+                                    width: 1
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15.0)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              height: 50,
+                              child: TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return DialogExitConfirmation();
+                                    },
+                                  );
+                                },
+                                style: TextButton.styleFrom(
+                                  elevation: 10,
+                                  backgroundColor: biruImran4,
+                                ),
+                                child: const Text(
+                                  "Back",
+                                  style: TextStyle(
+                                    color: biruImran,
+                                    fontSize: 16
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 300,
+                              height: 50,
+                              child: TextButton(
+                                // onPressed:() {
+                                //   debugPrint('QUANTITY: ${_inventoryData[0]['quantity'].toString()}');
+                                // },
+                                onPressed: _commentController.text.isNotEmpty ? () async {
+                                  bool _confirmSave = false;
+                                    
+                                  _confirmSave = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return DialogSaveConfirmation();
+                                    },
+                                  );
+                                    
+                                  if (_confirmSave) {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    
+                                    await acknowledgeData().whenComplete(() {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    });
+                                  }
+                                  
+                                } :
+                                () {
+                                  FloatingSnackBar(
+                                    message: 'Please enter comment before saving.',
+                                    context: context,
+                                  );
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: _commentController.text.isNotEmpty ? hijauImran : Colors.transparent,
+                                  side: BorderSide(
+                                    color: _commentController.text.isNotEmpty ? Colors.transparent : greyColor
+                                  )
+                                ),
+                                child: Text(
+                                  "Save",
+                                  style: TextStyle(
+                                    color: _commentController.text.isNotEmpty ? white : greyColor,
+                                    fontSize: 16
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 )
               ],
             ),

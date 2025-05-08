@@ -706,101 +706,104 @@ class _VanEODPageState extends State<VanEODPage> {
                                   Center(child: Text(errMsg, style: TextStyle(color: biruImran),)) :
                                   (vanDetails.isEmpty && selectedVanId == '') ?
                                   Center(child: Text('Select a van to view details.', style: TextStyle(color: biruImran),)) :
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GroupedListView<dynamic, String>(
-                                      elements: vanDetails,
-                                      groupBy: (element) => element['short_code'],
-                                      
-                                      groupSeparatorBuilder: (String value) =>
-                                      
-                                      Card(
-                                        color: biruImran,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                        ),
-                                        child: ListTile(
-                                          title: Text(
-                                            value,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: _responsiveFontSize(),
-                                              color: white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      itemBuilder: (context, element) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                          child: ListTile(
-                                            title: Text(
-                                              '${element['name']}',
-                                              style: TextStyle(
-                                                fontSize: _responsiveFontSize(),
-                                                fontWeight: FontWeight.bold,
-                                                color: biruImran
-                                              ),
-                                            ),
-                                            subtitle: RichText(
-                                              overflow: TextOverflow.visible,
-                                              text: TextSpan(
-                                                  text: 'SKU ID   ',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w300,
-                                                    color: biruImran,
-                                                    fontSize: _responsiveFontSize() * 0.8,
+                                  SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: screenHeight * 0.5,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: 
+                                            GroupedListView<dynamic, String>(
+                                              elements: vanDetails,
+                                              groupBy: (element) => element['short_code'],
+                                              
+                                              groupSeparatorBuilder: (String value) =>
+                                              
+                                              Card(
+                                                color: biruImran,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(15.0),
+                                                ),
+                                                child: ListTile(
+                                                  title: Text(
+                                                    value,
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: _responsiveFontSize(),
+                                                      color: white,
+                                                    ),
                                                   ),
-                                                  children: [
-                                                    TextSpan(
-                                                      text: '${element['sku_id']}',
+                                                ),
+                                              ),
+                                              itemBuilder: (context, element) {
+                                                return Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                                  child: ListTile(
+                                                    title: Text(
+                                                      '${element['name']}',
                                                       style: TextStyle(
-                                                        fontWeight: FontWeight.normal,
-                                                        fontSize: _responsiveFontSize() * 0.8,
-                                                        color: biruImran,
+                                                        fontSize: _responsiveFontSize(),
+                                                        fontWeight: FontWeight.bold,
+                                                        color: biruImran
                                                       ),
                                                     ),
-                                                  ]),
-                                            ),
-                                            trailing:
-                                            
-                                            SizedBox(
-                                              width: MediaQuery.of(context).size.width * 0.2,
-                                              child: TextFormField(
-                                                initialValue: '${element['updated_qty']}',
-                                                keyboardType: TextInputType.number,
-                                                textAlign: TextAlign.start,
-                                                style: TextStyle(color: biruImran2),
-                                                decoration: InputDecoration(
-                                                  labelText: 'Quantity',
-                                                  suffixIcon: Icon(Icons.edit, size: _responsiveFontSize() * 0.8, color: biruImran,),
-                                                ),
-                                                onChanged: (value) {
-                                                  if (value.isEmpty) {
-                                                    value = '0';
-                                                  }
-                                                  
-                                                  final int inputQty = int.parse(value);
-                                                  value = inputQty.toString();
-
-                                                  setState(() {
-                                                    element['updated_qty'] = value;
-                                                  });
-                                                  // debugPrint(vanDetails.toString());
-                                                },
-                                              ),
+                                                    subtitle: RichText(
+                                                      overflow: TextOverflow.visible,
+                                                      text: TextSpan(
+                                                          text: 'SKU ID   ',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.w300,
+                                                            color: biruImran,
+                                                            fontSize: _responsiveFontSize() * 0.8,
+                                                          ),
+                                                          children: [
+                                                            TextSpan(
+                                                              text: '${element['sku_id']}',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.normal,
+                                                                fontSize: _responsiveFontSize() * 0.8,
+                                                                color: biruImran,
+                                                              ),
+                                                            ),
+                                                          ]),
+                                                    ),
+                                                    trailing:
+                                                    
+                                                    SizedBox(
+                                                      width: MediaQuery.of(context).size.width * 0.2,
+                                                      child: TextFormField(
+                                                        initialValue: '${element['init_qty']}',
+                                                        keyboardType: TextInputType.number,
+                                                        textAlign: TextAlign.start,
+                                                        style: TextStyle(color: biruImran2),
+                                                        decoration: InputDecoration(
+                                                          labelText: 'Quantity',
+                                                          suffixIcon: Icon(Icons.edit, size: _responsiveFontSize() * 0.8, color: biruImran,),
+                                                        ),
+                                                        onChanged: (value) {
+                                                          if (value.isEmpty) {
+                                                            value = '0';
+                                                          }
+                                                          
+                                                          final int inputQty = int.parse(value);
+                                                          value = inputQty.toString();
+                                          
+                                                          setState(() {
+                                                            element['updated_qty'] = value;
+                                                          });
+                                                          // debugPrint(vanDetails.toString());
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                                
+                                              },
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
-                                  )
-                
-                
-                              ),
-                            ),
-                        
-                            Padding(
+                                        ),
+                                        Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -964,9 +967,14 @@ class _VanEODPageState extends State<VanEODPage> {
                                   ),
                                 ],
                               ),
+                            )
+                                      ],
+                                    ),
+                                  )
+                                  
+                              ),
                             ),
-                        
-                        
+                            
                         
                             // Padding(
                             //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
