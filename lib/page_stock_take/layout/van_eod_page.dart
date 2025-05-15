@@ -773,7 +773,7 @@ class _VanEODPageState extends State<VanEODPage> {
                                                     SizedBox(
                                                       width: MediaQuery.of(context).size.width * 0.2,
                                                       child: TextFormField(
-                                                        initialValue: '${element['init_qty']}',
+                                                        initialValue: '0',
                                                         keyboardType: TextInputType.number,
                                                         textAlign: TextAlign.start,
                                                         style: TextStyle(color: biruImran2),
