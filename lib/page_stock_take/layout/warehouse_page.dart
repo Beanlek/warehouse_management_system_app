@@ -735,43 +735,40 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
         
         bool _alreadyHasFilterSubCategory = false;
 
-        // for (var i = 0; i < inventoryLength; i++) {
-        //   final sub_category = inventoryData[i]['sub_category'];
-        //   final quantity = [
-        //     0,
-        //     0,
-        //     0,
-        //     0,
-        //     0,
-        //     0,
-        //     0,
-        //   ];
+        for (var i = 0; i < inventoryLength; i++) {
+          final sub_category = inventoryData[i]['sub_category'];
+          final quantity = [
+            0,
+            0,
+            0,
+            0,
+          ];
 
-        //   inventoryData[i]['quantity'] = List.from(quantity);
+          inventoryData[i]['quantity'] = List.from(quantity);
           
-        //   final int subCategoryLength = subCategoryFilters.length;
+          final int subCategoryLength = subCategoryFilters.length;
 
-        //   if (sub_category == null) {
-        //     continue;
-        //   }
+          if (sub_category == null) {
+            continue;
+          }
 
-        //   if (subCategoryLength > 0) {
-        //     for (var k = 0; k < subCategoryLength; k++) {
-        //       if (subCategoryFilters[k] == sub_category) {
-        //         _alreadyHasFilterSubCategory = true;
-        //         k = subCategoryLength;
-        //       } else {
-        //         _alreadyHasFilterSubCategory = false;
-        //       }
-        //     }
-        //   }
+          if (subCategoryLength > 0) {
+            for (var k = 0; k < subCategoryLength; k++) {
+              if (subCategoryFilters[k] == sub_category) {
+                _alreadyHasFilterSubCategory = true;
+                k = subCategoryLength;
+              } else {
+                _alreadyHasFilterSubCategory = false;
+              }
+            }
+          }
 
-        //   if (_alreadyHasFilterSubCategory == false) {
-        //     subCategoryFilters.add(sub_category);
-        //     subCategorySelection.add(false);
-        //   }
+          if (_alreadyHasFilterSubCategory == false) {
+            subCategoryFilters.add(sub_category);
+            subCategorySelection.add(false);
+          }
 
-        // }
+        }
 
         setState(() {
           _inventoryData = inventoryData;
@@ -897,21 +894,6 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
       if (response.statusCode == 200) {
         FloatingSnackBar(message: 'Successfully acknowledged into WMS log', context: context);
         Navigator.of(context).pop();
-
-        // showDialog(
-        //   context: context,
-        //   builder: (BuildContext context) {
-        //     return SuccessModal(
-        //       buttonText: 'Okay',
-        //       content: 'Successfully acknowledged into WMS log',
-        //       title: 'Success',
-        //       onPressed: () {
-        //         Navigator.of(context).pop();
-        //         Navigator.of(context).pop();
-        //       },
-        //     );
-        //   },
-        // );
         debugPrint('Data acknowledged successfully. ${response.statusCode}');
       } else {
         debugPrint(token);
