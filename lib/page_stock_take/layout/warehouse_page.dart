@@ -694,14 +694,6 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                                 ),
                               ),
                             ),
-                            _commentFocusNode.hasFocus ?
-                            
-                            Opacity(
-                              opacity: 0.5,
-                              child: Container(color: biruImran,)
-                            )
-                                          
-                            :
                             SizedBox()
                           ],
                         ),

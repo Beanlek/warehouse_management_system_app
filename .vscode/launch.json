@@ -26,7 +26,7 @@
             "name": "Pixel_Tablet",
             "request": "launch",
             "type": "dart",
-            "deviceId": "emulator-5556"
+            "deviceId": "emulator-5558"
         },
     ]
 }
