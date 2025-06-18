@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.example.warehouse"
 
-    compileSdkVersion 34
+    compileSdkVersion 35
     ndkVersion = "26.1.10909125"
 
     compileOptions {
@@ -40,7 +40,7 @@ android {
         // sourceCompatibility JavaVersion.VERSION_1_8
         // targetCompatibility JavaVersion.VERSION_1_8
 
-        coreLibraryDesugaringEnabled false
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -53,6 +53,8 @@ android {
     }
 
     defaultConfig {
+
+        multiDexEnabled true
         
         applicationId "com.amast.warehousemanagementsystem.v1"
 
@@ -90,5 +92,5 @@ flutter {
 
 dependencies {
     implementation("com.google.android.material:material:1.12.0")
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }

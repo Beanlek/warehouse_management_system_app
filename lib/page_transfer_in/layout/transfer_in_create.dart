@@ -239,6 +239,18 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
         transferSkus =
             sitesRaw.map((sites) => StockItem.fromJson(sites)).toList();
 
+        brandSku.clear();
+          for (var item in transferSkus) {
+            String brand = item.principalName;
+            if (!brandSku.containsKey(brand)) {
+              brandSku[brand] = {
+                "name": brand,
+                "rows": <StockItem>[],
+              };
+            }
+            brandSku[brand]["rows"].add(item);
+          }
+
         debugPrint(
             'fetch transferoutdetails completed\nTransferSKUS: ${transferSkus[0].quantity}');
         setState(() {
@@ -285,19 +297,6 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
               _isLoading = false;
             });
           }
-          // setState(() {
-          //   //remember to remove the take(10) when you want to show all skus
-          //   skus = skusRaw
-          //   //TODO: REMOVE THIS!!
-          //       .where((sku) =>
-          //           sku['principalname'] == 'BIKA' ||
-          //           sku['principalname'] == 'ZUS' ||
-          //           sku['principalname'] == 'CARABAO')
-          //       .map((sku) => Sku.fromJson(sku))
-          //       .toList();
-          //   sortBrands();
-          //   _isLoading = false;
-          // });
           debugPrint('fetch API completed');
         } else {
           debugPrint('No SKUs found in response');
@@ -378,31 +377,10 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     }
   }
 
-  // Future<void> sortBrands() async {
-  //   List items = [];
-  //   if (selectedReferenceType == 'Transfer') {
-  //     items = transferSkus;
-  //   } else {
-  //     items = skus;
-  //   }
-  //   for (var item in items) {
-  //     String brand = item.principalName;
-
-  //     if (!brandSku.containsKey(brand)) {
-  //       brandSku.addEntries({brand: {}}.entries);
-
-  //       brandSku[brand].addEntries({'name': item.name}.entries);
-  //       brandSku[brand].addEntries({'rows': []}.entries);
-  //     }
-
-  //     brandSku[brand]['rows']!.add(item);
-  //   }
-  // }
-
   Future<void> sortBrands() async {
     debugPrint('Starting sortBrands');
     brandNames.clear(); // Clear existing brand names
-    brandSku.clear(); // Clear existing brandSku map
+    //brandSku.clear(); // Clear existing brandSku map
 
     List items = [];
     if (selectedReferenceType == 'Transfer') {
@@ -433,65 +411,6 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
     return sb.toString();
   }
 
-  // void validatePayload() {
-  //   List<Sku> receivingSkusList =
-  //       skus.where((sku) => sku.hasValidReceivedValues()).toList();
-  //   List<Sku> nonReceivingSkusList =
-  //       skus.where((sku) => sku.hasValidUnreceivedValues()).toList();
-
-  //   if (selectedReferenceType == 'Stock Arrival') {
-  //     if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
-  //       StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
-  //     } else {
-  //       showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return DialogNotice(
-  //             title: 'Missing Information',
-  //             notice:
-  //                 'Please fill in the SKU quantity for Stock Arrival before proceeding.',
-  //           );
-  //         },
-  //       );
-  //     }
-  //   } else {
-  //     StockTransferPayload();
-  //   }
-  // }
-
-//
-// bool validatePayload() {
-//     List<Sku> receivingSkusList =
-//       skus.where((sku) => sku.hasValidReceivedValues()).toList();
-//   List<Sku> nonReceivingSkusList =
-//       skus.where((sku) => sku.hasValidUnreceivedValues()).toList();
-
-//   if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
-//     StockArrivalPayload(receivingSkusList, nonReceivingSkusList);
-//     return true;
-//     }
-//     else{
-//       showDialog(
-//         context: context,
-//         builder: (BuildContext context) {
-//           return AlertDialog(
-//             title: Text('Error'),
-//             content: Text('Please make sure to fill at least one SKU.'),
-//             actions: [
-//               TextButton(
-//                 child: Text('OK'),
-//                 onPressed: () {
-//                   Navigator.of(context).pop();
-//                 },
-//               ),
-//             ],
-//           );
-//         },
-//       );
-//      return false;
-//     }
-//   }
-
   bool validatePayload() {
     debugPrint('\n=== Starting Payload Validation ===');
     debugPrint('Reference Type: $selectedReferenceType');
@@ -500,32 +419,32 @@ class _TransferInCreateViewState extends State<TransferInCreateView> {
       List<Sku> receivingSkusList = skus.where((sku) {
         bool isValid = sku.hasValidReceivedValues();
         debugPrint('''
-SKU ${sku.skuId} receiving validation:
-  fresh: ${sku.fresh}
-  damaged: ${sku.damaged}
-  old: ${sku.old}
-  recalled: ${sku.recalled}
-  isValid: $isValid
-''');
+          SKU ${sku.skuId} receiving validation:
+            fresh: ${sku.fresh}
+            damaged: ${sku.damaged}
+            old: ${sku.old}
+            recalled: ${sku.recalled}
+            isValid: $isValid
+          ''');
         return isValid;
       }).toList();
 
       List<Sku> nonReceivingSkusList = skus.where((sku) {
         bool isValid = sku.hasValidUnreceivedValues();
         debugPrint('''
-SKU ${sku.skuId} unreceived validation:
-  unreceived: ${sku.unreceived}
-  isValid: $isValid
-''');
+          SKU ${sku.skuId} unreceived validation:
+          unreceived: ${sku.unreceived}
+          isValid: $isValid
+          ''');
         return isValid;
       }).toList();
 
       debugPrint('''
-Validation Results:
-  Total SKUs: ${skus.length}
-  Valid Receiving SKUs: ${receivingSkusList.length}
-  Valid Non-receiving SKUs: ${nonReceivingSkusList.length}
-''');
+        Validation Results:
+        Total SKUs: ${skus.length}
+        Valid Receiving SKUs: ${receivingSkusList.length}
+        Valid Non-receiving SKUs: ${nonReceivingSkusList.length}
+        ''');
 
       if (receivingSkusList.isNotEmpty || nonReceivingSkusList.isNotEmpty) {
         debugPrint('Validation successful - Processing payload');
@@ -586,35 +505,6 @@ Validation Results:
     debugPrint('Payload: $payload');
   }
 
-  // void StockArrivalPayload(
-  //     List<Sku> receivingSkusList, List<Sku> nonReceivingSkusList) {
-  //   String typeId = 'ad';
-  //   String siteId = selectedSourceSite.id;
-  //   String type = 'stock arrival';
-  //   String refId = poId;
-  //   String remark = this.remark;
-
-  //   String receivingSkus = receivingSkusList.isNotEmpty
-  //       ? '[${receivingSkusList.map((sku) => jsonEncode(sku.toPostJsonReceived())).join(',')}]'
-  //       : '[]'; // Ensure to create an empty array if no valid receiving SKUs
-
-  //   String nonReceivingSkus = nonReceivingSkusList.isNotEmpty
-  //       ? '[${nonReceivingSkusList.map((sku) => jsonEncode(sku.toPostJsonUnreceived())).join(',')}]'
-  //       : '[]'; // Ensure to create an empty array if no non-receiving SKUs
-
-  //   String payload = '''{
-  //   "type_id": "$typeId",
-  //   "site_id": "$siteId",
-  //   "type": "$type",
-  //   "ref_id": "$refId",
-  //   "remark": "$remark",
-  //   "receivingSkus": $receivingSkus,
-  //   "nonReceivingSkus": $nonReceivingSkus
-  // }''';
-
-  //   createTransfer(payload);
-  //   debugPrint('Payload: $payload');
-  // }
   void StockArrivalPayload(
       List<Sku> receivingSkusList, List<Sku> nonReceivingSkusList) {
     String typeId = 'ad';
@@ -1166,7 +1056,7 @@ Validation Results:
                               (selectedReferenceType == 'Transfer')
                                   ? ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: biruImran,
+                                        backgroundColor: redColor,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0),
@@ -1179,7 +1069,7 @@ Validation Results:
                                       child: Text(
                                         isSwapped
                                             ? 'Reset Table'
-                                            : 'No All SKU Condition Received',
+                                            : 'All SKU Not Received',
                                         style: TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w500,
@@ -2086,6 +1976,7 @@ Validation Results:
         //   debugPrint('transferOuts is empty');
         //   fetchTransferOuts();
         // }
+        
         return StockTransfer();
     }
 

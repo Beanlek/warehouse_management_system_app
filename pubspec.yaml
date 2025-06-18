@@ -1,7 +1,7 @@
 name: warehouse
 description: "A new Flutter project."
 publish_to: 'none'
-version: 3.2.2
+version: 3.2.3
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -65,7 +65,7 @@ dependencies:
   device_info_plus: ^10.1.0
   flutter_sticky_header: ^0.6.5
   calendar_date_picker2: ^1.1.7
-  simple_barcode_scanner: ^0.1.1
+  simple_barcode_scanner: ^0.3.0
   flutter_keyboard_visibility: ^6.0.0
   url_launcher: ^6.3.0
   flutter_hooks: ^0.21.2
@@ -152,3 +152,8 @@ flutter_launcher_icons:
   # macos:
   #   generate: true
   #   image_path: "path/to/image.png"
+
+  dependency_overrides:
+    camera: ^0.10.10+3
+    camera_android: ^0.10.10+3
+    camera_platform_interface: ^2.10.0

@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.9.10'
+    ext.kotlin_version = '1.9.24'
     repositories {
         google()
         mavenCentral()
@@ -48,7 +48,7 @@ subprojects {
                                 + " to increase their compileSdk to the latest (otherwise try updating to the latest version)."
                 )
                 project.android {
-                    compileSdk 31
+                    compileSdk 30
                 }
             }
         }
