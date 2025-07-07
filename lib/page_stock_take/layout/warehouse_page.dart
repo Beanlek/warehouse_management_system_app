@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously, library_private_types_in_public_api
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/page_stock_take/component/components.dart';
 import 'package:warehouse/page_stock_take/widget/dialog_widget.dart';
+import 'package:warehouse/routes/routes.dart';
 
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/utils/utils.dart';
@@ -41,6 +44,8 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
   late List<Map<String, dynamic>> _inventoryData = [];
   late List<Map<String, dynamic>> _searchedInventoryData = [];
 
+  String token = '';
+
   bool _isLoading = true;
   // bool _expanded = false;
 
@@ -51,7 +56,16 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
         _isLoading = false;
       });
     });
+    getToken();
     super.initState();
+  }
+
+  void getToken() async {
+    token = (await TokenUtil.getToken())!;
+    setState(() {
+      token = token;
+      debugPrint('Token: $token');
+    });
   }
 
   @override
@@ -254,6 +268,89 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
     }
   }
 
+  Future<void> deleteDraft() async {
+    if (token == null) {
+      Navigator.pushNamed(context, AppRoutes.login);
+      FloatingSnackBar(
+        message: 'Token Expired. Please login back to the system.',
+        context: context,
+      );
+      return;
+    }
+    debugPrint('Deleting draft...');
+    final String? _domainName = await TokenUtil.getDomainName();
+    String url = '${_domainName}/api/wms/warehouse_stock_take/delete_draft';
+    final Dio dio = Dio();
+
+    const String _mainBody = 'deletedDraft';
+
+    try {
+      final response = await dio.get(
+        url,
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }),
+      ).timeout(const Duration(seconds: 3));
+
+      int statusCode = response.statusCode ?? 0;
+
+      if (statusCode == 200 || statusCode == 201) {
+        final json = response.data;
+
+        debugPrint("RESPONSE JSON :: ${json.toString()}");
+
+        try {
+          final List<dynamic> deletedDrafts = json[_mainBody];
+          int count = deletedDrafts.length;
+
+          debugPrint('Deleted drafts count: $count');
+          debugPrint('Deleted drafts list: $deletedDrafts');
+
+        } catch (e) {
+          debugPrint('Failed to parse JSON: $e');
+        }
+      } else if (statusCode == 401 || statusCode == 403) {
+        Navigator.pushNamed(context, AppRoutes.login);
+        FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context,
+        );
+        return;
+      } else {
+        debugPrint('Failed to delete drafts. Status code: $statusCode');
+        debugPrint('Error Body: ${response.data}');
+        FloatingSnackBar(
+          message: 'Delete draft failed with status code: $statusCode',
+          context: context,
+        );
+      }
+    } on TimeoutException {
+      const errMsg = 'This may be due to server hiccups. Please wait for a while.';
+      FloatingSnackBar(
+        message: 'Delete draft encountered an error. $errMsg',
+        context: context,
+      );
+      Navigator.of(context).pop();
+    } on DioException catch (e) {
+      debugPrint("Dio ERROR :: ${e.toString()}");
+      const errMsg = 'This may be due to server hiccups. Please wait for a while.';
+      FloatingSnackBar(
+        message: 'Delete draft encountered an error. $errMsg',
+        context: context,
+      );
+      Navigator.of(context).pop();
+    } catch (e) {
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may be due to server hiccups. Please wait for a while.';
+      FloatingSnackBar(
+        message: 'Delete draft encountered an error. $errMsg',
+        context: context,
+      );
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -268,7 +365,9 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
             return DialogExitConfirmation();
           },
         );
-  
+        if (willPop){
+          deleteDraft();
+        }
         return willPop;
       },
       
