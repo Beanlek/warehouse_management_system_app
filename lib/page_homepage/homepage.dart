@@ -287,138 +287,6 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
     appVersion = await TokenUtil.getAppVersion();
   }
 
-  Future<void> fetchReconCount(String? token, Completer _completer) async {
-    if (_completer.isCompleted) {
-      return;
-    }
-    debugPrint('fetchReconCount initiated');
-    if (token == null) {
-      if (_completer.isCompleted == false) _completer.complete(false);
-      return;
-    }
-    final String? domainName = await TokenUtil.getDomainName();
-    String _subDirectory = '/api/reconciliation/wms/list';
-
-    String url = '$domainName$_subDirectory?status=ready&limit_rows=1';
-    final uri = Uri.parse(url);
-
-    final response =
-        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      setState(() {
-        reconCount = data['data']['count'];
-      });
-      await fetchPickListCount(token, _completer);
-      // await _getUserDetails(_completer);
-    } else {
-      if (_completer.isCompleted == false) _completer.complete(false);
-    }
-  }
-
-  Future<void> fetchPickListCount(String? token, Completer _completer) async {
-    if (_completer.isCompleted) {
-      return;
-    }
-    debugPrint('fetchPickListCount initiated');
-    if (token == null) {
-      if (_completer.isCompleted == false) _completer.complete(false);
-      return;
-    }
-    String _mainBody = 'picklists';
-    String _subDirectory = '/api/picklist/android/list';
-
-    final String? _domainName = await TokenUtil.getDomainName();
-    String domainName = _domainName!;
-
-    String url = '$domainName$_subDirectory?limit_rows=1';
-    final uri = Uri.parse(url);
-
-    final response =
-        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      setState(() {
-        picklistCount = data[_mainBody]['count'];
-      });
-      await fetchSalesOrderCount(token, _completer);
-    } else {
-      if (_completer.isCompleted == false) _completer.complete(false);
-    }
-  }
-
-  Future<void> fetchSalesOrderCount(String? token, Completer _completer) async {
-    if (_completer.isCompleted) {
-      return;
-    }
-    debugPrint('fetchSalesOrderCount initiated');
-    if (token == null) {
-      if (_completer.isCompleted == false) _completer.complete(false);
-      return;
-    }
-    String _mainBody = 'pre_sales_order';
-    String _subDirectory = '/api/sale/order/list/all';
-
-    final String? _domainName = await TokenUtil.getDomainName();
-    String domainName = _domainName!;
-
-    String url =
-        '$domainName$_subDirectory?limit_rows=1&status=sent%20for%20picking';
-    final uri = Uri.parse(url);
-
-    final response =
-        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      setState(() {
-        salesOrderCount = data[_mainBody]['count'];
-      });
-      await fetchReturnOrderCount(token, _completer);
-    } else {
-      if (_completer.isCompleted == false) _completer.complete(false);
-    }
-  }
-
-  Future<void> fetchReturnOrderCount(
-      String? token, Completer _completer) async {
-    if (_completer.isCompleted) {
-      return;
-    }
-    debugPrint('fetchReturnOrderCount initiated');
-    if (token == null) {
-      if (_completer.isCompleted == false) _completer.complete(false);
-      return;
-    }
-    String _mainBody = 'pre_sales_order_return';
-    String _subDirectory = '/api/sale/order/return/list';
-
-    final String? _domainName = await TokenUtil.getDomainName();
-    String domainName = _domainName!;
-
-    String url = '$domainName$_subDirectory?limit_rows=1';
-    final uri = Uri.parse(url);
-
-    final response =
-        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      setState(() {
-        returnOrderCount = data[_mainBody]['count'];
-      });
-      await _getUserDetails(_completer);
-    } else {
-      if (_completer.isCompleted == false) _completer.complete(false);
-    }
-  }
-
   Future<void> fetchData(String? token, Completer _completer) async {
     if (_completer.isCompleted) {
       return;
@@ -554,22 +422,192 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
               acknowledgedCount = data[_mainBody]["count"];
               pendingCount = totalListing - acknowledgedCount;
               break;
-
-            // api/wms/android-list?limit_rows=1&type=allot_plan&status=unacknowledged 5
-            // api/wms/android-list?limit_rows=1&type=allot_balance&status=unacknowledged 22
-            // api/wms/android-list?limit_rows=1&type=allot_additional&status=unacknowledged 6
-            // api/wms/android-list?limit_rows=1&type=market_return&allotment_date=2024-11-22&status=unacknowledged 0
-            // api/wms/android-list?limit_rows=1&type=return_order&status=unacknowledged 1
-            // api/wms/android-list?limit_rows=1&type=adhoc_request&status=unacknowledged 1
-            // api/wms/android-list?limit_rows=1&type=adhoc_return&status=unacknowledged 0
-            // api/wms/android-list?limit_rows=1&type=transfer_in&status=unacknowledged 1
-            // api/wms/android-list?limit_rows=1&type=transfer_out&status=unacknowledged 2
-            // api/wms/android-list?limit_rows=1 117
-            // acknowledgedCount: api/wms/android-list?limit_rows=1&status=acknowledged 63
-            // pendingCount: api/wms/android-list?limit_rows=1&status=acknowledged 63
           }
         });
         await fetchReconCount(token, _completer);
+      } else {
+        if (_completer.isCompleted == false) _completer.complete(false);
+      }
+    }
+  }
+
+  Future<void> fetchReconCount(String? token, Completer _completer) async {
+    if (_completer.isCompleted) {
+      return;
+    }
+    debugPrint('fetchReconCount initiated');
+    if (token == null) {
+      if (_completer.isCompleted == false) _completer.complete(false);
+      return;
+    }
+    final String? domainName = await TokenUtil.getDomainName();
+    String _subDirectory = '/api/reconciliation/wms/list';
+
+    String url = '$domainName$_subDirectory?status=ready&limit_rows=1';
+    final uri = Uri.parse(url);
+
+    final response =
+        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      setState(() {
+        reconCount = data['data']['count'];
+      });
+      await fetchPickListCount(token, _completer);
+      // await _getUserDetails(_completer);
+    } else {
+      if (_completer.isCompleted == false) _completer.complete(false);
+    }
+  }
+
+  Future<void> fetchPickListCount(String? token, Completer _completer) async {
+    if (_completer.isCompleted) {
+      return;
+    }
+    debugPrint('fetchPickListCount initiated');
+    if (token == null) {
+      if (_completer.isCompleted == false) _completer.complete(false);
+      return;
+    }
+    String _mainBody = 'picklists';
+    String _subDirectory = '/api/picklist/android/list';
+
+    final String? _domainName = await TokenUtil.getDomainName();
+    String domainName = _domainName!;
+
+    String url = '$domainName$_subDirectory?limit_rows=1';
+    final uri = Uri.parse(url);
+
+    final response =
+        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      setState(() {
+        picklistCount = data[_mainBody]['count'];
+      });
+      await fetchSalesOrderCount(token, _completer);
+    } else {
+      if (_completer.isCompleted == false) _completer.complete(false);
+    }
+  }
+
+  Future<void> fetchSalesOrderCount(String? token, Completer _completer) async {
+    if (_completer.isCompleted) {
+      return;
+    }
+    debugPrint('fetchSalesOrderCount initiated');
+    if (token == null) {
+      if (_completer.isCompleted == false) _completer.complete(false);
+      return;
+    }
+    String _mainBody = 'pre_sales_order';
+    String _subDirectory = '/api/sale/order/list/all';
+
+    final String? _domainName = await TokenUtil.getDomainName();
+    String domainName = _domainName!;
+
+    String url =
+        '$domainName$_subDirectory?limit_rows=1&status=sent%20for%20picking';
+    final uri = Uri.parse(url);
+
+    final response =
+        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      setState(() {
+        salesOrderCount = data[_mainBody]['count'];
+      });
+      await fetchReturnOrderCount(token, _completer);
+    } else {
+      if (_completer.isCompleted == false) _completer.complete(false);
+    }
+  }
+
+  Future<void> fetchReturnOrderCount(String? token, Completer _completer) async {
+    if (_completer.isCompleted) {
+      return;
+    }
+    debugPrint('fetchReturnOrderCount initiated');
+    if (token == null) {
+      if (_completer.isCompleted == false) _completer.complete(false);
+      return;
+    }
+    String _mainBody = 'pre_sales_order_return';
+    String _subDirectory = '/api/sale/order/return/list';
+
+    final String? _domainName = await TokenUtil.getDomainName();
+    String domainName = _domainName!;
+
+    String url = '$domainName$_subDirectory?limit_rows=1';
+    final uri = Uri.parse(url);
+
+    final response =
+        await http.get(uri, headers: {'Authorization': 'Bearer $token'});
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      setState(() {
+        returnOrderCount = data[_mainBody]['count'];
+      });
+      await fetchTinToutData(token, _completer);
+    } else {
+      if (_completer.isCompleted == false) _completer.complete(false);
+    }
+  }
+
+  Future<void> fetchTinToutData(String? token, Completer _completer) async {
+    if (_completer.isCompleted) {
+      return;
+    }
+    debugPrint('fetchTinToutData initiated');
+    if (token == null) {
+      if (_completer.isCompleted == false) _completer.complete(false);
+      return;
+    }
+    final String? domainName = await TokenUtil.getDomainName();
+
+    const String _tInApi = '/api/tin_tout/transfer_in/list';
+    const String _tOutApi = '/api/tin_tout/transfer_out/list';
+
+    List<String> apiLists = [
+      _tInApi,
+      _tOutApi,
+    ];
+
+    for (var i = 0; i < apiLists.length; i++) {
+      final api = apiLists[i];
+      
+      String rootUrl = '$domainName$api?limit_rows=1';
+      String url = rootUrl;
+
+      final uri = Uri.parse(url);
+
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        setState(() {
+          switch (api) {
+            case _tInApi:
+              tInCount = int.parse(data['transferIn']["count"]);
+              break;
+            case _tOutApi:
+              tOutCount = data['transferOut']["count"];
+              break;
+          }
+        });
+        await _getUserDetails(_completer);
       } else {
         if (_completer.isCompleted == false) _completer.complete(false);
       }
@@ -1199,37 +1237,34 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                           return stockMovementTile(
                                               'assets/homepage/icon_marketReturn.png',
                                               'Market Return\nMovements',
-                                              marketReturnCount +
-                                                  mrReturnOrderCount, () async {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return DialogStockMovement(
-                                                  title: "Market Return",
-                                                  counts: [
-                                                    {
-                                                      "marketReturn":
-                                                          marketReturnCount
-                                                    },
-                                                    {
-                                                      "mrReturnOrder":
-                                                          mrReturnOrderCount
-                                                    },
-                                                  ],
-                                                  routes: [
-                                                    {
-                                                      "marketReturn":
-                                                          MarketReturnListing()
-                                                    },
-                                                    {
-                                                      "mrReturnOrder":
-                                                          MRReturnOrderListing()
-                                                    },
-                                                  ],
+                                              marketReturnCount + mrReturnOrderCount,
+
+                                              () async {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return DialogStockMovement(
+                                                      title: "Market Return",
+                                                      counts: [
+                                                        {
+                                                          "marketReturn": marketReturnCount
+                                                        },
+                                                        {
+                                                          "mrReturnOrder": mrReturnOrderCount
+                                                        },
+                                                      ],
+                                                      routes: [
+                                                        {
+                                                          "marketReturn": MarketReturnListing()
+                                                        },
+                                                        {
+                                                          "mrReturnOrder": MRReturnOrderListing()
+                                                        },
+                                                      ],
+                                                    );
+                                                  },
                                                 );
-                                              },
-                                            );
-                                          });
+                                              });
                                         } else if (index == 3) {
                                           return stockMovementTile(
                                               'assets/homepage/icon_stockRecon.png',
@@ -1246,39 +1281,40 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                           return stockMovementTile(
                                               'assets/homepage/icon_transferInOut.png',
                                               'Transfer I/O \nMovements',
-                                              transferInCount +
-                                                  transferOutCount, () async {
-                                            await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return DialogStockMovement(
-                                                  title: "Transfer I/O",
-                                                  counts: [
-                                                    {"transferIn": -1},
-                                                    {"transferOut": -1},
-                                                    {
-                                                      "transferInOutAcknowledgement":
-                                                          transferInCount +
-                                                              transferOutCount
-                                                    },
-                                                  ],
-                                                  routes: [
-                                                    {
-                                                      "transferIn":
-                                                          TransferInListing()
-                                                    },
-                                                    {
-                                                      "transferOut":
-                                                          TransferOutListing()
-                                                    },
-                                                    {
-                                                      "transferInOutAcknowledgement":
-                                                          TransferInOutListing()
-                                                    },
-                                                  ],
+                                              tInCount + tOutCount + transferInCount + transferOutCount,
+                                              
+                                              () async {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return DialogStockMovement(
+                                                      title: "Transfer I/O",
+                                                      counts: [
+                                                        {"transferIn": tInCount},
+                                                        {"transferOut": tOutCount},
+                                                        {
+                                                          "transferInOutAcknowledgement":
+                                                              transferInCount +
+                                                                  transferOutCount
+                                                        },
+                                                      ],
+                                                      routes: [
+                                                        {
+                                                          "transferIn":
+                                                              TransferInListing()
+                                                        },
+                                                        {
+                                                          "transferOut":
+                                                              TransferOutListing()
+                                                        },
+                                                        {
+                                                          "transferInOutAcknowledgement":
+                                                              TransferInOutListing()
+                                                        },
+                                                      ],
+                                                    );
+                                                  },
                                                 );
-                                              },
-                                            );
                                           });
                                         } else {
                                           return SizedBox();
@@ -1304,6 +1340,8 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                 ),
                         ],
                       ),
+                      
+                      // Inventory Stock Take && Presales Order
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,

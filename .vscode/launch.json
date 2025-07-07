@@ -23,15 +23,16 @@
             "deviceId": "R9PT80JGLJD"
         },
         {
-            "name": "Pixel_Tablet",
+            "name": "emulator-5556",
             "request": "launch",
             "type": "dart",
-            "deviceId": "emulator-555"
+            "deviceId": "emulator-5556"
         },
         {
-            "name": "just_run",
+            "name": "emulator-5554",
             "request": "launch",
             "type": "dart",
+            "deviceId": "emulator-5554"
         },
     ]
 }

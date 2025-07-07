@@ -70,6 +70,182 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
     super.dispose();
   }
 
+  Future<bool?> sendData({
+    required String refID,
+    required XFile imageFile,
+    required List<Map<String, dynamic>> dataArr,
+    required String comment,
+  }) async {
+    final String? token = await TokenUtil.getToken();
+    if (token == null) {
+      Navigator.pushNamed(context, AppRoutes.login);
+      FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context);
+      return false;
+    }
+
+    String _subDirectory = '/api/wms/android/market_return/acknowledge';
+    File dataImage;
+    
+    final String? _domainName = await TokenUtil.getDomainName();
+    String domainName = _domainName!;
+
+    String url = '$domainName$_subDirectory/${refID}';
+    final uri = Uri.parse(url);
+    
+    dataImage = File(imageFile.path);
+
+    final List<int> imageBytes = dataImage.readAsBytesSync();
+    final String imageBase64 = base64Encode(imageBytes);
+
+    Map<String, dynamic> payload = {};
+
+    final List<Map<String, dynamic>> customizedDataArr = [];
+
+    for (final skuData in dataArr) {
+      final Map<String, dynamic> customizedSkuData = {
+        'sku_id': skuData['sku_id'],
+        'uom_id': skuData['uom_id'],
+        'condition': skuData['condition'],
+        'updated_qty': skuData['quantity'][0],
+      };
+      customizedDataArr.add(customizedSkuData);
+    }
+
+    payload = {
+      'id': refID,
+      'comment': comment,
+      'image': [
+        {'image': 'data:image/png;base64,${imageBase64}'}
+      ],
+      'skus': customizedDataArr,
+    };
+
+    debugPrint("imageBase64: $imageBase64");
+  
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(payload),
+      );
+
+      debugPrint('response.statusCode : ${response.statusCode}');
+
+      if (response.statusCode == 500) {
+        final json = jsonDecode(response.body);
+        final errMsg = json['errMsg'];
+        debugPrint('errMsg: $errMsg');
+
+        FloatingSnackBar(
+          message: '${refID} encounter an error. $errMsg',
+          context: context
+        );
+
+        return false;
+      }
+
+      else if (response.statusCode == 302) {
+
+        FloatingSnackBar(
+          message: 'Error ${response.statusCode}. Please contact system admin.',
+          context: context
+        );
+
+        return false;
+
+      }
+
+      else if (response.statusCode == 200) {
+        debugPrint('at 200 : ${response.statusCode}');
+        FloatingSnackBar(
+          message: 'Allotment ${refID} acknowledged.',
+          context: context,
+        );
+
+        return true;
+      } else {
+        debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${response.body}');
+        Navigator.pushNamed(context, AppRoutes.login);
+
+        FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context
+        );
+
+        return false;
+      }
+    } catch (error) {
+      debugPrint('Error ${error}. Please contact system admin.');
+      FloatingSnackBar(
+        message: 'Error ${error}. Please contact system admin.',
+        context: context
+      );
+
+      return false;
+    }
+  }
+
+  Future<void> fetchMarketReturnDetails(String marketReturnId) async {
+    final String? token = await TokenUtil.getToken();
+    final String? domainName = await TokenUtil.getDomainName();
+
+    String marketReturnUrl = '$domainName/api/wms/android/market_return/o/';
+    final marketReturnUri = Uri.parse('$marketReturnUrl$marketReturnId');
+
+    final marketReturnResponse = await http
+        .get(marketReturnUri, headers: {'Authorization': 'Bearer $token'});
+
+    if (marketReturnResponse.statusCode == 200) {
+      try {
+        final marketReturnJson = jsonDecode(marketReturnResponse.body);
+        final marketReturnData = marketReturnJson['data'];
+        final detailsData = marketReturnData['skus'];
+        debugPrint('detailsData: $detailsData');
+
+        setState(() {
+          choosedMarketReturn = marketReturnData;
+          if (choosedMarketReturn['van_id'] == null) {
+            FloatingSnackBar(
+                message: 'Error in marketReturn ${widget.marketReturnId}: van_id=null. Please contact system admin.',
+                context: context);
+            Navigator.of(context).pop();
+          }
+          details = List<Map<String, dynamic>>.from(detailsData);
+          debugPrint('details: $details');
+          // allItemsChecked = _areAllItemsChecked();
+        });
+
+        debugPrint('Fetch MarketReturn API completed');
+      } catch (e) {
+        debugPrint('Failed to parse MarketReturn JSON: $e');
+      }
+    }
+    else if(marketReturnResponse.statusCode == 404) {
+      final json = jsonDecode(marketReturnResponse.body);
+      final errMsg = json['errMsg'];
+
+      FloatingSnackBar(
+          message: 'Error in marketReturn ${widget.marketReturnId}: ${errMsg}.\nPlease contact system admin.',
+          context: context);
+      Navigator.of(context).pop();
+    }
+    else {
+      debugPrint('Failed to fetch MarketReturn API. Status code: ${marketReturnResponse.statusCode}');
+      debugPrint('MarketReturn Error Body: ${marketReturnResponse.body}');
+      Navigator.pushNamed(context, AppRoutes.login);
+      FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector( onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -471,24 +647,34 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
                                       debugPrint("choosedMarketReturn['van_id']: ${choosedMarketReturn['van_id']}");
                                       debugPrint("choosedMarketReturn['reference_id']: ${choosedMarketReturn['reference_id']}");
                                       bool tempRefresh = false;
-                                      tempRefresh = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => MarketReturnQRScanner(
-                                            vanID: choosedMarketReturn['van_id'],
-                                            refID: choosedMarketReturn['reference_id'],
-                                            imageFile: _capturedImage!,
-                                            comment: comment,
-                        
-                                            dataArr: details,
-                                          )),
-                                      );
+                                      await sendData(
+                                        refID: choosedMarketReturn['reference_id'],
+                                        imageFile: _capturedImage!,
+                                        dataArr: details,
+                                        comment: comment
+                                      ).then((v) {
+                                        tempRefresh = v ?? false;
+                                      });
+
                                       if (tempRefresh) {
                                         setState(() {
                                           Navigator.pop(context, true);
                                           tempRefresh = false;
                                         });
                                       }
+
+                                      // tempRefresh = await Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => MarketReturnQRScanner(
+                                      //       vanID: choosedMarketReturn['van_id'],
+                                      //       refID: choosedMarketReturn['reference_id'],
+                                      //       imageFile: _capturedImage!,
+                                      //       comment: comment,
+                        
+                                      //       dataArr: details,
+                                      //     )),
+                                      // );
                                     }
                                   
                                   },
@@ -844,60 +1030,6 @@ class _MarketReturnDetailViewState extends State<MarketReturnDetailView> {
         ),
       ),
     );
-  }
-
-  Future<void> fetchMarketReturnDetails(String marketReturnId) async {
-    final String? token = await TokenUtil.getToken();
-    final String? domainName = await TokenUtil.getDomainName();
-
-    String marketReturnUrl = '$domainName/api/wms/android/market_return/o/';
-    final marketReturnUri = Uri.parse('$marketReturnUrl$marketReturnId');
-
-    final marketReturnResponse = await http
-        .get(marketReturnUri, headers: {'Authorization': 'Bearer $token'});
-
-    if (marketReturnResponse.statusCode == 200) {
-      try {
-        final marketReturnJson = jsonDecode(marketReturnResponse.body);
-        final marketReturnData = marketReturnJson['data'];
-        final detailsData = marketReturnData['skus'];
-        debugPrint('detailsData: $detailsData');
-
-        setState(() {
-          choosedMarketReturn = marketReturnData;
-          if (choosedMarketReturn['van_id'] == null) {
-            FloatingSnackBar(
-                message: 'Error in marketReturn ${widget.marketReturnId}: van_id=null. Please contact system admin.',
-                context: context);
-            Navigator.of(context).pop();
-          }
-          details = List<Map<String, dynamic>>.from(detailsData);
-          debugPrint('details: $details');
-          // allItemsChecked = _areAllItemsChecked();
-        });
-
-        debugPrint('Fetch MarketReturn API completed');
-      } catch (e) {
-        debugPrint('Failed to parse MarketReturn JSON: $e');
-      }
-    }
-    else if(marketReturnResponse.statusCode == 404) {
-      final json = jsonDecode(marketReturnResponse.body);
-      final errMsg = json['errMsg'];
-
-      FloatingSnackBar(
-          message: 'Error in marketReturn ${widget.marketReturnId}: ${errMsg}.\nPlease contact system admin.',
-          context: context);
-      Navigator.of(context).pop();
-    }
-    else {
-      debugPrint('Failed to fetch MarketReturn API. Status code: ${marketReturnResponse.statusCode}');
-      debugPrint('MarketReturn Error Body: ${marketReturnResponse.body}');
-      Navigator.pushNamed(context, AppRoutes.login);
-      FloatingSnackBar(
-          message: 'Token Expired. Please login back to the system.',
-          context: context);
-    }
   }
 
   Widget _buildInfoContainer(String label, dynamic value, IconData icon) {

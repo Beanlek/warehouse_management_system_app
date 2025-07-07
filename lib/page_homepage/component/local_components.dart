@@ -19,8 +19,11 @@ mixin HomepageComponents {
   int marketReturnCount = 0;
   int mrReturnOrderCount = 0;
   int reconCount = 0;
+
   int transferInCount = 0;
   int transferOutCount = 0;
+  int tInCount = 0;
+  int tOutCount = 0;
   
   int pendingCount = 0;
   int totalListing = 0;
