@@ -1054,7 +1054,7 @@ class _TransferOutCreateState extends State<TransferOutCreate> {
                                       var cardColor = siteSelect ? biruImran4 : biruImran;
                                       var fontColor = siteSelect ? biruImran : white;
 
-                                      final isSourceSite = siteID == selectedSourceSite.id; 
+                                      final isSourceSite = siteID == selectedSourceSite.id || siteID == 'SB'; 
                                       
                                       return InkWell(
                                         splashColor: white,
