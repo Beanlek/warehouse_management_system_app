@@ -1184,6 +1184,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                               height: 50,
                               child: TextButton(
                                 onPressed: () {
+                                  deleteDraft();
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -1208,12 +1209,9 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
                               width: 300,
                               height: 50,
                               child: TextButton(
-                                // onPressed:() {
-                                //   debugPrint('QUANTITY: ${_inventoryData[0]['quantity'].toString()}');
-                                // },
                                 onPressed: _commentController.text.isNotEmpty ? () async {
                                   bool _confirmSave = false;
-                                    
+                                  debugPrint('Back button pressed');
                                   _confirmSave = await showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
