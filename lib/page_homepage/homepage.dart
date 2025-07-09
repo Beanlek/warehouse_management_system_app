@@ -324,8 +324,8 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
 
       if (i < recordType.length) {
         if (i == 3)
-          url =
-              '${rootUrl}&type=${recordType[i]}&allotment_date=${formattedDate2}&status=unacknowledged';
+          // url = '${rootUrl}&type=${recordType[i]}&allotment_date=${formattedDate2}&status=unacknowledged';
+          url = '${rootUrl}&type=${recordType[i]}&status=unacknowledged';
         else
           url = '${rootUrl}&type=${recordType[i]}&status=unacknowledged';
       } else if (i == recordType.length) {

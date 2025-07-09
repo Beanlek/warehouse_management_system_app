@@ -3,6 +3,8 @@
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:board_datetime_picker/board_datetime_picker.dart';
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,9 @@ class MarketReturnListing extends StatefulWidget {
 }
 
 class _MarketReturnListingState extends State<MarketReturnListing> {
+  // DateTime? selectedDate = DateTime.now().add(Duration(hours: int.parse('8')));
+  DateTime? selectedDate;
+  
   List<Map<String, dynamic>> marketReturns = [];
   List<String> filters = [
     'All',
@@ -37,13 +42,12 @@ class _MarketReturnListingState extends State<MarketReturnListing> {
     'Any Time',
   ];
   String selectedFilter = 'Unacknowledged';
-  String selectedDateFilter = 'Today';
+  String selectedDateFilter = 'Any Time';
   int _currentPage = 0;
   int _numPages = 10;
 
   final TextEditingController _searchFieldController = TextEditingController();
-  final NumberPaginatorController _paginatorController =
-      NumberPaginatorController();
+  final NumberPaginatorController _paginatorController = NumberPaginatorController();
 
   DateFormat? _myFormat;
   DateFormat allotment_date_format = DateFormat('yyyy-MM-dd');
@@ -55,7 +59,7 @@ class _MarketReturnListingState extends State<MarketReturnListing> {
   void initState() {
     super.initState();
     _myFormat = DateFormat('dd-MM-yyyy').add_Hms();
-    stringDate = allotment_date_format.format(currentDate);
+    // stringDate = allotment_date_format.format(currentDate);
     
     _getToken();
   }
@@ -97,7 +101,7 @@ class _MarketReturnListingState extends State<MarketReturnListing> {
     };
 
     debugPrint("stringDate: $stringDate");
-    if (selectedDateFilter == "Today") {
+    if (selectedDateFilter != "Any Time") {
       params.addEntries( { 'allotment_date': stringDate }.entries);
     }
 
@@ -201,6 +205,153 @@ class _MarketReturnListingState extends State<MarketReturnListing> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final dayTextStyle = TextStyle(color: white, fontWeight: FontWeight.w500, fontSize: 16,);
+    final weekendTextStyle = TextStyle(color: biruImran3, fontWeight: FontWeight.normal, fontSize: 14,);
+
+    final config = CalendarDatePicker2WithActionButtonsConfig(
+      calendarViewScrollPhysics: const NeverScrollableScrollPhysics(),
+
+      dayTextStyle: dayTextStyle,
+
+      selectedDayHighlightColor: biruImran4,
+      nextMonthIcon: Icon(Icons.navigate_next, color: white,),
+      lastMonthIcon: Icon(Icons.navigate_before, color: white,),
+
+      calendarType: CalendarDatePicker2Type.single,
+      closeDialogOnCancelTapped: true,
+      firstDayOfWeek: 1,
+
+      weekdayLabelTextStyle: const TextStyle(
+        color: white,
+        fontSize: 12,
+        fontWeight: FontWeight.w300,
+      ),
+
+      controlsTextStyle: const TextStyle(
+        color: white,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+
+      centerAlignModePicker: true,
+      selectedDayTextStyle: dayTextStyle.copyWith(color: biruImran),
+
+      dayTextStylePredicate: ({required date}) {
+        TextStyle? textStyle;
+        
+        if (date.weekday == DateTime.saturday ||
+            date.weekday == DateTime.sunday) {
+          textStyle = weekendTextStyle;
+        }
+        // if (DateUtils.isSameDay(date, DateTime(2021, 1, 25))) {
+        //   textStyle = anniversaryTextStyle;
+        // }
+        return textStyle;
+      },
+      
+      dayBuilder: ({
+        required date,
+        textStyle,
+        decoration,
+        isSelected,
+        isDisabled,
+        isToday,
+      }) {
+        Widget? dayWidget;
+        return dayWidget;
+      },
+
+      monthBuilder: ({
+        required month,
+        decoration,
+        isCurrentMonth,
+        isDisabled,
+        isSelected,
+        textStyle,
+      }) {
+        bool _isSelected = isSelected ?? false;
+        List <String> months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ];
+        return Center(
+          child: Container(
+            height: 32,
+            //width: 100,
+            decoration: !_isSelected ? null :
+            BoxDecoration(
+              color: biruImran4,
+              borderRadius: BorderRadius.all(radiusCircular(10)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  months[month - 1],
+                  style: _isSelected ? dayTextStyle.copyWith(color: biruImran) :
+                  dayTextStyle,
+                ),
+                if (isCurrentMonth == true)
+                  SizedBox(width: 10,),
+                if (isCurrentMonth == true)
+                  Icon(Icons.circle_rounded, color: _isSelected ? biruImran : white, size: 10,),
+              ],
+            ),
+          ),
+        );
+      },
+      
+      yearBuilder: ({
+        required year,
+        decoration,
+        isCurrentYear,
+        isDisabled,
+        isSelected,
+        textStyle,
+      }) {
+        bool _isSelected = isSelected ?? false;
+
+        return Center(
+          child: Container(
+            height: 32,
+            width: 90,
+            decoration: !_isSelected ? null :
+            BoxDecoration(
+              color: biruImran4,
+              borderRadius: BorderRadius.all(radiusCircular(10)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  year.toString(),
+                  style: _isSelected ? dayTextStyle.copyWith(color: biruImran) :
+                  dayTextStyle,
+                ),
+                if (isCurrentYear == true)
+                  SizedBox(width: 10,),
+                if (isCurrentYear == true)
+                  Icon(Icons.circle_rounded, color: _isSelected ? biruImran : white, size: 10,),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    
     return GestureDetector( onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
       appBar: PreferredSize(
@@ -276,6 +427,55 @@ class _MarketReturnListingState extends State<MarketReturnListing> {
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Expanded(
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: Container(
+                  //       height: 55,
+                  //       decoration: BoxDecoration(
+                  //           borderRadius: BorderRadius.circular(12),
+                  //           border: Border.all(color: greyColor, width: 2)),
+                  //       child: Align(
+                  //         alignment: Alignment.bottomRight,
+                  //         child: DropdownButton<String>(
+                  //           padding: EdgeInsets.only(right: 12, left: 12),
+                  //           isExpanded: true,
+                  //           value: selectedDateFilter,
+                  //           items: dateFilters
+                  //               .map(
+                  //                 (filter) => DropdownMenuItem<String>(
+                  //                   alignment: AlignmentDirectional.centerEnd,
+                  //                   value: filter,
+                  //                   child: Align(
+                  //                     alignment: Alignment.centerRight,
+                  //                     child: SizedBox(
+                  //                       child: Text(
+                  //                         filter,
+                  //                         textAlign: TextAlign.end,
+                  //                         style: TextStyle(
+                  //                             fontWeight: FontWeight.normal),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               )
+                  //               .toList(),
+                  //           onChanged: (filter) async {
+                  //             setState(
+                  //               () {
+                  //                 selectedDateFilter = filter!;
+                  //                 _currentPage = 0;
+                  //                 _paginatorController.currentPage = 0;
+                  //                 marketReturns.clear();
+                  //               },
+                  //             );
+                  //             await fetchAPI(_token);
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -286,40 +486,60 @@ class _MarketReturnListingState extends State<MarketReturnListing> {
                             border: Border.all(color: greyColor, width: 2)),
                         child: Align(
                           alignment: Alignment.bottomRight,
-                          child: DropdownButton<String>(
-                            padding: EdgeInsets.only(right: 12, left: 12),
-                            isExpanded: true,
-                            value: selectedDateFilter,
-                            items: dateFilters
-                                .map(
-                                  (filter) => DropdownMenuItem<String>(
-                                    alignment: AlignmentDirectional.centerEnd,
-                                    value: filter,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: SizedBox(
-                                        child: Text(
-                                          filter,
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ),
-                                    ),
+                          child: ListTile(
+                            trailing: Icon(Icons.calendar_today, color: biruImran, size: 20),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Opacity(
+                                  opacity: .6,
+                                  child: Text(
+                                    'Trans Date:',
+                                    style: Theme.of(context).textTheme.bodyMedium,
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (filter) async {
-                              setState(
-                                () {
-                                  selectedDateFilter = filter!;
+                                ),
+                                Text(
+                                  selectedDate != null
+                                      ? BoardDateFormat('yyyy-MM-dd').format(selectedDate!)
+                                      : selectedDateFilter,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+
+                            onTap: () async {
+                              final values = await showCalendarDatePicker2Dialog(
+                                context: context,
+                                config: config,
+                                dialogSize: Size(screenWidth * 0.6, screenHeight * 0.2),
+                                borderRadius: BorderRadius.circular(15),
+                                value: [selectedDate],
+                                dialogBackgroundColor: biruImran,
+                              );
+                              if (values != null) {
+                                debugPrint(values.toString());
+                                setState(() {
+                                  selectedDate = values[0];
+                                  selectedDateFilter = BoardDateFormat('yyyy-MM-dd').format(selectedDate!);
+                                  stringDate = selectedDateFilter;
+                                  debugPrint('SELECTED DATE FILTER :: ${selectedDateFilter}');
                                   _currentPage = 0;
                                   _paginatorController.currentPage = 0;
                                   marketReturns.clear();
-                                },
-                              );
-                              await fetchAPI(_token);
-                            },
+                                });
+                                await fetchAPI(_token);
+                              } else if (values == null) {
+                                setState(() {
+                                  selectedDate = null;
+                                  selectedDateFilter = 'Any Time';
+                                  stringDate = "null";
+                                  _currentPage = 0;
+                                  _paginatorController.currentPage = 0;
+                                  marketReturns.clear();
+                                });
+                                await fetchAPI(_token);
+                              } 
+                            }
                           ),
                         ),
                       ),
