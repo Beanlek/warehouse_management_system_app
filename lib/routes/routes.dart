@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:warehouse/page_homepage/homepage.dart';
-import 'package:warehouse/page_login/layout/login.dart';
-import 'package:warehouse/page_login/layout/env_settings.dart';
+import 'package:warehouse/presentation/views/page_homepage/homepage.dart';
+import 'package:warehouse/presentation/views/page_login/layout/login.dart';
+import 'package:warehouse/presentation/views/page_login/layout/env_settings.dart';
 
 class AppRoutes {
   static const String homepage = 'home';

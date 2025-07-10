@@ -69,12 +69,30 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   url_launcher: ^6.3.0
   flutter_hooks: ^0.21.2
+
+  # bloc
+
+  bloc: ^9.0.0
+  flutter_bloc: ^9.0.0
+
+  # network
   dio: ^5.7.0
+  retrofit: ^4.4.2
+
+  # misc
+  equatable: ^2.0.7
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+
+  build_runner: ^2.4.5
+  freezed: ^2.3.5
+  json_serializable: ^6.7.0
+  retrofit_generator: ^8.1.0
+  injectable_generator: ^2.1.6
 
 flutter:
   fonts:

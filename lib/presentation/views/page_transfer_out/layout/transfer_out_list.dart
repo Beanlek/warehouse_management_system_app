@@ -1,0 +1,832 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously, unused_field, library_private_types_in_public_api, prefer_const_constructors, no_leading_underscores_for_local_identifiers, unnecessary_brace_in_string_interps, non_constant_identifier_names, constant_identifier_names
+
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
+import 'package:floating_snackbar/floating_snackbar.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:number_paginator/number_paginator.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:warehouse/presentation/views/page_transfer_out/layout/transfer_out_create.dart';
+import 'package:warehouse/presentation/views/page_transfer_out/layout/transfer_out_detail.dart';
+// import 'package:warehouse/page_transfer_out/layout/transfer_out_detail.dart';
+import 'package:warehouse/routes/routes.dart';
+import 'package:warehouse/shared_preference/token.dart';
+import 'package:warehouse/utils/utils.dart';
+
+const String TYPE = TRANSFER_OUT;
+
+class TransferOutListing extends StatefulWidget {
+  const TransferOutListing({super.key});
+
+  @override
+  _TransferOutListingState createState() => _TransferOutListingState();
+}
+
+class _TransferOutListingState extends State<TransferOutListing> {
+  List<Map<String, dynamic>> transferOuts = [];
+
+  List<String> filters = [
+    ALL,
+    TIO_RECEIVED,
+    TIO_PARTIALLY_RECEIVED,
+    TIO_IN_TRANSIT,
+    TIO_PENDING_APPROVAL,
+    TIO_PENDING_WA_ACK,
+  ];
+
+  String selectedFilter = ALL;
+
+  int _currentPage = 0;
+  int _numPages = 10;
+
+  final TextEditingController _searchFieldController = TextEditingController();
+  final NumberPaginatorController _paginatorController =
+      NumberPaginatorController();
+
+  DateFormat? _myFormat;
+  DateFormat the_date_format = DateFormat('yyyy-MM-dd');
+  DateTime currentDate = DateTime.now();
+  String stringDate = "null";
+  String? _token;
+
+  @override
+  void initState() {
+    super.initState();
+    _myFormat = DateFormat('dd-MM-yyyy').add_Hms();
+    stringDate = the_date_format.format(currentDate);
+    
+    _getToken();
+  }
+
+  Future<void> _getToken() async {
+    final String? token = await TokenUtil.getToken();
+    setState(() {
+      _token = token!;
+      // showPickLists = true;
+    });
+    if (token != null) {
+      await fetchAPINew(_token);
+    }
+  }
+
+  Future<void> fetchAPINew(String? token) async {
+    if (token == null) {
+      Navigator.pushNamed(context, AppRoutes.login);
+      FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context);
+      return;
+    }
+
+    int statusCode = 505;
+    
+    final String? _domainName = await TokenUtil.getDomainName();
+    String url = '${_domainName}/api/tin_tout/transfer_out/list';
+    final Dio dio = Dio();
+
+    String _mainBody = 'transferOut';
+
+    Map<String, String> params = {
+      'limit_rows': '20',
+      'page': (_currentPage + 1).toString(),
+
+      if(selectedFilter != ALL)
+        'status': selectedFilter
+    };
+
+    debugPrint("stringDate: $stringDate");
+
+    debugPrint('selectedFilter: $selectedFilter');
+    debugPrint('params: $params');
+    debugPrint('_currentPage: $_currentPage');
+
+    debugPrint(url.toString());
+
+    try {
+      final response = await dio.get(
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }),
+
+        url,
+        queryParameters: params
+      ).timeout(Duration(seconds: 3));
+
+      statusCode = response.statusCode!;
+
+      if (statusCode == 200 || statusCode == 201) {
+        final json = response.data;
+
+        try {
+
+          debugPrint("RESPONSE JSON :: ${json.toString()}");
+          
+          final List<dynamic> wms_van_ids = json[_mainBody]['rows'];
+          int count = json[_mainBody]['count'];
+
+          if (count == 0) {
+            count = 1;
+          }
+
+          _numPages = (count / 20).round();
+          if (_numPages < (count / 20)) {
+            _numPages++;
+          }
+
+          setState(() {
+            transferOuts = List<Map<String, dynamic>>.from(wms_van_ids).toList();
+          });
+        } catch (e) {
+          debugPrint('Failed to parse JSON: $e');
+        }
+      } else {
+        debugPrint('Failed to fetch Unacknowledged API. Status code: ${response.statusCode}');
+        debugPrint('Error Body: ${json}');
+
+        Navigator.pushNamed(context, AppRoutes.login);
+        FloatingSnackBar(
+          message: 'Token Expired. Please login back to the system.',
+          context: context
+        );
+      }
+
+    } on TimeoutException {
+      
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+
+    } on DioException catch (e) {
+      
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+
+    } catch (e) {
+
+      debugPrint("ERROR :: ${e.toString()}");
+      const errMsg = 'This may due to server hickups. Please wait for a while.';
+
+      FloatingSnackBar(
+          message: '${titleCheck(TYPE)} encounter an error. $errMsg',
+          context: context);
+
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      transferOuts.clear(); // Clear the existing data
+    });
+
+    await Future.delayed(
+      const Duration(seconds: 2),
+    ); // Simulate a delay (replace with your actual data fetching logic)
+
+    await fetchAPINew(_token);
+  }
+
+  void _onSearchSubmitted(String query) {
+    setState(() async {
+      await fetchAPINew(_token);
+      _searchFieldController.text = query;
+
+      // Filter transferOuts based on search text
+      transferOuts = transferOuts.where((_tOut) {
+        // final vanId = _tOut['van_id'].toString().toLowerCase();
+        final id = _tOut['id'].toString().toLowerCase();
+        final site = _tOut['site_id'].toString().toLowerCase();
+        final recordType = _tOut['record_type'].toString().toLowerCase();
+        final status = _tOut['status'].toString().toLowerCase();
+        final searchText = _searchFieldController.text.toLowerCase();
+
+        return //vanId.contains(searchText) ||
+            id.contains(searchText) ||
+            site.contains(searchText) ||
+            recordType.contains(searchText) ||
+            status.contains(searchText);
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70),
+        child: AppBar(
+          centerTitle: true,
+          title: Text(
+            '${titleCheck(TYPE)} Lists',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24.0,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          backgroundColor: biruImran,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, top: 24.0, right: 20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                          text: 'Home ',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).pop();
+                            },
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                            color: textColorTertiary,
+                          ),
+                          children: [TextSpan(text: '> ${titleCheck(TYPE)}')]),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: biruImran,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                      ),
+                      child: Text(
+                        'Create Transfer Out',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: white,
+                        ),
+                      ),
+                      onPressed: () {
+                        debugPrint("You're a frog now");
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TransferOutCreate()
+                        ));
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 70,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          onChanged: _onSearchSubmitted,
+                          controller: _searchFieldController,
+                          decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search),
+                              hintText: 'Search ...',
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      BorderSide(color: greyColor, width: 2))),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 55,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: greyColor, width: 2)),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: DropdownButton<String>(
+                            padding: EdgeInsets.only(right: 12, left: 12),
+                            isExpanded: true,
+                            value: selectedFilter,
+                            items: filters
+                                .map(
+                                  (filter) => DropdownMenuItem<String>(
+                                    alignment: AlignmentDirectional.centerEnd,
+                                    value: filter,
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: SizedBox(
+                                        child: Text(
+                                          tioStatusCheck(filter),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (filter) async {
+                              setState(
+                                () {
+                                  selectedFilter = filter!;
+                                  _currentPage = 0;
+                                  _paginatorController.currentPage = 0;
+                                  transferOuts.clear();
+                                },
+                              );
+                              await fetchAPINew(_token);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: _numPages == 1 ? 12 : 24,
+            ),
+            _numPages == 1 ?
+            SizedBox() :
+            SizedBox(
+              width: (MediaQuery.of(context).size.width / 7) * 4,
+              child: NumberPaginator(
+                controller: _paginatorController,
+                numberPages: _numPages,
+                onPageChange: (index) async {
+                  transferOuts.clear();
+                  _currentPage = index;
+                  
+                  await fetchAPINew(_token);
+                },
+                config: NumberPaginatorUIConfig(
+                  buttonSelectedForegroundColor: white,
+                  buttonUnselectedForegroundColor: textColorTertiary,
+                  buttonSelectedBackgroundColor: biruImran,
+                ),
+                showNextButton: _numPages == 1 ? false : true,
+                showPrevButton: _numPages == 1 ? false : true,
+              ),
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                color: colorFirst,
+                backgroundColor: whiteColor,
+                onRefresh: _refreshData,
+                child: _buildListView(selectedFilter),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color colorCheck(String _status) {
+    switch (_status){
+      case 'received':
+        return hijauImran2;
+      case 'partially received':
+        return category4Color;
+      case 'in transit':
+        return biruImran;
+      case 'pending_approval':
+        return colorOrenAiman;
+      default:
+        return biruImran;
+    }
+  }
+
+  // Builds the ListView to display transferOut data
+  Widget _buildListView(String _filter) {
+    // Show shimmer if data is empty
+    _filter = _filter.toLowerCase();
+    if (transferOuts.isEmpty) {
+      return FutureBuilder<void>(
+        future: Future.delayed(const Duration(seconds: 3)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return showEmptyList();
+          } else {
+            return shimmerList(); // Display shimmer while waiting
+          }
+        },
+      );
+    }
+
+    // Filter transferOuts based on search text
+    List<Map<String, dynamic>> filteredTout = transferOuts.where((_tOut) {
+      
+      final id = _tOut['id'].toString().toLowerCase();
+      final site = _tOut['from_site_id'].toString().toLowerCase();
+      final recordType = _tOut['record_type'].toString().toLowerCase();
+      final status = _tOut['status'].toString().toLowerCase();
+      final searchText = _searchFieldController.text.toLowerCase();
+
+      return
+        id.contains(searchText) ||
+        site.contains(searchText) ||
+        recordType.contains(searchText) ||
+        status.contains(searchText);
+
+    }).toList();
+
+    return ListView.builder(
+      itemCount: filteredTout.length,
+      itemBuilder: (context, index) {
+        final transferOut = filteredTout[index];
+
+        final id = transferOut['id'] ?? 'null';
+        final date = transferOut['date'] ?? 'null';
+        final status = transferOut['status'] ?? 'null';
+        
+        final fromSiteId = transferOut['from_site_id'] ?? 'null';
+        final toSiteId = transferOut['to_site_id'] ?? 'null';
+
+        final createdBy = transferOut['created_by'] ?? 'null';
+        final createdAt = transferOut['created_at'] ?? 'null';
+        
+        final remark = transferOut['remark'] ?? 'null';
+
+        return _buildListTile(
+          index,
+          
+          id: id,
+          date: date,
+          status: status,
+
+          fromSiteId: fromSiteId,
+          toSiteId: toSiteId,
+
+          createdAt: createdAt,
+          createdBy: createdBy,
+          
+          remark: remark,
+        );
+      },
+      // controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+    );
+  }
+
+  Widget showEmptyList() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'No ${selectedFilter.toLowerCase()} list for now',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget shimmerList() {
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          period: const Duration(milliseconds: 800),
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[200]!,
+                  blurRadius: 5,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 16.0,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 200,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 80,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Builds an individual ListTile
+  Widget _buildListTile( int index, {
+    required String id,
+    required String date,
+    required String status,
+
+    required String fromSiteId,
+    required String toSiteId,
+    
+    required String createdAt,
+    required String createdBy,
+    
+    required String remark,
+  }) {
+    // DateTime dateTimeParsed = DateTime.parse(createdAt).add(Duration(hours: int.parse('8')));
+    // String dateCreatedAt = _myFormat!.format(dateTimeParsed);
+
+    if (_currentPage != 0) {
+      index = index + (20 * _currentPage);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
+      child: Material(
+        elevation: 3,
+        borderRadius: BorderRadius.circular(24.0),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.0),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: const [biruImran3, layoutBackgroundWhite],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    child: ListTile(
+                      splashColor: white,
+                      titleAlignment: ListTileTitleAlignment.titleHeight,
+                      onTap: () async {
+                        debugPrint(id);
+                        bool tempRefresh = false;
+                        tempRefresh = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TransferOutDetailView(
+                              id: id,
+                              status: status,
+                              createdAt: createdAt,
+                            ),
+                          ),
+                        ) ?? false;
+                        if (tempRefresh) {
+                          setState(() {
+                            transferOuts.clear();
+                            tempRefresh = false;
+                          });
+                          await fetchAPINew(_token);
+                        }
+                      },
+                      leading: CircleAvatar(
+                        maxRadius: 10,
+                        backgroundColor: Colors.transparent,
+                        child: Text(
+                          '${index + 1}',
+                          style:
+                              const TextStyle(color: biruImran, fontSize: 14),
+                        ),
+                      ),
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              child: AutoSizeText(
+                                maxLines: 1,
+                                id,
+                                style: const TextStyle(
+                                  color: biruImran,
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: RichText(
+                              text: TextSpan(
+                                  text: 'From Site ',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                    fontSize: 16.0,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: fromSiteId,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18.0,
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ),
+                          RichText(
+                            text: TextSpan(
+                                text: 'To Site ',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: black,
+                                  fontSize: 16.0,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: toSiteId,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                        ],
+                      ),
+                      subtitle: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AutoSizeText(
+                                titleCheck(TYPE),
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: black,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  RichText(
+                                    textAlign: TextAlign.end,
+                                    text: TextSpan(
+                                        text: 'Created At\n',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          color: black,
+                                          fontSize: 15.0,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: date,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                  ),
+                                  AutoSizeText(
+                                    'Created by: $createdBy',
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: black,
+                                      fontSize: 14.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          Divider(),
+
+                          Opacity(
+                            opacity: .65,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Remark: ',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                  ),
+                                ),
+                                AutoSizeText(
+                                  remark,
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: black,
+                                  ),
+                                  wrapWords: false,
+                                  maxLines: 2,
+                                  minFontSize: 1,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 10),
+                      Icon(
+                        Icons.circle_rounded,
+                        size: 8,
+                        color: colorCheck(status),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: AutoSizeText(
+                          status.capitalize(),
+                          maxLines: 1,
+                          style: TextStyle(
+                              color: colorCheck(status),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
