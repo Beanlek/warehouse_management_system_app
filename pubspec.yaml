@@ -70,8 +70,15 @@ dependencies:
   url_launcher: ^6.3.0
   flutter_hooks: ^0.21.2
 
-  # bloc
+  #annotation
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
 
+  # dependency injection
+  get_it: ^8.0.3
+  injectable: ^2.5.0
+
+  # bloc
   bloc: ^9.0.0
   flutter_bloc: ^9.0.0
 
@@ -81,6 +88,10 @@ dependencies:
 
   # misc
   equatable: ^2.0.7
+
+
+  # storage
+  flutter_secure_storage: ^9.2.4
 
 
 dev_dependencies:
