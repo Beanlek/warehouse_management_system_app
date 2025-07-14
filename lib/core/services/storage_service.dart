@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class StorageService {
   static const String keyToken = 'token';
   static const String keyTokenExpiryTime = 'token_expiry_time';

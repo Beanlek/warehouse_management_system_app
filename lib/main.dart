@@ -1,15 +1,40 @@
 // ignore_for_file: must_be_immutable, avoid_print, unnecessary_brace_in_string_interps, no_leading_underscores_for_local_identifiers
 
+import 'package:bloc/bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:warehouse/data/models/warehouse.dart';
+import 'package:warehouse/injection.dart';
+import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_bloc.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 // import 'package:warehouse/shared_preference/token.dart';
 
+class AppBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    if (bloc is Cubit) {
+      debugPrint('$change');
+    }
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    debugPrint('$transition');
+  }
+}
+
 void main() async {
+
+  Bloc.observer = AppBlocObserver();
+  await configureDependencies();
+
   WidgetsFlutterBinding.ensureInitialized();
   String _initRoute;
 
@@ -78,12 +103,17 @@ class MyApp extends StatelessWidget {
     
     debugPrint('main.dart editedRoute : ${initRoute}');
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: AppRoutes.routes,
-      initialRoute: initRoute,
-      theme: ThemeData(
-        fontFamily: 'Poppins'
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<WarehouseBloc>(create: (context) => WarehouseBloc())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        routes: AppRoutes.routes,
+        initialRoute: initRoute,
+        theme: ThemeData(
+          fontFamily: 'Poppins'
+        ),
       ),
     );
   }

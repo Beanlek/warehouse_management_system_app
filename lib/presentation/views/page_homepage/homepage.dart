@@ -7,9 +7,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_bloc.dart';
 import 'package:warehouse/presentation/views/page_homepage/component/local_components.dart';
 
 import 'package:warehouse/presentation/views/page_homepage/widget/appbar_homepage.dart';
@@ -26,6 +28,7 @@ import 'package:warehouse/presentation/views/page_stock_take/layout/main_stock_t
 import 'package:warehouse/presentation/views/page_transfer_in/layout/transfer_in_list.dart';
 import 'package:warehouse/presentation/views/page_transfer_inout/layout/transfer_inout_list.dart';
 import 'package:warehouse/presentation/views/page_transfer_out/layout/transfer_out_list.dart';
+import 'package:warehouse/presentation/views/warehouse_inventory/warehouse_inventory_screen.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/presentation/views/stock_recon/list_recon.dart';
@@ -1394,6 +1397,71 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                 SizedBox(
                                   height: 15,
                                 ),
+                                Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: ListTile(
+                                          onTap: () {
+                                            deleteDraft();
+                                            Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => BlocProvider(
+                                                create: (_) => WarehouseBloc()..init(),
+                                                child: const WarehouseStocksScreen(),
+                                              ),
+                                            ),
+                                          );
+                                          },
+                                          title: Material(
+                                            elevation: 3,
+                                            borderRadius:
+                                                BorderRadius.circular(24.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(24.0),
+                                                // color: Colors.orange,
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Colors.orange,
+                                                    Color.fromARGB(
+                                                        255, 255, 186, 82)
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Flexible(
+                                                    fit: FlexFit.tight,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          24.0, 16, 24, 16),
+                                                      child: SizedBox(
+                                                        child: AutoSizeText(
+                                                          "Warehouse Inventory",
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              color: biruImran),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Image.asset(
+                                                    "assets/homepage/icon_warehouseStockTake.png",
+                                                    width: 100,
+                                                    height: 100,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                 showInventoryStockTake
                                     ? Padding(
                                         padding: const EdgeInsets.only(

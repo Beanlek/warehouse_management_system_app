@@ -1,6 +1,5 @@
 class Globals {
-  static const String defaultEnv = 'Production';
-  static const String debugURL = 'https://pnv.amastsales.com/';
+  static const String debugURL = 'https://tnvsales.amastsales-sandbox.com';
   static const List<Server> serversList = [
     Server("https://tnvsales.amastsales-sandbox.com/", true),
     Server("https://pnvsales.amastsales.com/", false),
