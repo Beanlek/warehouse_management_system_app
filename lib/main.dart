@@ -9,7 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warehouse/data/models/warehouse.dart';
 import 'package:warehouse/injection.dart';
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_bloc.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 // import 'package:warehouse/shared_preference/token.dart';

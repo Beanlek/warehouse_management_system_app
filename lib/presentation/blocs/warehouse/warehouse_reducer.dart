@@ -1,6 +1,6 @@
 
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_event.dart';
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_state.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_event.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_state.dart';
 
 import '../base/reducer.dart';
 
@@ -16,6 +16,15 @@ class WarehouseReducer extends Reducer<WarehouseEvent, WarehouseState> {
       siteId: newEvent.maybeWhen(
         selectSite: (siteId) => siteId,
         orElse: () => currentState.siteId,
+      ),
+      brands: newEvent.maybeWhen(
+        loadBrandList: (brands) => brands,
+        orElse: () => currentState.brands,
+      ),
+      selectedBrand: newEvent.maybeWhen(
+        selectBrand: (selectedBrand) => selectedBrand,
+        selectSite: (_) => null,
+        orElse: () => currentState.selectedBrand
       ),
       warehouseInventoryList: newEvent.maybeWhen(
         loadWarehouseInventory: (warehouseInventoryList) => warehouseInventoryList,

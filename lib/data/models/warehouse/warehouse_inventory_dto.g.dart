@@ -9,21 +9,21 @@ part of 'warehouse_inventory_dto.dart';
 _$WarehouseInventoryDtoImpl _$$WarehouseInventoryDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$WarehouseInventoryDtoImpl(
-      brand: json['brand'] as String,
-      category: json['category'] as String,
-      subCategory: json['sub_category'] as String,
-      skuId: json['sku_id'] as String,
-      skuName: json['sku_name'] as String,
-      sequence: (json['sequence'] as num).toInt(),
-      uomId: json['uom_id'] as String,
-      shortCode: json['short_code'] as String,
-      name: json['name'] as String,
-      quantity: (json['quantity'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+      brand: json['brand'] as String?,
+      category: json['category'] as String?,
+      subCategory: json['sub_category'] as String?,
+      skuId: json['sku_id'] as String?,
+      skuName: json['sku_name'] as String?,
+      sequence: (json['sequence'] as num?)?.toInt(),
+      uomId: json['uom_id'] as String?,
+      shortCode: json['short_code'] as String?,
+      name: json['name'] as String?,
+      quantity: (json['quantity'] as List<dynamic>?)
+          ?.map((e) => (e as num?)?.toInt())
           .toList(),
       availableSkuConversion:
-          (json['available_sku_conversion'] as List<dynamic>)
-              .map((e) => e as String)
+          (json['available_sku_conversion'] as List<dynamic>?)
+              ?.map((e) => e as String?)
               .toList(),
     );
 

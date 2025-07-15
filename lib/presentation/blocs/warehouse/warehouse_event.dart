@@ -9,6 +9,9 @@ part 'warehouse_event.freezed.dart';
 class WarehouseEvent with _$WarehouseEvent {
   const factory WarehouseEvent.setup() = Setup;
   const factory WarehouseEvent.selectSite(String siteId) = SelectSite;
+  const factory WarehouseEvent.selectBrand(String? brand) = SelectBrand;
   const factory WarehouseEvent.setupSiteList(List<Site> siteList) = SetupSiteList;
+  const factory WarehouseEvent.loadBrandList(List<String> brands) = LoadBrandList;
   const factory WarehouseEvent.loadWarehouseInventory(List<WarehouseInventory> warehouseInventoryList) = LoadWarehouseInventory;
+  const factory WarehouseEvent.loadBrandInventoryList(Map<String, List<WarehouseInventory>> brandInventoryMap) = LoadBrandInventoryList;
 }

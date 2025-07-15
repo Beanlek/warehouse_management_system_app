@@ -5,11 +5,10 @@ import 'package:warehouse/core/network/network_bound_item.dart';
 import 'package:warehouse/core/network/retrofit/api_client.dart';
 import 'package:warehouse/core/network/retrofit/rest_api_executor.dart';
 import 'package:warehouse/core/shared/app_error.dart';
-import 'package:warehouse/core/utils/iterable_extensions.dart';
-import 'package:warehouse/data/models/responses/site_list_response_dto.dart';
-import 'package:warehouse/data/models/sites/site_dto.dart';
-import 'package:warehouse/data/models/warehouse/warehouse_inventory_dto.dart';
+import 'package:warehouse/data/models/responses/sites/site_list_response_dto.dart';
+import 'package:warehouse/data/models/responses/warehouse/inventory_list_response_dto.dart';
 import 'package:warehouse/domain/entities/sites/site.dart';
+import 'package:warehouse/domain/entities/warehouse_inventory/warehouse_inventory.dart';
 import 'package:warehouse/domain/repositories/warehouse_inventory_repository.dart';
 
 @Injectable(as: WarehouseInventoryRepository)
@@ -19,20 +18,17 @@ class WarehouseInventoryRepositoryImpl extends WarehouseInventoryRepository{
   WarehouseInventoryRepositoryImpl(this._apiClient);
   
   @override
-  Future fetchWarehouseInventory(String token, String siteId) {
+  Future<Result<List<WarehouseInventory>, AppError>> fetchWarehouseInventory(String token, String siteId) {
     debugPrint('Fetching warehouse inventory for site: $siteId with token: $token');
     return networkInBoundItem(
-      apiRequest: () => RestApiExecutor.executeForList<WarehouseInventoryDto>(
+      apiRequest: () => RestApiExecutor.executeGeneric<InventoryListResponseDto>(
         requestCall: () async {
           var restClient = await _apiClient.getRestClient();
-          return restClient.getWarehouseInventory(
-            token,
-            siteId,
-          );
+          return restClient.getWarehouseInventory('Bearer $token', siteId, true);
         }),
-      saveToDb: (List<WarehouseInventoryDto> responseList) => {},
-      getSuccessState: (List<WarehouseInventoryDto> apiResult) =>
-          Result.success(apiResult.mapNotNull((item) => item.map()).toList()),
+      saveToDb: (InventoryListResponseDto _) => {},
+      getSuccessState: (InventoryListResponseDto dto) =>
+          Result.success(dto.inventory.map((e) => e.map()).toList()),
       getErrorState: (AppError errorApiResult) =>
           Result.failure(errorApiResult),
     );

@@ -16,23 +16,24 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$WarehouseInventory {
-  String get brand => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
+  String? get brand => throw _privateConstructorUsedError;
+  String? get category => throw _privateConstructorUsedError;
   @JsonKey(name: 'sub_category')
-  String get subCategory => throw _privateConstructorUsedError;
+  String? get subCategory => throw _privateConstructorUsedError;
   @JsonKey(name: 'sku_id')
-  String get skuId => throw _privateConstructorUsedError;
+  String? get skuId => throw _privateConstructorUsedError;
   @JsonKey(name: 'sku_name')
-  String get skuName => throw _privateConstructorUsedError;
-  int get sequence => throw _privateConstructorUsedError;
+  String? get skuName => throw _privateConstructorUsedError;
+  int? get sequence => throw _privateConstructorUsedError;
   @JsonKey(name: 'uom_id')
-  String get uomId => throw _privateConstructorUsedError;
+  String? get uomId => throw _privateConstructorUsedError;
   @JsonKey(name: 'short_code')
-  String get shortCode => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  List<int> get quantity => throw _privateConstructorUsedError;
+  String? get shortCode => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  List<int?>? get quantity => throw _privateConstructorUsedError;
   @JsonKey(name: 'available_sku_conversion')
-  List<String> get availableSkuConversion => throw _privateConstructorUsedError;
+  List<String?>? get availableSkuConversion =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of WarehouseInventory
   /// with the given fields replaced by the non-null parameter values.
@@ -48,18 +49,18 @@ abstract class $WarehouseInventoryCopyWith<$Res> {
       _$WarehouseInventoryCopyWithImpl<$Res, WarehouseInventory>;
   @useResult
   $Res call(
-      {String brand,
-      String category,
-      @JsonKey(name: 'sub_category') String subCategory,
-      @JsonKey(name: 'sku_id') String skuId,
-      @JsonKey(name: 'sku_name') String skuName,
-      int sequence,
-      @JsonKey(name: 'uom_id') String uomId,
-      @JsonKey(name: 'short_code') String shortCode,
-      String name,
-      List<int> quantity,
+      {String? brand,
+      String? category,
+      @JsonKey(name: 'sub_category') String? subCategory,
+      @JsonKey(name: 'sku_id') String? skuId,
+      @JsonKey(name: 'sku_name') String? skuName,
+      int? sequence,
+      @JsonKey(name: 'uom_id') String? uomId,
+      @JsonKey(name: 'short_code') String? shortCode,
+      String? name,
+      List<int?>? quantity,
       @JsonKey(name: 'available_sku_conversion')
-      List<String> availableSkuConversion});
+      List<String?>? availableSkuConversion});
 }
 
 /// @nodoc
@@ -77,63 +78,63 @@ class _$WarehouseInventoryCopyWithImpl<$Res, $Val extends WarehouseInventory>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? brand = null,
-    Object? category = null,
-    Object? subCategory = null,
-    Object? skuId = null,
-    Object? skuName = null,
-    Object? sequence = null,
-    Object? uomId = null,
-    Object? shortCode = null,
-    Object? name = null,
-    Object? quantity = null,
-    Object? availableSkuConversion = null,
+    Object? brand = freezed,
+    Object? category = freezed,
+    Object? subCategory = freezed,
+    Object? skuId = freezed,
+    Object? skuName = freezed,
+    Object? sequence = freezed,
+    Object? uomId = freezed,
+    Object? shortCode = freezed,
+    Object? name = freezed,
+    Object? quantity = freezed,
+    Object? availableSkuConversion = freezed,
   }) {
     return _then(_value.copyWith(
-      brand: null == brand
+      brand: freezed == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
-              as String,
-      category: null == category
+              as String?,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      subCategory: null == subCategory
+              as String?,
+      subCategory: freezed == subCategory
           ? _value.subCategory
           : subCategory // ignore: cast_nullable_to_non_nullable
-              as String,
-      skuId: null == skuId
+              as String?,
+      skuId: freezed == skuId
           ? _value.skuId
           : skuId // ignore: cast_nullable_to_non_nullable
-              as String,
-      skuName: null == skuName
+              as String?,
+      skuName: freezed == skuName
           ? _value.skuName
           : skuName // ignore: cast_nullable_to_non_nullable
-              as String,
-      sequence: null == sequence
+              as String?,
+      sequence: freezed == sequence
           ? _value.sequence
           : sequence // ignore: cast_nullable_to_non_nullable
-              as int,
-      uomId: null == uomId
+              as int?,
+      uomId: freezed == uomId
           ? _value.uomId
           : uomId // ignore: cast_nullable_to_non_nullable
-              as String,
-      shortCode: null == shortCode
+              as String?,
+      shortCode: freezed == shortCode
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
+              as String?,
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
+              as String?,
+      quantity: freezed == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      availableSkuConversion: null == availableSkuConversion
+              as List<int?>?,
+      availableSkuConversion: freezed == availableSkuConversion
           ? _value.availableSkuConversion
           : availableSkuConversion // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<String?>?,
     ) as $Val);
   }
 }
@@ -147,18 +148,18 @@ abstract class _$$WarehouseInventoryImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String brand,
-      String category,
-      @JsonKey(name: 'sub_category') String subCategory,
-      @JsonKey(name: 'sku_id') String skuId,
-      @JsonKey(name: 'sku_name') String skuName,
-      int sequence,
-      @JsonKey(name: 'uom_id') String uomId,
-      @JsonKey(name: 'short_code') String shortCode,
-      String name,
-      List<int> quantity,
+      {String? brand,
+      String? category,
+      @JsonKey(name: 'sub_category') String? subCategory,
+      @JsonKey(name: 'sku_id') String? skuId,
+      @JsonKey(name: 'sku_name') String? skuName,
+      int? sequence,
+      @JsonKey(name: 'uom_id') String? uomId,
+      @JsonKey(name: 'short_code') String? shortCode,
+      String? name,
+      List<int?>? quantity,
       @JsonKey(name: 'available_sku_conversion')
-      List<String> availableSkuConversion});
+      List<String?>? availableSkuConversion});
 }
 
 /// @nodoc
@@ -174,63 +175,63 @@ class __$$WarehouseInventoryImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? brand = null,
-    Object? category = null,
-    Object? subCategory = null,
-    Object? skuId = null,
-    Object? skuName = null,
-    Object? sequence = null,
-    Object? uomId = null,
-    Object? shortCode = null,
-    Object? name = null,
-    Object? quantity = null,
-    Object? availableSkuConversion = null,
+    Object? brand = freezed,
+    Object? category = freezed,
+    Object? subCategory = freezed,
+    Object? skuId = freezed,
+    Object? skuName = freezed,
+    Object? sequence = freezed,
+    Object? uomId = freezed,
+    Object? shortCode = freezed,
+    Object? name = freezed,
+    Object? quantity = freezed,
+    Object? availableSkuConversion = freezed,
   }) {
     return _then(_$WarehouseInventoryImpl(
-      brand: null == brand
+      brand: freezed == brand
           ? _value.brand
           : brand // ignore: cast_nullable_to_non_nullable
-              as String,
-      category: null == category
+              as String?,
+      category: freezed == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      subCategory: null == subCategory
+              as String?,
+      subCategory: freezed == subCategory
           ? _value.subCategory
           : subCategory // ignore: cast_nullable_to_non_nullable
-              as String,
-      skuId: null == skuId
+              as String?,
+      skuId: freezed == skuId
           ? _value.skuId
           : skuId // ignore: cast_nullable_to_non_nullable
-              as String,
-      skuName: null == skuName
+              as String?,
+      skuName: freezed == skuName
           ? _value.skuName
           : skuName // ignore: cast_nullable_to_non_nullable
-              as String,
-      sequence: null == sequence
+              as String?,
+      sequence: freezed == sequence
           ? _value.sequence
           : sequence // ignore: cast_nullable_to_non_nullable
-              as int,
-      uomId: null == uomId
+              as int?,
+      uomId: freezed == uomId
           ? _value.uomId
           : uomId // ignore: cast_nullable_to_non_nullable
-              as String,
-      shortCode: null == shortCode
+              as String?,
+      shortCode: freezed == shortCode
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
+              as String?,
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
+              as String?,
+      quantity: freezed == quantity
           ? _value._quantity
           : quantity // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      availableSkuConversion: null == availableSkuConversion
+              as List<int?>?,
+      availableSkuConversion: freezed == availableSkuConversion
           ? _value._availableSkuConversion
           : availableSkuConversion // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<String?>?,
     ));
   }
 }
@@ -239,61 +240,65 @@ class __$$WarehouseInventoryImplCopyWithImpl<$Res>
 
 class _$WarehouseInventoryImpl extends _WarehouseInventory {
   const _$WarehouseInventoryImpl(
-      {required this.brand,
-      required this.category,
-      @JsonKey(name: 'sub_category') required this.subCategory,
-      @JsonKey(name: 'sku_id') required this.skuId,
-      @JsonKey(name: 'sku_name') required this.skuName,
-      required this.sequence,
-      @JsonKey(name: 'uom_id') required this.uomId,
-      @JsonKey(name: 'short_code') required this.shortCode,
-      required this.name,
-      required final List<int> quantity,
+      {this.brand,
+      this.category,
+      @JsonKey(name: 'sub_category') this.subCategory,
+      @JsonKey(name: 'sku_id') this.skuId,
+      @JsonKey(name: 'sku_name') this.skuName,
+      this.sequence,
+      @JsonKey(name: 'uom_id') this.uomId,
+      @JsonKey(name: 'short_code') this.shortCode,
+      this.name,
+      final List<int?>? quantity,
       @JsonKey(name: 'available_sku_conversion')
-      required final List<String> availableSkuConversion})
+      final List<String?>? availableSkuConversion})
       : _quantity = quantity,
         _availableSkuConversion = availableSkuConversion,
         super._();
 
   @override
-  final String brand;
+  final String? brand;
   @override
-  final String category;
+  final String? category;
   @override
   @JsonKey(name: 'sub_category')
-  final String subCategory;
+  final String? subCategory;
   @override
   @JsonKey(name: 'sku_id')
-  final String skuId;
+  final String? skuId;
   @override
   @JsonKey(name: 'sku_name')
-  final String skuName;
+  final String? skuName;
   @override
-  final int sequence;
+  final int? sequence;
   @override
   @JsonKey(name: 'uom_id')
-  final String uomId;
+  final String? uomId;
   @override
   @JsonKey(name: 'short_code')
-  final String shortCode;
+  final String? shortCode;
   @override
-  final String name;
-  final List<int> _quantity;
+  final String? name;
+  final List<int?>? _quantity;
   @override
-  List<int> get quantity {
+  List<int?>? get quantity {
+    final value = _quantity;
+    if (value == null) return null;
     if (_quantity is EqualUnmodifiableListView) return _quantity;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_quantity);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<String> _availableSkuConversion;
+  final List<String?>? _availableSkuConversion;
   @override
   @JsonKey(name: 'available_sku_conversion')
-  List<String> get availableSkuConversion {
+  List<String?>? get availableSkuConversion {
+    final value = _availableSkuConversion;
+    if (value == null) return null;
     if (_availableSkuConversion is EqualUnmodifiableListView)
       return _availableSkuConversion;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_availableSkuConversion);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -351,49 +356,48 @@ class _$WarehouseInventoryImpl extends _WarehouseInventory {
 
 abstract class _WarehouseInventory extends WarehouseInventory {
   const factory _WarehouseInventory(
-          {required final String brand,
-          required final String category,
-          @JsonKey(name: 'sub_category') required final String subCategory,
-          @JsonKey(name: 'sku_id') required final String skuId,
-          @JsonKey(name: 'sku_name') required final String skuName,
-          required final int sequence,
-          @JsonKey(name: 'uom_id') required final String uomId,
-          @JsonKey(name: 'short_code') required final String shortCode,
-          required final String name,
-          required final List<int> quantity,
-          @JsonKey(name: 'available_sku_conversion')
-          required final List<String> availableSkuConversion}) =
-      _$WarehouseInventoryImpl;
+      {final String? brand,
+      final String? category,
+      @JsonKey(name: 'sub_category') final String? subCategory,
+      @JsonKey(name: 'sku_id') final String? skuId,
+      @JsonKey(name: 'sku_name') final String? skuName,
+      final int? sequence,
+      @JsonKey(name: 'uom_id') final String? uomId,
+      @JsonKey(name: 'short_code') final String? shortCode,
+      final String? name,
+      final List<int?>? quantity,
+      @JsonKey(name: 'available_sku_conversion')
+      final List<String?>? availableSkuConversion}) = _$WarehouseInventoryImpl;
   const _WarehouseInventory._() : super._();
 
   @override
-  String get brand;
+  String? get brand;
   @override
-  String get category;
+  String? get category;
   @override
   @JsonKey(name: 'sub_category')
-  String get subCategory;
+  String? get subCategory;
   @override
   @JsonKey(name: 'sku_id')
-  String get skuId;
+  String? get skuId;
   @override
   @JsonKey(name: 'sku_name')
-  String get skuName;
+  String? get skuName;
   @override
-  int get sequence;
+  int? get sequence;
   @override
   @JsonKey(name: 'uom_id')
-  String get uomId;
+  String? get uomId;
   @override
   @JsonKey(name: 'short_code')
-  String get shortCode;
+  String? get shortCode;
   @override
-  String get name;
+  String? get name;
   @override
-  List<int> get quantity;
+  List<int?>? get quantity;
   @override
   @JsonKey(name: 'available_sku_conversion')
-  List<String> get availableSkuConversion;
+  List<String?>? get availableSkuConversion;
 
   /// Create a copy of WarehouseInventory
   /// with the given fields replaced by the non-null parameter values.

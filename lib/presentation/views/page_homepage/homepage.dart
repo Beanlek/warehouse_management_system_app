@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_bloc.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
 import 'package:warehouse/presentation/views/page_homepage/component/local_components.dart';
 
 import 'package:warehouse/presentation/views/page_homepage/widget/appbar_homepage.dart';
@@ -1402,7 +1402,6 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                             left: 16, right: 16),
                                         child: ListTile(
                                           onTap: () {
-                                            deleteDraft();
                                             Navigator.push(
                                             context,
                                             MaterialPageRoute(

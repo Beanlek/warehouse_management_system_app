@@ -12,7 +12,10 @@ class WarehouseState with _$WarehouseState {
     @Default(false) bool isLoading,
     @Default(null) String? siteId,
     @Default([]) List<Site> siteList,
+    @Default(null) String? selectedBrand,
+    @Default([]) List<String> brands,
     @Default([]) List<WarehouseInventory> warehouseInventoryList,
+    @Default({}) Map<String, List<WarehouseInventory>> brandInventoryMap,
   }) = _WarehouseState;
 
 }

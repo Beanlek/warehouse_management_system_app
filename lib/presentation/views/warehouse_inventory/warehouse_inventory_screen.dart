@@ -3,9 +3,10 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/domain/entities/sites/site.dart';
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_bloc.dart';
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_event.dart';
-import 'package:warehouse/presentation/blocs/warehouse_inventory/warehouse_state.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_event.dart';
+import 'package:warehouse/presentation/blocs/warehouse/warehouse_state.dart';
+import 'package:warehouse/presentation/widgets/warehouse/brand_group.dart';
 import 'package:warehouse/utils/utils.dart';
 
 class WarehouseStocksScreen extends StatefulWidget {
@@ -16,13 +17,22 @@ class WarehouseStocksScreen extends StatefulWidget {
 }
 
 class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
+  late final WarehouseBloc _warehouseBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _warehouseBloc = BlocProvider.of<WarehouseBloc>(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
           appBar: AppBar(
           centerTitle: true,
           title: Text(
-            'Warehouse Stocks',
+            'Warehouse Inventory',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24.0,
@@ -39,7 +49,7 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child:
-                      BlocBuilder<WarehouseBloc, WarehouseState>(
+                    BlocBuilder<WarehouseBloc, WarehouseState>(
                     builder: (context, state) {
                       return InkWell(
                           onTap: () {
@@ -89,6 +99,28 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
                         current.siteId,
                   ),
                 ),
+                BlocBuilder<WarehouseBloc, WarehouseState>(
+                  builder: (context, state) {
+                    if (state.warehouseInventoryList.isEmpty) {
+                      return const Center(
+                        child: Text('No inventory data available.'),
+                      );
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: state.brands.length,
+                        itemBuilder: (context, index) {
+                          final brand = state.brands[index];
+                          return BrandGroup(
+                            brand: brand,
+                            callback: (expanded) =>
+                            _warehouseBloc.process(WarehouseEvent.selectBrand(expanded ? state.brands[index] : null)),
+                            isSelected: state.selectedBrand != null && state.brands[index] == state.selectedBrand);
+                        },
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ));
@@ -109,6 +141,13 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
           builder: (BuildContext buildContext, StateSetter setModalState) {
             return SingleChildScrollView(
               child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
                 width: double.infinity,
                 padding: const EdgeInsets.only(top: 32, bottom: 10),
                 child: Padding(

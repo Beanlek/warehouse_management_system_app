@@ -10,17 +10,17 @@ class WarehouseInventoryDto with _$WarehouseInventoryDto implements BaseDtoModel
   const WarehouseInventoryDto._();
 
   const factory WarehouseInventoryDto({
-    required String brand,
-    required String category,
-    @JsonKey(name: 'sub_category') required String subCategory,
-    @JsonKey(name: 'sku_id') required String skuId,
-    @JsonKey(name: 'sku_name') required String skuName,
-    required int sequence,
-    @JsonKey(name: 'uom_id') required String uomId,
-    @JsonKey(name: 'short_code') required String shortCode,
-    required String name,
-    required List<int> quantity,
-    @JsonKey(name: 'available_sku_conversion') required List<String> availableSkuConversion,
+    String? brand,
+    String? category,
+    @JsonKey(name: 'sub_category') String? subCategory,
+    @JsonKey(name: 'sku_id') required String? skuId,
+    @JsonKey(name: 'sku_name') required String? skuName,
+    int? sequence,
+    @JsonKey(name: 'uom_id') required String? uomId,
+    @JsonKey(name: 'short_code') String? shortCode,
+    String? name,
+    required List<int?>? quantity,
+    @JsonKey(name: 'available_sku_conversion') List<String?>? availableSkuConversion,
   }) = _WarehouseInventoryDto;
 
   factory WarehouseInventoryDto.fromJson(Map<String, Object?> json) =>

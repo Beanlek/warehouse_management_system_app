@@ -39,11 +39,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1041.ApiClient(gh<_i231.DioClient>()));
     gh.factory<_i186.WarehouseInventoryRepository>(
         () => _i351.WarehouseInventoryRepositoryImpl(gh<_i1041.ApiClient>()));
+    gh.factory<_i428.FetchSitesListUseCase>(() =>
+        _i428.FetchSitesListUseCase(gh<_i186.WarehouseInventoryRepository>()));
     gh.factory<_i633.FetchWarehouseInventoryListUseCase>(() =>
         _i633.FetchWarehouseInventoryListUseCase(
             gh<_i186.WarehouseInventoryRepository>()));
-    gh.factory<_i428.FetchSitesListUseCase>(() =>
-        _i428.FetchSitesListUseCase(gh<_i186.WarehouseInventoryRepository>()));
     return this;
   }
 }
