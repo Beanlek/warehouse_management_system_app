@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
 import 'package:warehouse/presentation/blocs/warehouse/warehouse_state.dart';
+import 'package:warehouse/presentation/widgets/warehouse/cell_inventory.dart';
 import 'package:warehouse/utils/utils.dart';
 
 
@@ -44,7 +45,7 @@ class BrandGroup extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
-                  color: biruImran),
+                  color: black),
             ),
             _buildIcon()
           ],
@@ -53,40 +54,64 @@ class BrandGroup extends StatelessWidget {
       collapsed: Column(
         children: [
           Container(
-            height: 50,
-            alignment: Alignment.centerLeft,
-            color: lightBlue,
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Name',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: black),
+            width: double.infinity,
+          color: biruImran,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Table(
+            columnWidths: const {
+              0: FixedColumnWidth(80),  // Category
+              1: FixedColumnWidth(100),  // Subcategory
+              2: FixedColumnWidth(80),  // SKU ID
+              3: FixedColumnWidth(100), // SKU Name
+              4: FixedColumnWidth(40),  // Seq
+              5: FixedColumnWidth(50),  // UOM
+              6: FixedColumnWidth(60),  // Fresh
+              7: FixedColumnWidth(60),  // Damage
+              8: FixedColumnWidth(60),  // Old
+              9: FixedColumnWidth(60),  // Recalled
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: [
+              TableRow(
+                children: [
+                  _header('Category'),
+                  _header('Subcategory'),
+                  _header('SKU ID'),
+                  _header('SKU Name'),
+                  _header('Seq'),
+                  _header('UOM'),
+                  _header('Fresh'),
+                  _header('Damage'),
+                  _header('Old'),
+                  _header('Recalled'),
+                ],
               ),
-            ),
+            ],
           ),
+        ),
           BlocBuilder<WarehouseBloc, WarehouseState>(
             builder: (context, state) {
               final products = state.brandInventoryMap[brand];
-
+      
               if (products == null || products.isEmpty) {
                 return const Center(
                   child: Text('No products available for this brand'),
                 );
               }
-
+      
               return ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];
-                  return Text(product.name ?? '');
+                  return CellInventory(
+                    hasEvenIndex: index.isEven,
+                    product: product,
+                  );
                 },
               );
-
+      
             },
           ),
         ],
@@ -112,5 +137,16 @@ class BrandGroup extends StatelessWidget {
                 Icons.keyboard_arrow_up_rounded,
                 key: ValueKey('collapse'),
               ));
+  }
+
+  Widget _header(String text) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Text(
+        text,
+        style: boldTextStyle(color: white, size: 12),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 }

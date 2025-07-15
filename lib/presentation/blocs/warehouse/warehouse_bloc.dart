@@ -51,7 +51,6 @@ class WarehouseBloc extends BaseBloc<WarehouseEvent, WarehouseState> {
   _processListsSetup(String siteId) async {
     debugPrint('WarehouseBloc: Processing lists setup for siteId: $siteId');
     await _fetchWarehouseInventoryListUseCase.execute(siteId).then((value) {
-      //populate the products list
       value.maybeWhen(
           success: (result) {
             warehouseInventoryList = result;

@@ -1,57 +1,67 @@
-// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:warehouse/domain/entities/warehouse_inventory/warehouse_inventory.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:warehouse/utils/utils.dart';
 
-// class CellVanStockProducts extends StatelessWidget {
-//   final bool? hasEvenIndex;
-//   final ProductVanStock productVanStock;
-//   final String quantityDisplay;
+class CellInventory extends StatelessWidget {
+  final bool? hasEvenIndex;
+  final WarehouseInventory product;
 
-//   const CellVanStockProducts(
-//       {super.key, 
-//       this.hasEvenIndex,
-//       required this.productVanStock,
-//       this.quantityDisplay = '',
-//       });
+  const CellInventory({
+    Key? key,
+    this.hasEvenIndex,
+    required this.product,
+  }) : super(key: key);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       color:
-//           hasEvenIndex == true ? AppColors.pureWhite : AppColors.esXLightGrey,
-//       child: Padding(
-//         padding: const EdgeInsets.only(left: 32, top: 8, right: 32, bottom: 8),
-//         child: Row(
-//           children: [
-//             Expanded(
-//               flex: 1,
-//               child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(productVanStock.product.name,
-//                         style: TextStyle(
-//                         color: AppColors.esBlack,
-//                         fontWeight: FontWeight.normal,
-//                         fontSize: 12)),
-//                     Text(productVanStock.product.productId,
-//                         style: TextStyle(
-//                         color:AppColors.esBlack,
-//                         fontWeight:  FontWeight.normal,
-//                         fontSize: 12)),
-//                   ]),
-//             ),
-//             Expanded(
-//                 flex: 1,
-//                 child: Padding(
-//                   padding: const EdgeInsets.only(right: 8.0),
-//                   child: Text(quantityDisplay,
-//                       textAlign: TextAlign.end,
-//                       style: TextStyle(
-//                         color:AppColors.esBlack,
-//                         fontWeight: FontWeight.normal,
-//                         fontSize: 12)),
-//                 )),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    final qty = product.quantity ?? [];
+
+    return Container(
+      color: hasEvenIndex == true ? white : greyColor2,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Table(
+        columnWidths: const {
+          0: FixedColumnWidth(80),  // Category
+          1: FixedColumnWidth(100),  // Subcategory
+          2: FixedColumnWidth(80),  // SKU ID
+          3: FixedColumnWidth(100), // SKU Name
+          4: FixedColumnWidth(40),  // Seq
+          5: FixedColumnWidth(50),  // UOM
+          6: FixedColumnWidth(60),  // Fresh
+          7: FixedColumnWidth(60),  // Damage
+          8: FixedColumnWidth(60),  // Old
+          9: FixedColumnWidth(60),  // Recalled
+        },
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: [
+          TableRow(
+            children: [
+              _cell(product.category),
+              _cell(product.subCategory),
+              _cell(product.skuId),
+              _cell(product.skuName),
+              _cell(product.sequence?.toString()),
+              _cell(product.uomId),
+              _cell((qty.isNotEmpty) ? qty[0].toString() : '0'),
+              _cell((qty.length > 1) ? qty[1].toString() : '0'),
+              _cell((qty.length > 2) ? qty[2].toString() : '0'),
+              _cell((qty.length > 3) ? qty[3].toString() : '0'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cell(String? text) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Text(
+        text ?? '-',
+        style: primaryTextStyle(size: 12),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}

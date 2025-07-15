@@ -9,8 +9,10 @@ class WarehouseReducer extends Reducer<WarehouseEvent, WarehouseState> {
   WarehouseState reduce(WarehouseEvent newEvent, WarehouseState currentState) {
     return currentState.copyWith(
       isLoading: newEvent.maybeWhen(
-        selectSite: (_) => false,
+        selectSite: (_) => true,
         loadWarehouseInventory: (_) => false,
+        loadBrandList: (_) => false,
+        loadBrandInventoryList: (_) => false,
         orElse: () => currentState.isLoading,
       ),
       siteId: newEvent.maybeWhen(
@@ -29,6 +31,10 @@ class WarehouseReducer extends Reducer<WarehouseEvent, WarehouseState> {
       warehouseInventoryList: newEvent.maybeWhen(
         loadWarehouseInventory: (warehouseInventoryList) => warehouseInventoryList,
         orElse: () => currentState.warehouseInventoryList,
+      ),
+      brandInventoryMap: newEvent.maybeWhen(
+        loadBrandInventoryList: (brandInventoryMap) => brandInventoryMap,
+        orElse: () => currentState.brandInventoryMap,
       ),
       siteList: newEvent.maybeWhen(
         setupSiteList: (siteList) => siteList,
