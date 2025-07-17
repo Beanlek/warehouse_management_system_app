@@ -9,12 +9,12 @@ part of 'picklist_details_dto.dart';
 _$PicklistDetailsDtoImpl _$$PicklistDetailsDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$PicklistDetailsDtoImpl(
-      picklist: Picklist.fromJson(json['picklist'] as Map<String, dynamic>),
+      picklist: PicklistDto.fromJson(json['picklist'] as Map<String, dynamic>),
       batch: (json['batch'] as List<dynamic>)
-          .map((e) => Batch.fromJson(e as Map<String, dynamic>))
+          .map((e) => BatchDto.fromJson(e as Map<String, dynamic>))
           .toList(),
       packing: (json['packing'] as List<dynamic>)
-          .map((e) => Packing.fromJson(e as Map<String, dynamic>))
+          .map((e) => PackingDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

@@ -1,11 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:warehouse/core/network/interfaces/base_dto_model.dart';
 import 'package:warehouse/domain/entities/picklist/picklist.dart';
 
 part 'picklist_dto.freezed.dart';
 part 'picklist_dto.g.dart';
 
 @freezed
-class PicklistDto with _$PicklistDto {
+class PicklistDto with _$PicklistDto implements BaseDtoModel<Picklist> {
   const PicklistDto._();
 
   const factory PicklistDto({
@@ -25,6 +26,7 @@ class PicklistDto with _$PicklistDto {
   factory PicklistDto.fromJson(Map<String, Object?> json) =>
       _$PicklistDtoFromJson(json);
 
+  @override
   Picklist map() => Picklist(
     id: id,
     status: status,

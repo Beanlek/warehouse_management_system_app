@@ -9,12 +9,12 @@ part of 'picklist_details_response_dto.dart';
 _$PicklistDetailsResponseDtoImpl _$$PicklistDetailsResponseDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$PicklistDetailsResponseDtoImpl(
-      picklist: Picklist.fromJson(json['picklist'] as Map<String, dynamic>),
+      picklist: PicklistDto.fromJson(json['picklist'] as Map<String, dynamic>),
       batch: (json['batch'] as List<dynamic>)
-          .map((e) => Batch.fromJson(e as Map<String, dynamic>))
+          .map((e) => BatchDto.fromJson(e as Map<String, dynamic>))
           .toList(),
       packing: (json['packing'] as List<dynamic>)
-          .map((e) => Packing.fromJson(e as Map<String, dynamic>))
+          .map((e) => PackingDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -29,12 +29,12 @@ Map<String, dynamic> _$$PicklistDetailsResponseDtoImplToJson(
 _$PicklistDetailsWrapperDtoImpl _$$PicklistDetailsWrapperDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$PicklistDetailsWrapperDtoImpl(
-      picklist: Picklist.fromJson(json['picklist'] as Map<String, dynamic>),
+      picklist: PicklistDto.fromJson(json['picklist'] as Map<String, dynamic>),
       batch: (json['batch'] as List<dynamic>)
-          .map((e) => Batch.fromJson(e as Map<String, dynamic>))
+          .map((e) => BatchDto.fromJson(e as Map<String, dynamic>))
           .toList(),
       packing: (json['packing'] as List<dynamic>)
-          .map((e) => Packing.fromJson(e as Map<String, dynamic>))
+          .map((e) => PackingDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

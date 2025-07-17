@@ -21,9 +21,9 @@ PicklistDetailsResponseDto _$PicklistDetailsResponseDtoFromJson(
 
 /// @nodoc
 mixin _$PicklistDetailsResponseDto {
-  Picklist get picklist => throw _privateConstructorUsedError;
-  List<Batch> get batch => throw _privateConstructorUsedError;
-  List<Packing> get packing => throw _privateConstructorUsedError;
+  PicklistDto get picklist => throw _privateConstructorUsedError;
+  List<BatchDto> get batch => throw _privateConstructorUsedError;
+  List<PackingDto> get packing => throw _privateConstructorUsedError;
 
   /// Serializes this PicklistDetailsResponseDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,9 +42,10 @@ abstract class $PicklistDetailsResponseDtoCopyWith<$Res> {
       _$PicklistDetailsResponseDtoCopyWithImpl<$Res,
           PicklistDetailsResponseDto>;
   @useResult
-  $Res call({Picklist picklist, List<Batch> batch, List<Packing> packing});
+  $Res call(
+      {PicklistDto picklist, List<BatchDto> batch, List<PackingDto> packing});
 
-  $PicklistCopyWith<$Res> get picklist;
+  $PicklistDtoCopyWith<$Res> get picklist;
 }
 
 /// @nodoc
@@ -71,15 +72,15 @@ class _$PicklistDetailsResponseDtoCopyWithImpl<$Res,
       picklist: null == picklist
           ? _value.picklist
           : picklist // ignore: cast_nullable_to_non_nullable
-              as Picklist,
+              as PicklistDto,
       batch: null == batch
           ? _value.batch
           : batch // ignore: cast_nullable_to_non_nullable
-              as List<Batch>,
+              as List<BatchDto>,
       packing: null == packing
           ? _value.packing
           : packing // ignore: cast_nullable_to_non_nullable
-              as List<Packing>,
+              as List<PackingDto>,
     ) as $Val);
   }
 
@@ -87,8 +88,8 @@ class _$PicklistDetailsResponseDtoCopyWithImpl<$Res,
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $PicklistCopyWith<$Res> get picklist {
-    return $PicklistCopyWith<$Res>(_value.picklist, (value) {
+  $PicklistDtoCopyWith<$Res> get picklist {
+    return $PicklistDtoCopyWith<$Res>(_value.picklist, (value) {
       return _then(_value.copyWith(picklist: value) as $Val);
     });
   }
@@ -103,10 +104,11 @@ abstract class _$$PicklistDetailsResponseDtoImplCopyWith<$Res>
       __$$PicklistDetailsResponseDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Picklist picklist, List<Batch> batch, List<Packing> packing});
+  $Res call(
+      {PicklistDto picklist, List<BatchDto> batch, List<PackingDto> packing});
 
   @override
-  $PicklistCopyWith<$Res> get picklist;
+  $PicklistDtoCopyWith<$Res> get picklist;
 }
 
 /// @nodoc
@@ -132,15 +134,15 @@ class __$$PicklistDetailsResponseDtoImplCopyWithImpl<$Res>
       picklist: null == picklist
           ? _value.picklist
           : picklist // ignore: cast_nullable_to_non_nullable
-              as Picklist,
+              as PicklistDto,
       batch: null == batch
           ? _value._batch
           : batch // ignore: cast_nullable_to_non_nullable
-              as List<Batch>,
+              as List<BatchDto>,
       packing: null == packing
           ? _value._packing
           : packing // ignore: cast_nullable_to_non_nullable
-              as List<Packing>,
+              as List<PackingDto>,
     ));
   }
 }
@@ -150,8 +152,8 @@ class __$$PicklistDetailsResponseDtoImplCopyWithImpl<$Res>
 class _$PicklistDetailsResponseDtoImpl implements _PicklistDetailsResponseDto {
   const _$PicklistDetailsResponseDtoImpl(
       {required this.picklist,
-      required final List<Batch> batch,
-      required final List<Packing> packing})
+      required final List<BatchDto> batch,
+      required final List<PackingDto> packing})
       : _batch = batch,
         _packing = packing;
 
@@ -160,18 +162,18 @@ class _$PicklistDetailsResponseDtoImpl implements _PicklistDetailsResponseDto {
       _$$PicklistDetailsResponseDtoImplFromJson(json);
 
   @override
-  final Picklist picklist;
-  final List<Batch> _batch;
+  final PicklistDto picklist;
+  final List<BatchDto> _batch;
   @override
-  List<Batch> get batch {
+  List<BatchDto> get batch {
     if (_batch is EqualUnmodifiableListView) return _batch;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_batch);
   }
 
-  final List<Packing> _packing;
+  final List<PackingDto> _packing;
   @override
-  List<Packing> get packing {
+  List<PackingDto> get packing {
     if (_packing is EqualUnmodifiableListView) return _packing;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_packing);
@@ -221,19 +223,20 @@ class _$PicklistDetailsResponseDtoImpl implements _PicklistDetailsResponseDto {
 abstract class _PicklistDetailsResponseDto
     implements PicklistDetailsResponseDto {
   const factory _PicklistDetailsResponseDto(
-      {required final Picklist picklist,
-      required final List<Batch> batch,
-      required final List<Packing> packing}) = _$PicklistDetailsResponseDtoImpl;
+          {required final PicklistDto picklist,
+          required final List<BatchDto> batch,
+          required final List<PackingDto> packing}) =
+      _$PicklistDetailsResponseDtoImpl;
 
   factory _PicklistDetailsResponseDto.fromJson(Map<String, dynamic> json) =
       _$PicklistDetailsResponseDtoImpl.fromJson;
 
   @override
-  Picklist get picklist;
+  PicklistDto get picklist;
   @override
-  List<Batch> get batch;
+  List<BatchDto> get batch;
   @override
-  List<Packing> get packing;
+  List<PackingDto> get packing;
 
   /// Create a copy of PicklistDetailsResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -250,9 +253,9 @@ PicklistDetailsWrapperDto _$PicklistDetailsWrapperDtoFromJson(
 
 /// @nodoc
 mixin _$PicklistDetailsWrapperDto {
-  Picklist get picklist => throw _privateConstructorUsedError;
-  List<Batch> get batch => throw _privateConstructorUsedError;
-  List<Packing> get packing => throw _privateConstructorUsedError;
+  PicklistDto get picklist => throw _privateConstructorUsedError;
+  List<BatchDto> get batch => throw _privateConstructorUsedError;
+  List<PackingDto> get packing => throw _privateConstructorUsedError;
 
   /// Serializes this PicklistDetailsWrapperDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -270,9 +273,10 @@ abstract class $PicklistDetailsWrapperDtoCopyWith<$Res> {
           $Res Function(PicklistDetailsWrapperDto) then) =
       _$PicklistDetailsWrapperDtoCopyWithImpl<$Res, PicklistDetailsWrapperDto>;
   @useResult
-  $Res call({Picklist picklist, List<Batch> batch, List<Packing> packing});
+  $Res call(
+      {PicklistDto picklist, List<BatchDto> batch, List<PackingDto> packing});
 
-  $PicklistCopyWith<$Res> get picklist;
+  $PicklistDtoCopyWith<$Res> get picklist;
 }
 
 /// @nodoc
@@ -299,15 +303,15 @@ class _$PicklistDetailsWrapperDtoCopyWithImpl<$Res,
       picklist: null == picklist
           ? _value.picklist
           : picklist // ignore: cast_nullable_to_non_nullable
-              as Picklist,
+              as PicklistDto,
       batch: null == batch
           ? _value.batch
           : batch // ignore: cast_nullable_to_non_nullable
-              as List<Batch>,
+              as List<BatchDto>,
       packing: null == packing
           ? _value.packing
           : packing // ignore: cast_nullable_to_non_nullable
-              as List<Packing>,
+              as List<PackingDto>,
     ) as $Val);
   }
 
@@ -315,8 +319,8 @@ class _$PicklistDetailsWrapperDtoCopyWithImpl<$Res,
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $PicklistCopyWith<$Res> get picklist {
-    return $PicklistCopyWith<$Res>(_value.picklist, (value) {
+  $PicklistDtoCopyWith<$Res> get picklist {
+    return $PicklistDtoCopyWith<$Res>(_value.picklist, (value) {
       return _then(_value.copyWith(picklist: value) as $Val);
     });
   }
@@ -331,10 +335,11 @@ abstract class _$$PicklistDetailsWrapperDtoImplCopyWith<$Res>
       __$$PicklistDetailsWrapperDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Picklist picklist, List<Batch> batch, List<Packing> packing});
+  $Res call(
+      {PicklistDto picklist, List<BatchDto> batch, List<PackingDto> packing});
 
   @override
-  $PicklistCopyWith<$Res> get picklist;
+  $PicklistDtoCopyWith<$Res> get picklist;
 }
 
 /// @nodoc
@@ -360,15 +365,15 @@ class __$$PicklistDetailsWrapperDtoImplCopyWithImpl<$Res>
       picklist: null == picklist
           ? _value.picklist
           : picklist // ignore: cast_nullable_to_non_nullable
-              as Picklist,
+              as PicklistDto,
       batch: null == batch
           ? _value._batch
           : batch // ignore: cast_nullable_to_non_nullable
-              as List<Batch>,
+              as List<BatchDto>,
       packing: null == packing
           ? _value._packing
           : packing // ignore: cast_nullable_to_non_nullable
-              as List<Packing>,
+              as List<PackingDto>,
     ));
   }
 }
@@ -378,8 +383,8 @@ class __$$PicklistDetailsWrapperDtoImplCopyWithImpl<$Res>
 class _$PicklistDetailsWrapperDtoImpl implements _PicklistDetailsWrapperDto {
   const _$PicklistDetailsWrapperDtoImpl(
       {required this.picklist,
-      required final List<Batch> batch,
-      required final List<Packing> packing})
+      required final List<BatchDto> batch,
+      required final List<PackingDto> packing})
       : _batch = batch,
         _packing = packing;
 
@@ -387,18 +392,18 @@ class _$PicklistDetailsWrapperDtoImpl implements _PicklistDetailsWrapperDto {
       _$$PicklistDetailsWrapperDtoImplFromJson(json);
 
   @override
-  final Picklist picklist;
-  final List<Batch> _batch;
+  final PicklistDto picklist;
+  final List<BatchDto> _batch;
   @override
-  List<Batch> get batch {
+  List<BatchDto> get batch {
     if (_batch is EqualUnmodifiableListView) return _batch;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_batch);
   }
 
-  final List<Packing> _packing;
+  final List<PackingDto> _packing;
   @override
-  List<Packing> get packing {
+  List<PackingDto> get packing {
     if (_packing is EqualUnmodifiableListView) return _packing;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_packing);
@@ -447,19 +452,20 @@ class _$PicklistDetailsWrapperDtoImpl implements _PicklistDetailsWrapperDto {
 
 abstract class _PicklistDetailsWrapperDto implements PicklistDetailsWrapperDto {
   const factory _PicklistDetailsWrapperDto(
-      {required final Picklist picklist,
-      required final List<Batch> batch,
-      required final List<Packing> packing}) = _$PicklistDetailsWrapperDtoImpl;
+          {required final PicklistDto picklist,
+          required final List<BatchDto> batch,
+          required final List<PackingDto> packing}) =
+      _$PicklistDetailsWrapperDtoImpl;
 
   factory _PicklistDetailsWrapperDto.fromJson(Map<String, dynamic> json) =
       _$PicklistDetailsWrapperDtoImpl.fromJson;
 
   @override
-  Picklist get picklist;
+  PicklistDto get picklist;
   @override
-  List<Batch> get batch;
+  List<BatchDto> get batch;
   @override
-  List<Packing> get packing;
+  List<PackingDto> get packing;
 
   /// Create a copy of PicklistDetailsWrapperDto
   /// with the given fields replaced by the non-null parameter values.

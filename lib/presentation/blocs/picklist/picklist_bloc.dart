@@ -49,7 +49,9 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
           success: (result) {
             process(PicklistEvent.loadPickListDetails(result));
           },
-          orElse: () {});
+          orElse: () {
+            print('ORELSEEEEE!!!!');
+          });
     });
   }
 }

@@ -7,8 +7,14 @@ import 'package:warehouse/core/network/retrofit/rest_api_executor.dart';
 import 'package:warehouse/core/shared/app_error.dart';
 import 'package:warehouse/data/models/batch/batch_dto.dart';
 import 'package:warehouse/data/models/packing/packing_dto.dart';
+import 'package:warehouse/data/models/picklist/picklist_details_dto.dart';
+import 'package:warehouse/data/models/picklist/picklist_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_details_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_response_dto.dart';
+import 'package:warehouse/domain/entities/batch/batch.dart';
+import 'package:warehouse/domain/entities/packing/packing.dart';
+import 'package:warehouse/domain/entities/picklist/picklist.dart';
+import 'package:warehouse/domain/entities/picklist/picklist_details.dart';
 import 'package:warehouse/domain/repositories/picklist_repository.dart';
 
 
@@ -43,12 +49,16 @@ class PicklistRepositoryImpl extends PicklistRepository{
           return restClient.getPicklistDetails('Bearer $token', picklistId);
         }),
       saveToDb: (_) => {},
-      getSuccessState: (PicklistDetailsResponseDto dto) =>
-          Result.success({
-            dto.picklist,
-            dto.batch.map((e) => e.map()).whereType<BatchDto>().toList(),
-            dto.packing.map((e) => e.map()).whereType<PackingDto>().toList()
-          }),
+      getSuccessState: (PicklistDetailsResponseDto dto) {
+        
+          final List<PicklistDto> picklistList = [dto.picklist];
+          
+          return Result.success(PicklistDetails(
+            picklist: picklistList.map((e) => e.map()).whereType<Picklist>().toList()[0],
+            batch: dto.batch.map((e) => e.map()).whereType<Batch>().toList(),
+            packing: dto.packing.map((e) => e.map()).whereType<Packing>().toList()
+          ));
+        },
       getErrorState: (AppError errorApiResult) =>
           Result.failure(errorApiResult),
     );
