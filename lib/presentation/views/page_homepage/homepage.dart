@@ -28,12 +28,15 @@ import 'package:warehouse/presentation/views/page_stock_take/layout/main_stock_t
 import 'package:warehouse/presentation/views/page_transfer_in/layout/transfer_in_list.dart';
 import 'package:warehouse/presentation/views/page_transfer_inout/layout/transfer_inout_list.dart';
 import 'package:warehouse/presentation/views/page_transfer_out/layout/transfer_out_list.dart';
+import 'package:warehouse/presentation/views/picklist/picklist_screen.dart';
 import 'package:warehouse/presentation/views/warehouse_inventory/warehouse_inventory_screen.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
 import 'package:warehouse/presentation/views/stock_recon/list_recon.dart';
 import 'package:warehouse/utils/utils.dart';
 import 'package:warehouse/presentation/views/van_allotment/layout/allotment_listslookup.dart';
+
+import '../../blocs/picklist/picklist.dart';
 
 class HomepageV2 extends StatefulWidget {
   const HomepageV2({super.key});
@@ -772,14 +775,12 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                           Expanded(
                             child: SizedBox(
                               child: Text(
-                                count < 1000
-                                    ? '${count}'
-                                    : NumberFormat.compact().format(count),
+                                displayCount(count),
                                 style: TextStyle(
-                                  fontSize: 30,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                               ),
                             ),
                           ),
@@ -820,6 +821,14 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
         ),
       ),
     );
+  }
+
+  String displayCount(int count){
+    switch(count){
+      case <0: return '';
+      case <1000: return '${count}';
+      default : return NumberFormat.compact().format(count);
+    }
   }
 
   @override
@@ -1134,7 +1143,7 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                   child: GridView.builder(
                                       gridDelegate: gridDelegate,
                                       physics: NeverScrollableScrollPhysics(),
-                                      itemCount: 5,
+                                      itemCount: 6,
                                       itemBuilder: (context, index) {
                                         if (index == 0) {
                                           return stockMovementTile(
@@ -1319,6 +1328,23 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                                   },
                                                 );
                                           });
+                                        } else if (index == 5) {
+
+                                          return stockMovementTile(
+                                              'assets/homepage/icon_transferInOut.png',
+                                              'Picklist Van Allotment',
+                                              -1,
+                                              () async {
+                                                Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => BlocProvider(
+                                                    create: (_) => PicklistBloc(),
+                                                    child: const PicklistScreen(),
+                                                  ),
+                                                ),
+                                              );
+                                              });
                                         } else {
                                           return SizedBox();
                                         }

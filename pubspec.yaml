@@ -93,6 +93,7 @@ dependencies:
   # storage
   flutter_secure_storage: ^9.2.4
   expandable: ^5.0.1
+  mocktail: ^1.0.4
 
 
 dev_dependencies:

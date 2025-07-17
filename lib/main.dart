@@ -12,6 +12,8 @@ import 'package:warehouse/injection.dart';
 import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
+
+import 'presentation/blocs/picklist/picklist.dart';
 // import 'package:warehouse/shared_preference/token.dart';
 
 class AppBlocObserver extends BlocObserver {
@@ -105,7 +107,8 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<WarehouseBloc>(create: (context) => WarehouseBloc())
+        BlocProvider<WarehouseBloc>(create: (context) => WarehouseBloc()),
+        BlocProvider<PicklistBloc>(create: (context) => PicklistBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
