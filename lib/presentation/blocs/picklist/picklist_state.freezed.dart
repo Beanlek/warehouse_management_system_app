@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PicklistState {
   bool get isLoading => throw _privateConstructorUsedError;
   List<Picklist> get picklist => throw _privateConstructorUsedError;
+  PicklistDetails get picklistDetails => throw _privateConstructorUsedError;
 
   /// Create a copy of PicklistState
   /// with the given fields replaced by the non-null parameter values.
@@ -32,7 +33,12 @@ abstract class $PicklistStateCopyWith<$Res> {
           PicklistState value, $Res Function(PicklistState) then) =
       _$PicklistStateCopyWithImpl<$Res, PicklistState>;
   @useResult
-  $Res call({bool isLoading, List<Picklist> picklist});
+  $Res call(
+      {bool isLoading,
+      List<Picklist> picklist,
+      PicklistDetails picklistDetails});
+
+  $PicklistDetailsCopyWith<$Res> get picklistDetails;
 }
 
 /// @nodoc
@@ -52,6 +58,7 @@ class _$PicklistStateCopyWithImpl<$Res, $Val extends PicklistState>
   $Res call({
     Object? isLoading = null,
     Object? picklist = null,
+    Object? picklistDetails = null,
   }) {
     return _then(_value.copyWith(
       isLoading: null == isLoading
@@ -62,7 +69,21 @@ class _$PicklistStateCopyWithImpl<$Res, $Val extends PicklistState>
           ? _value.picklist
           : picklist // ignore: cast_nullable_to_non_nullable
               as List<Picklist>,
+      picklistDetails: null == picklistDetails
+          ? _value.picklistDetails
+          : picklistDetails // ignore: cast_nullable_to_non_nullable
+              as PicklistDetails,
     ) as $Val);
+  }
+
+  /// Create a copy of PicklistState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PicklistDetailsCopyWith<$Res> get picklistDetails {
+    return $PicklistDetailsCopyWith<$Res>(_value.picklistDetails, (value) {
+      return _then(_value.copyWith(picklistDetails: value) as $Val);
+    });
   }
 }
 
@@ -74,7 +95,13 @@ abstract class _$$PicklistStateImplCopyWith<$Res>
       __$$PicklistStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, List<Picklist> picklist});
+  $Res call(
+      {bool isLoading,
+      List<Picklist> picklist,
+      PicklistDetails picklistDetails});
+
+  @override
+  $PicklistDetailsCopyWith<$Res> get picklistDetails;
 }
 
 /// @nodoc
@@ -92,6 +119,7 @@ class __$$PicklistStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? picklist = null,
+    Object? picklistDetails = null,
   }) {
     return _then(_$PicklistStateImpl(
       isLoading: null == isLoading
@@ -102,6 +130,10 @@ class __$$PicklistStateImplCopyWithImpl<$Res>
           ? _value._picklist
           : picklist // ignore: cast_nullable_to_non_nullable
               as List<Picklist>,
+      picklistDetails: null == picklistDetails
+          ? _value.picklistDetails
+          : picklistDetails // ignore: cast_nullable_to_non_nullable
+              as PicklistDetails,
     ));
   }
 }
@@ -110,7 +142,9 @@ class __$$PicklistStateImplCopyWithImpl<$Res>
 
 class _$PicklistStateImpl extends _PicklistState {
   const _$PicklistStateImpl(
-      {this.isLoading = false, final List<Picklist> picklist = const []})
+      {this.isLoading = false,
+      final List<Picklist> picklist = const [],
+      this.picklistDetails = PicklistDetails.empty})
       : _picklist = picklist,
         super._();
 
@@ -127,8 +161,12 @@ class _$PicklistStateImpl extends _PicklistState {
   }
 
   @override
+  @JsonKey()
+  final PicklistDetails picklistDetails;
+
+  @override
   String toString() {
-    return 'PicklistState(isLoading: $isLoading, picklist: $picklist)';
+    return 'PicklistState(isLoading: $isLoading, picklist: $picklist, picklistDetails: $picklistDetails)';
   }
 
   @override
@@ -138,12 +176,14 @@ class _$PicklistStateImpl extends _PicklistState {
             other is _$PicklistStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
-            const DeepCollectionEquality().equals(other._picklist, _picklist));
+            const DeepCollectionEquality().equals(other._picklist, _picklist) &&
+            (identical(other.picklistDetails, picklistDetails) ||
+                other.picklistDetails == picklistDetails));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, isLoading, const DeepCollectionEquality().hash(_picklist));
+  int get hashCode => Object.hash(runtimeType, isLoading,
+      const DeepCollectionEquality().hash(_picklist), picklistDetails);
 
   /// Create a copy of PicklistState
   /// with the given fields replaced by the non-null parameter values.
@@ -157,13 +197,16 @@ class _$PicklistStateImpl extends _PicklistState {
 abstract class _PicklistState extends PicklistState {
   const factory _PicklistState(
       {final bool isLoading,
-      final List<Picklist> picklist}) = _$PicklistStateImpl;
+      final List<Picklist> picklist,
+      final PicklistDetails picklistDetails}) = _$PicklistStateImpl;
   const _PicklistState._() : super._();
 
   @override
   bool get isLoading;
   @override
   List<Picklist> get picklist;
+  @override
+  PicklistDetails get picklistDetails;
 
   /// Create a copy of PicklistState
   /// with the given fields replaced by the non-null parameter values.

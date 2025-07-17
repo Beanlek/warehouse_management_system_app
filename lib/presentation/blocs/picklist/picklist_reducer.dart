@@ -12,11 +12,16 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
         setup: (_) => true,
         selectPickList: (_) => true,
         loadPickList: (_) => false,
+        loadPickListDetails: (_) => false,
         orElse: () => currentState.isLoading,
       ),
       picklist: newEvent.maybeWhen(
         loadPickList: (picklist) => picklist,
         orElse: () => currentState.picklist,
+      ),
+      picklistDetails: newEvent.maybeWhen(
+        loadPickListDetails: (picklistDetails) => picklistDetails,
+        orElse: () => currentState.picklistDetails,
       ),
     );
   }

@@ -28,6 +28,17 @@ mixin _$PicklistDto {
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_by')
   String? get created_by => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sent_for_picking_by')
+  String? get sentForPickingBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sent_for_picking_at')
+  String? get sentForPickingAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'started_packing_at')
+  String? get startedPackingAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'done_packing_at')
+  String? get donePackingAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_date')
+  String? get createdDate => throw _privateConstructorUsedError;
+  String? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this PicklistDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +61,13 @@ abstract class $PicklistDtoCopyWith<$Res> {
       String status,
       @JsonKey(name: 'site_id') String? siteId,
       @JsonKey(name: 'created_at') String? createdAt,
-      @JsonKey(name: 'created_by') String? created_by});
+      @JsonKey(name: 'created_by') String? created_by,
+      @JsonKey(name: 'sent_for_picking_by') String? sentForPickingBy,
+      @JsonKey(name: 'sent_for_picking_at') String? sentForPickingAt,
+      @JsonKey(name: 'started_packing_at') String? startedPackingAt,
+      @JsonKey(name: 'done_packing_at') String? donePackingAt,
+      @JsonKey(name: 'created_date') String? createdDate,
+      String? updatedAt});
 }
 
 /// @nodoc
@@ -73,6 +90,12 @@ class _$PicklistDtoCopyWithImpl<$Res, $Val extends PicklistDto>
     Object? siteId = freezed,
     Object? createdAt = freezed,
     Object? created_by = freezed,
+    Object? sentForPickingBy = freezed,
+    Object? sentForPickingAt = freezed,
+    Object? startedPackingAt = freezed,
+    Object? donePackingAt = freezed,
+    Object? createdDate = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -95,6 +118,30 @@ class _$PicklistDtoCopyWithImpl<$Res, $Val extends PicklistDto>
           ? _value.created_by
           : created_by // ignore: cast_nullable_to_non_nullable
               as String?,
+      sentForPickingBy: freezed == sentForPickingBy
+          ? _value.sentForPickingBy
+          : sentForPickingBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sentForPickingAt: freezed == sentForPickingAt
+          ? _value.sentForPickingAt
+          : sentForPickingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startedPackingAt: freezed == startedPackingAt
+          ? _value.startedPackingAt
+          : startedPackingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      donePackingAt: freezed == donePackingAt
+          ? _value.donePackingAt
+          : donePackingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdDate: freezed == createdDate
+          ? _value.createdDate
+          : createdDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -112,7 +159,13 @@ abstract class _$$PicklistDtoImplCopyWith<$Res>
       String status,
       @JsonKey(name: 'site_id') String? siteId,
       @JsonKey(name: 'created_at') String? createdAt,
-      @JsonKey(name: 'created_by') String? created_by});
+      @JsonKey(name: 'created_by') String? created_by,
+      @JsonKey(name: 'sent_for_picking_by') String? sentForPickingBy,
+      @JsonKey(name: 'sent_for_picking_at') String? sentForPickingAt,
+      @JsonKey(name: 'started_packing_at') String? startedPackingAt,
+      @JsonKey(name: 'done_packing_at') String? donePackingAt,
+      @JsonKey(name: 'created_date') String? createdDate,
+      String? updatedAt});
 }
 
 /// @nodoc
@@ -133,6 +186,12 @@ class __$$PicklistDtoImplCopyWithImpl<$Res>
     Object? siteId = freezed,
     Object? createdAt = freezed,
     Object? created_by = freezed,
+    Object? sentForPickingBy = freezed,
+    Object? sentForPickingAt = freezed,
+    Object? startedPackingAt = freezed,
+    Object? donePackingAt = freezed,
+    Object? createdDate = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_$PicklistDtoImpl(
       id: null == id
@@ -155,6 +214,30 @@ class __$$PicklistDtoImplCopyWithImpl<$Res>
           ? _value.created_by
           : created_by // ignore: cast_nullable_to_non_nullable
               as String?,
+      sentForPickingBy: freezed == sentForPickingBy
+          ? _value.sentForPickingBy
+          : sentForPickingBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sentForPickingAt: freezed == sentForPickingAt
+          ? _value.sentForPickingAt
+          : sentForPickingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startedPackingAt: freezed == startedPackingAt
+          ? _value.startedPackingAt
+          : startedPackingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      donePackingAt: freezed == donePackingAt
+          ? _value.donePackingAt
+          : donePackingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdDate: freezed == createdDate
+          ? _value.createdDate
+          : createdDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -167,7 +250,13 @@ class _$PicklistDtoImpl extends _PicklistDto {
       required this.status,
       @JsonKey(name: 'site_id') this.siteId,
       @JsonKey(name: 'created_at') this.createdAt,
-      @JsonKey(name: 'created_by') this.created_by})
+      @JsonKey(name: 'created_by') this.created_by,
+      @JsonKey(name: 'sent_for_picking_by') this.sentForPickingBy,
+      @JsonKey(name: 'sent_for_picking_at') this.sentForPickingAt,
+      @JsonKey(name: 'started_packing_at') this.startedPackingAt,
+      @JsonKey(name: 'done_packing_at') this.donePackingAt,
+      @JsonKey(name: 'created_date') this.createdDate,
+      this.updatedAt})
       : super._();
 
   factory _$PicklistDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -186,10 +275,27 @@ class _$PicklistDtoImpl extends _PicklistDto {
   @override
   @JsonKey(name: 'created_by')
   final String? created_by;
+  @override
+  @JsonKey(name: 'sent_for_picking_by')
+  final String? sentForPickingBy;
+  @override
+  @JsonKey(name: 'sent_for_picking_at')
+  final String? sentForPickingAt;
+  @override
+  @JsonKey(name: 'started_packing_at')
+  final String? startedPackingAt;
+  @override
+  @JsonKey(name: 'done_packing_at')
+  final String? donePackingAt;
+  @override
+  @JsonKey(name: 'created_date')
+  final String? createdDate;
+  @override
+  final String? updatedAt;
 
   @override
   String toString() {
-    return 'PicklistDto(id: $id, status: $status, siteId: $siteId, createdAt: $createdAt, created_by: $created_by)';
+    return 'PicklistDto(id: $id, status: $status, siteId: $siteId, createdAt: $createdAt, created_by: $created_by, sentForPickingBy: $sentForPickingBy, sentForPickingAt: $sentForPickingAt, startedPackingAt: $startedPackingAt, donePackingAt: $donePackingAt, createdDate: $createdDate, updatedAt: $updatedAt)';
   }
 
   @override
@@ -203,13 +309,36 @@ class _$PicklistDtoImpl extends _PicklistDto {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.created_by, created_by) ||
-                other.created_by == created_by));
+                other.created_by == created_by) &&
+            (identical(other.sentForPickingBy, sentForPickingBy) ||
+                other.sentForPickingBy == sentForPickingBy) &&
+            (identical(other.sentForPickingAt, sentForPickingAt) ||
+                other.sentForPickingAt == sentForPickingAt) &&
+            (identical(other.startedPackingAt, startedPackingAt) ||
+                other.startedPackingAt == startedPackingAt) &&
+            (identical(other.donePackingAt, donePackingAt) ||
+                other.donePackingAt == donePackingAt) &&
+            (identical(other.createdDate, createdDate) ||
+                other.createdDate == createdDate) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, status, siteId, createdAt, created_by);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      status,
+      siteId,
+      createdAt,
+      created_by,
+      sentForPickingBy,
+      sentForPickingAt,
+      startedPackingAt,
+      donePackingAt,
+      createdDate,
+      updatedAt);
 
   /// Create a copy of PicklistDto
   /// with the given fields replaced by the non-null parameter values.
@@ -229,12 +358,17 @@ class _$PicklistDtoImpl extends _PicklistDto {
 
 abstract class _PicklistDto extends PicklistDto {
   const factory _PicklistDto(
-          {required final String id,
-          required final String status,
-          @JsonKey(name: 'site_id') final String? siteId,
-          @JsonKey(name: 'created_at') final String? createdAt,
-          @JsonKey(name: 'created_by') final String? created_by}) =
-      _$PicklistDtoImpl;
+      {required final String id,
+      required final String status,
+      @JsonKey(name: 'site_id') final String? siteId,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'created_by') final String? created_by,
+      @JsonKey(name: 'sent_for_picking_by') final String? sentForPickingBy,
+      @JsonKey(name: 'sent_for_picking_at') final String? sentForPickingAt,
+      @JsonKey(name: 'started_packing_at') final String? startedPackingAt,
+      @JsonKey(name: 'done_packing_at') final String? donePackingAt,
+      @JsonKey(name: 'created_date') final String? createdDate,
+      final String? updatedAt}) = _$PicklistDtoImpl;
   const _PicklistDto._() : super._();
 
   factory _PicklistDto.fromJson(Map<String, dynamic> json) =
@@ -253,6 +387,23 @@ abstract class _PicklistDto extends PicklistDto {
   @override
   @JsonKey(name: 'created_by')
   String? get created_by;
+  @override
+  @JsonKey(name: 'sent_for_picking_by')
+  String? get sentForPickingBy;
+  @override
+  @JsonKey(name: 'sent_for_picking_at')
+  String? get sentForPickingAt;
+  @override
+  @JsonKey(name: 'started_packing_at')
+  String? get startedPackingAt;
+  @override
+  @JsonKey(name: 'done_packing_at')
+  String? get donePackingAt;
+  @override
+  @JsonKey(name: 'created_date')
+  String? get createdDate;
+  @override
+  String? get updatedAt;
 
   /// Create a copy of PicklistDto
   /// with the given fields replaced by the non-null parameter values.

@@ -21,6 +21,8 @@ import 'package:warehouse/domain/repositories/picklist_repository.dart'
     as _i623;
 import 'package:warehouse/domain/repositories/warehouse_inventory_repository.dart'
     as _i186;
+import 'package:warehouse/domain/usecases/picklist/fetch_picklist_details_usecase.dart'
+    as _i734;
 import 'package:warehouse/domain/usecases/picklist/fetch_picklist_usecase.dart'
     as _i934;
 import 'package:warehouse/domain/usecases/warehouse_inventory/fetch_sites_list_use_case.dart'
@@ -54,6 +56,8 @@ extension GetItInjectableX on _i174.GetIt {
             gh<_i186.WarehouseInventoryRepository>()));
     gh.factory<_i934.FetchPickListUseCase>(
         () => _i934.FetchPickListUseCase(gh<_i623.PicklistRepository>()));
+    gh.factory<_i734.FetchPickListDetailsUseCase>(() =>
+        _i734.FetchPickListDetailsUseCase(gh<_i623.PicklistRepository>()));
     return this;
   }
 }

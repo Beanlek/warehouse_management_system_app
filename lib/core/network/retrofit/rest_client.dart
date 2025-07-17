@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import 'package:warehouse/config/globals.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_details_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_response_dto.dart';
 import 'package:warehouse/data/models/responses/sites/site_list_response_dto.dart';
 import 'package:warehouse/data/models/responses/warehouse/inventory_list_response_dto.dart';
@@ -27,5 +28,11 @@ abstract class RestClient {
   Future<PicklistResponseDto> getPicklist(
     @Header('Authorization') String token,
     @Query('status') String status,
+  );
+
+  @GET('/api/picklist/android/van_allotment/o/{picklist_id}')
+  Future<PicklistDetailsResponseDto> getPicklistDetails(
+    @Header('Authorization') String token,
+    @Path('picklist_id') String picklistId,
   );
 }

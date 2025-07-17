@@ -1,18 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'picklist_dto.dart';
+part of 'picklist.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$PicklistDtoImpl _$$PicklistDtoImplFromJson(Map<String, dynamic> json) =>
-    _$PicklistDtoImpl(
+_$PicklistImpl _$$PicklistImplFromJson(Map<String, dynamic> json) =>
+    _$PicklistImpl(
       id: json['id'] as String,
       status: json['status'] as String,
       siteId: json['site_id'] as String?,
       createdAt: json['created_at'] as String?,
-      created_by: json['created_by'] as String?,
+      createdBy: json['created_by'] as String?,
       sentForPickingBy: json['sent_for_picking_by'] as String?,
       sentForPickingAt: json['sent_for_picking_at'] as String?,
       startedPackingAt: json['started_packing_at'] as String?,
@@ -21,13 +21,13 @@ _$PicklistDtoImpl _$$PicklistDtoImplFromJson(Map<String, dynamic> json) =>
       updatedAt: json['updatedAt'] as String?,
     );
 
-Map<String, dynamic> _$$PicklistDtoImplToJson(_$PicklistDtoImpl instance) =>
+Map<String, dynamic> _$$PicklistImplToJson(_$PicklistImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'status': instance.status,
       'site_id': instance.siteId,
       'created_at': instance.createdAt,
-      'created_by': instance.created_by,
+      'created_by': instance.createdBy,
       'sent_for_picking_by': instance.sentForPickingBy,
       'sent_for_picking_at': instance.sentForPickingAt,
       'started_packing_at': instance.startedPackingAt,

@@ -5,13 +5,16 @@ import 'package:warehouse/core/network/network_bound_item.dart';
 import 'package:warehouse/core/network/retrofit/api_client.dart';
 import 'package:warehouse/core/network/retrofit/rest_api_executor.dart';
 import 'package:warehouse/core/shared/app_error.dart';
+import 'package:warehouse/data/models/batch/batch_dto.dart';
+import 'package:warehouse/data/models/packing/packing_dto.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_details_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_response_dto.dart';
 import 'package:warehouse/domain/repositories/picklist_repository.dart';
 
 
 @Injectable(as: PicklistRepository)
 class PicklistRepositoryImpl extends PicklistRepository{
-  ApiClient _apiClient;
+  final ApiClient _apiClient;
 
   PicklistRepositoryImpl(this._apiClient);
   
@@ -26,6 +29,26 @@ class PicklistRepositoryImpl extends PicklistRepository{
       saveToDb: (_) => {},
       getSuccessState: (PicklistResponseDto dto) =>
           Result.success(dto.picklists.rows.map((e) => e.map()).toList()),
+      getErrorState: (AppError errorApiResult) =>
+          Result.failure(errorApiResult),
+    );
+  }
+
+  @override
+  Future fetchPickListDetails(String token, String picklistId) {
+    return networkInBoundItem(
+      apiRequest: () => RestApiExecutor.executeGeneric<PicklistDetailsResponseDto>(
+        requestCall: () async {
+          var restClient = await _apiClient.getRestClient();
+          return restClient.getPicklistDetails('Bearer $token', picklistId);
+        }),
+      saveToDb: (_) => {},
+      getSuccessState: (PicklistDetailsResponseDto dto) =>
+          Result.success({
+            dto.picklist,
+            dto.batch.map((e) => e.map()).whereType<BatchDto>().toList(),
+            dto.packing.map((e) => e.map()).whereType<PackingDto>().toList()
+          }),
       getErrorState: (AppError errorApiResult) =>
           Result.failure(errorApiResult),
     );

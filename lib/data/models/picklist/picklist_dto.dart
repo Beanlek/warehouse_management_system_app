@@ -14,6 +14,12 @@ class PicklistDto with _$PicklistDto {
     @JsonKey(name: 'site_id') String? siteId,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'created_by') String? created_by,
+    @JsonKey(name: 'sent_for_picking_by') String? sentForPickingBy,
+    @JsonKey(name: 'sent_for_picking_at') String? sentForPickingAt,
+    @JsonKey(name: 'started_packing_at') String? startedPackingAt,
+    @JsonKey(name: 'done_packing_at') String? donePackingAt,
+    @JsonKey(name: 'created_date') String? createdDate,
+    String? updatedAt,
   }) = _PicklistDto;
 
   factory PicklistDto.fromJson(Map<String, Object?> json) =>
@@ -25,5 +31,11 @@ class PicklistDto with _$PicklistDto {
     siteId: siteId,
     createdAt: createdAt,
     createdBy: created_by,
+    sentForPickingBy: sentForPickingBy,
+    sentForPickingAt: sentForPickingAt,
+    startedPackingAt: startedPackingAt,
+    donePackingAt: donePackingAt,
+    createdDate: createdDate,
+    updatedAt: updatedAt,
   );
 }
