@@ -15,10 +15,10 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
   final FetchPickListUseCase _fetchPicklistUseCase;
   final FetchPickListDetailsUseCase _fetchPicklistDetailsUseCase;
 
-  PicklistBloc()
-      :  _fetchPicklistUseCase = getIt<FetchPickListUseCase>(),
-        _fetchPicklistDetailsUseCase = getIt<FetchPickListDetailsUseCase>(),
-        super(const PicklistState());
+  PicklistBloc() :
+    _fetchPicklistUseCase = getIt<FetchPickListUseCase>(),
+    _fetchPicklistDetailsUseCase = getIt<FetchPickListDetailsUseCase>(),
+    super(const PicklistState());
 
   @override
   void init() {
@@ -49,9 +49,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
           success: (result) {
             process(PicklistEvent.loadPickListDetails(result));
           },
-          orElse: () {
-            print('ORELSEEEEE!!!!');
-          });
+          orElse: () {});
     });
   }
 }

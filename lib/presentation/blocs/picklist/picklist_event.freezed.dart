@@ -19,7 +19,7 @@ mixin _$PicklistEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? status) setup,
-    required TResult Function(String id) selectPickList,
+    required TResult Function(String picklistId) selectPickList,
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
@@ -29,7 +29,7 @@ mixin _$PicklistEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? status)? setup,
-    TResult? Function(String id)? selectPickList,
+    TResult? Function(String picklistId)? selectPickList,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
@@ -38,7 +38,7 @@ mixin _$PicklistEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? status)? setup,
-    TResult Function(String id)? selectPickList,
+    TResult Function(String picklistId)? selectPickList,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
@@ -49,27 +49,27 @@ mixin _$PicklistEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(Setup value) setup,
     required TResult Function(SelectPickList value) selectPickList,
-    required TResult Function(loadPickList value) loadPickList,
-    required TResult Function(loadPickListDetails value) loadPickListDetails,
-    required TResult Function(searchPicklist value) searchPicklist,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Setup value)? setup,
     TResult? Function(SelectPickList value)? selectPickList,
-    TResult? Function(loadPickList value)? loadPickList,
-    TResult? Function(loadPickListDetails value)? loadPickListDetails,
-    TResult? Function(searchPicklist value)? searchPicklist,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Setup value)? setup,
     TResult Function(SelectPickList value)? selectPickList,
-    TResult Function(loadPickList value)? loadPickList,
-    TResult Function(loadPickListDetails value)? loadPickListDetails,
-    TResult Function(searchPicklist value)? searchPicklist,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -165,7 +165,7 @@ class _$SetupImpl implements Setup {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? status) setup,
-    required TResult Function(String id) selectPickList,
+    required TResult Function(String picklistId) selectPickList,
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
@@ -178,7 +178,7 @@ class _$SetupImpl implements Setup {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? status)? setup,
-    TResult? Function(String id)? selectPickList,
+    TResult? Function(String picklistId)? selectPickList,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
@@ -190,7 +190,7 @@ class _$SetupImpl implements Setup {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? status)? setup,
-    TResult Function(String id)? selectPickList,
+    TResult Function(String picklistId)? selectPickList,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
@@ -207,9 +207,9 @@ class _$SetupImpl implements Setup {
   TResult map<TResult extends Object?>({
     required TResult Function(Setup value) setup,
     required TResult Function(SelectPickList value) selectPickList,
-    required TResult Function(loadPickList value) loadPickList,
-    required TResult Function(loadPickListDetails value) loadPickListDetails,
-    required TResult Function(searchPicklist value) searchPicklist,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
   }) {
     return setup(this);
   }
@@ -219,9 +219,9 @@ class _$SetupImpl implements Setup {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Setup value)? setup,
     TResult? Function(SelectPickList value)? selectPickList,
-    TResult? Function(loadPickList value)? loadPickList,
-    TResult? Function(loadPickListDetails value)? loadPickListDetails,
-    TResult? Function(searchPicklist value)? searchPicklist,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
   }) {
     return setup?.call(this);
   }
@@ -231,9 +231,9 @@ class _$SetupImpl implements Setup {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Setup value)? setup,
     TResult Function(SelectPickList value)? selectPickList,
-    TResult Function(loadPickList value)? loadPickList,
-    TResult Function(loadPickListDetails value)? loadPickListDetails,
-    TResult Function(searchPicklist value)? searchPicklist,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
     required TResult orElse(),
   }) {
     if (setup != null) {
@@ -261,7 +261,7 @@ abstract class _$$SelectPickListImplCopyWith<$Res> {
           $Res Function(_$SelectPickListImpl) then) =
       __$$SelectPickListImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String id});
+  $Res call({String picklistId});
 }
 
 /// @nodoc
@@ -277,12 +277,12 @@ class __$$SelectPickListImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? picklistId = null,
   }) {
     return _then(_$SelectPickListImpl(
-      null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      null == picklistId
+          ? _value.picklistId
+          : picklistId // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -291,14 +291,14 @@ class __$$SelectPickListImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$SelectPickListImpl implements SelectPickList {
-  const _$SelectPickListImpl(this.id);
+  const _$SelectPickListImpl(this.picklistId);
 
   @override
-  final String id;
+  final String picklistId;
 
   @override
   String toString() {
-    return 'PicklistEvent.selectPickList(id: $id)';
+    return 'PicklistEvent.selectPickList(picklistId: $picklistId)';
   }
 
   @override
@@ -306,11 +306,12 @@ class _$SelectPickListImpl implements SelectPickList {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SelectPickListImpl &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.picklistId, picklistId) ||
+                other.picklistId == picklistId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id);
+  int get hashCode => Object.hash(runtimeType, picklistId);
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -325,39 +326,39 @@ class _$SelectPickListImpl implements SelectPickList {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? status) setup,
-    required TResult Function(String id) selectPickList,
+    required TResult Function(String picklistId) selectPickList,
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
   }) {
-    return selectPickList(id);
+    return selectPickList(picklistId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? status)? setup,
-    TResult? Function(String id)? selectPickList,
+    TResult? Function(String picklistId)? selectPickList,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
   }) {
-    return selectPickList?.call(id);
+    return selectPickList?.call(picklistId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? status)? setup,
-    TResult Function(String id)? selectPickList,
+    TResult Function(String picklistId)? selectPickList,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     required TResult orElse(),
   }) {
     if (selectPickList != null) {
-      return selectPickList(id);
+      return selectPickList(picklistId);
     }
     return orElse();
   }
@@ -367,9 +368,9 @@ class _$SelectPickListImpl implements SelectPickList {
   TResult map<TResult extends Object?>({
     required TResult Function(Setup value) setup,
     required TResult Function(SelectPickList value) selectPickList,
-    required TResult Function(loadPickList value) loadPickList,
-    required TResult Function(loadPickListDetails value) loadPickListDetails,
-    required TResult Function(searchPicklist value) searchPicklist,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
   }) {
     return selectPickList(this);
   }
@@ -379,9 +380,9 @@ class _$SelectPickListImpl implements SelectPickList {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Setup value)? setup,
     TResult? Function(SelectPickList value)? selectPickList,
-    TResult? Function(loadPickList value)? loadPickList,
-    TResult? Function(loadPickListDetails value)? loadPickListDetails,
-    TResult? Function(searchPicklist value)? searchPicklist,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
   }) {
     return selectPickList?.call(this);
   }
@@ -391,9 +392,9 @@ class _$SelectPickListImpl implements SelectPickList {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Setup value)? setup,
     TResult Function(SelectPickList value)? selectPickList,
-    TResult Function(loadPickList value)? loadPickList,
-    TResult Function(loadPickListDetails value)? loadPickListDetails,
-    TResult Function(searchPicklist value)? searchPicklist,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
     required TResult orElse(),
   }) {
     if (selectPickList != null) {
@@ -404,9 +405,9 @@ class _$SelectPickListImpl implements SelectPickList {
 }
 
 abstract class SelectPickList implements PicklistEvent {
-  const factory SelectPickList(final String id) = _$SelectPickListImpl;
+  const factory SelectPickList(final String picklistId) = _$SelectPickListImpl;
 
-  String get id;
+  String get picklistId;
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -416,20 +417,20 @@ abstract class SelectPickList implements PicklistEvent {
 }
 
 /// @nodoc
-abstract class _$$loadPickListImplCopyWith<$Res> {
-  factory _$$loadPickListImplCopyWith(
-          _$loadPickListImpl value, $Res Function(_$loadPickListImpl) then) =
-      __$$loadPickListImplCopyWithImpl<$Res>;
+abstract class _$$LoadPickListImplCopyWith<$Res> {
+  factory _$$LoadPickListImplCopyWith(
+          _$LoadPickListImpl value, $Res Function(_$LoadPickListImpl) then) =
+      __$$LoadPickListImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<Picklist> picklist});
 }
 
 /// @nodoc
-class __$$loadPickListImplCopyWithImpl<$Res>
-    extends _$PicklistEventCopyWithImpl<$Res, _$loadPickListImpl>
-    implements _$$loadPickListImplCopyWith<$Res> {
-  __$$loadPickListImplCopyWithImpl(
-      _$loadPickListImpl _value, $Res Function(_$loadPickListImpl) _then)
+class __$$LoadPickListImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$LoadPickListImpl>
+    implements _$$LoadPickListImplCopyWith<$Res> {
+  __$$LoadPickListImplCopyWithImpl(
+      _$LoadPickListImpl _value, $Res Function(_$LoadPickListImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of PicklistEvent
@@ -439,7 +440,7 @@ class __$$loadPickListImplCopyWithImpl<$Res>
   $Res call({
     Object? picklist = null,
   }) {
-    return _then(_$loadPickListImpl(
+    return _then(_$LoadPickListImpl(
       null == picklist
           ? _value._picklist
           : picklist // ignore: cast_nullable_to_non_nullable
@@ -450,8 +451,8 @@ class __$$loadPickListImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$loadPickListImpl implements loadPickList {
-  const _$loadPickListImpl(final List<Picklist> picklist)
+class _$LoadPickListImpl implements LoadPickList {
+  const _$LoadPickListImpl(final List<Picklist> picklist)
       : _picklist = picklist;
 
   final List<Picklist> _picklist;
@@ -471,7 +472,7 @@ class _$loadPickListImpl implements loadPickList {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$loadPickListImpl &&
+            other is _$LoadPickListImpl &&
             const DeepCollectionEquality().equals(other._picklist, _picklist));
   }
 
@@ -484,14 +485,14 @@ class _$loadPickListImpl implements loadPickList {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$loadPickListImplCopyWith<_$loadPickListImpl> get copyWith =>
-      __$$loadPickListImplCopyWithImpl<_$loadPickListImpl>(this, _$identity);
+  _$$LoadPickListImplCopyWith<_$LoadPickListImpl> get copyWith =>
+      __$$LoadPickListImplCopyWithImpl<_$LoadPickListImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? status) setup,
-    required TResult Function(String id) selectPickList,
+    required TResult Function(String picklistId) selectPickList,
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
@@ -504,7 +505,7 @@ class _$loadPickListImpl implements loadPickList {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? status)? setup,
-    TResult? Function(String id)? selectPickList,
+    TResult? Function(String picklistId)? selectPickList,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
@@ -516,7 +517,7 @@ class _$loadPickListImpl implements loadPickList {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? status)? setup,
-    TResult Function(String id)? selectPickList,
+    TResult Function(String picklistId)? selectPickList,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
@@ -533,9 +534,9 @@ class _$loadPickListImpl implements loadPickList {
   TResult map<TResult extends Object?>({
     required TResult Function(Setup value) setup,
     required TResult Function(SelectPickList value) selectPickList,
-    required TResult Function(loadPickList value) loadPickList,
-    required TResult Function(loadPickListDetails value) loadPickListDetails,
-    required TResult Function(searchPicklist value) searchPicklist,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
   }) {
     return loadPickList(this);
   }
@@ -545,9 +546,9 @@ class _$loadPickListImpl implements loadPickList {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Setup value)? setup,
     TResult? Function(SelectPickList value)? selectPickList,
-    TResult? Function(loadPickList value)? loadPickList,
-    TResult? Function(loadPickListDetails value)? loadPickListDetails,
-    TResult? Function(searchPicklist value)? searchPicklist,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
   }) {
     return loadPickList?.call(this);
   }
@@ -557,9 +558,9 @@ class _$loadPickListImpl implements loadPickList {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Setup value)? setup,
     TResult Function(SelectPickList value)? selectPickList,
-    TResult Function(loadPickList value)? loadPickList,
-    TResult Function(loadPickListDetails value)? loadPickListDetails,
-    TResult Function(searchPicklist value)? searchPicklist,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
     required TResult orElse(),
   }) {
     if (loadPickList != null) {
@@ -569,24 +570,24 @@ class _$loadPickListImpl implements loadPickList {
   }
 }
 
-abstract class loadPickList implements PicklistEvent {
-  const factory loadPickList(final List<Picklist> picklist) =
-      _$loadPickListImpl;
+abstract class LoadPickList implements PicklistEvent {
+  const factory LoadPickList(final List<Picklist> picklist) =
+      _$LoadPickListImpl;
 
   List<Picklist> get picklist;
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$loadPickListImplCopyWith<_$loadPickListImpl> get copyWith =>
+  _$$LoadPickListImplCopyWith<_$LoadPickListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$loadPickListDetailsImplCopyWith<$Res> {
-  factory _$$loadPickListDetailsImplCopyWith(_$loadPickListDetailsImpl value,
-          $Res Function(_$loadPickListDetailsImpl) then) =
-      __$$loadPickListDetailsImplCopyWithImpl<$Res>;
+abstract class _$$LoadPickListDetailsImplCopyWith<$Res> {
+  factory _$$LoadPickListDetailsImplCopyWith(_$LoadPickListDetailsImpl value,
+          $Res Function(_$LoadPickListDetailsImpl) then) =
+      __$$LoadPickListDetailsImplCopyWithImpl<$Res>;
   @useResult
   $Res call({PicklistDetails picklistDetails});
 
@@ -594,11 +595,11 @@ abstract class _$$loadPickListDetailsImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$loadPickListDetailsImplCopyWithImpl<$Res>
-    extends _$PicklistEventCopyWithImpl<$Res, _$loadPickListDetailsImpl>
-    implements _$$loadPickListDetailsImplCopyWith<$Res> {
-  __$$loadPickListDetailsImplCopyWithImpl(_$loadPickListDetailsImpl _value,
-      $Res Function(_$loadPickListDetailsImpl) _then)
+class __$$LoadPickListDetailsImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$LoadPickListDetailsImpl>
+    implements _$$LoadPickListDetailsImplCopyWith<$Res> {
+  __$$LoadPickListDetailsImplCopyWithImpl(_$LoadPickListDetailsImpl _value,
+      $Res Function(_$LoadPickListDetailsImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of PicklistEvent
@@ -608,7 +609,7 @@ class __$$loadPickListDetailsImplCopyWithImpl<$Res>
   $Res call({
     Object? picklistDetails = null,
   }) {
-    return _then(_$loadPickListDetailsImpl(
+    return _then(_$LoadPickListDetailsImpl(
       null == picklistDetails
           ? _value.picklistDetails
           : picklistDetails // ignore: cast_nullable_to_non_nullable
@@ -629,8 +630,8 @@ class __$$loadPickListDetailsImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$loadPickListDetailsImpl implements loadPickListDetails {
-  const _$loadPickListDetailsImpl(this.picklistDetails);
+class _$LoadPickListDetailsImpl implements LoadPickListDetails {
+  const _$LoadPickListDetailsImpl(this.picklistDetails);
 
   @override
   final PicklistDetails picklistDetails;
@@ -644,7 +645,7 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$loadPickListDetailsImpl &&
+            other is _$LoadPickListDetailsImpl &&
             (identical(other.picklistDetails, picklistDetails) ||
                 other.picklistDetails == picklistDetails));
   }
@@ -657,15 +658,15 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$loadPickListDetailsImplCopyWith<_$loadPickListDetailsImpl> get copyWith =>
-      __$$loadPickListDetailsImplCopyWithImpl<_$loadPickListDetailsImpl>(
+  _$$LoadPickListDetailsImplCopyWith<_$LoadPickListDetailsImpl> get copyWith =>
+      __$$LoadPickListDetailsImplCopyWithImpl<_$LoadPickListDetailsImpl>(
           this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? status) setup,
-    required TResult Function(String id) selectPickList,
+    required TResult Function(String picklistId) selectPickList,
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
@@ -678,7 +679,7 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? status)? setup,
-    TResult? Function(String id)? selectPickList,
+    TResult? Function(String picklistId)? selectPickList,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
@@ -690,7 +691,7 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? status)? setup,
-    TResult Function(String id)? selectPickList,
+    TResult Function(String picklistId)? selectPickList,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
@@ -707,9 +708,9 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   TResult map<TResult extends Object?>({
     required TResult Function(Setup value) setup,
     required TResult Function(SelectPickList value) selectPickList,
-    required TResult Function(loadPickList value) loadPickList,
-    required TResult Function(loadPickListDetails value) loadPickListDetails,
-    required TResult Function(searchPicklist value) searchPicklist,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
   }) {
     return loadPickListDetails(this);
   }
@@ -719,9 +720,9 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Setup value)? setup,
     TResult? Function(SelectPickList value)? selectPickList,
-    TResult? Function(loadPickList value)? loadPickList,
-    TResult? Function(loadPickListDetails value)? loadPickListDetails,
-    TResult? Function(searchPicklist value)? searchPicklist,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
   }) {
     return loadPickListDetails?.call(this);
   }
@@ -731,9 +732,9 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Setup value)? setup,
     TResult Function(SelectPickList value)? selectPickList,
-    TResult Function(loadPickList value)? loadPickList,
-    TResult Function(loadPickListDetails value)? loadPickListDetails,
-    TResult Function(searchPicklist value)? searchPicklist,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
     required TResult orElse(),
   }) {
     if (loadPickListDetails != null) {
@@ -743,34 +744,34 @@ class _$loadPickListDetailsImpl implements loadPickListDetails {
   }
 }
 
-abstract class loadPickListDetails implements PicklistEvent {
-  const factory loadPickListDetails(final PicklistDetails picklistDetails) =
-      _$loadPickListDetailsImpl;
+abstract class LoadPickListDetails implements PicklistEvent {
+  const factory LoadPickListDetails(final PicklistDetails picklistDetails) =
+      _$LoadPickListDetailsImpl;
 
   PicklistDetails get picklistDetails;
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$loadPickListDetailsImplCopyWith<_$loadPickListDetailsImpl> get copyWith =>
+  _$$LoadPickListDetailsImplCopyWith<_$LoadPickListDetailsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$searchPicklistImplCopyWith<$Res> {
-  factory _$$searchPicklistImplCopyWith(_$searchPicklistImpl value,
-          $Res Function(_$searchPicklistImpl) then) =
-      __$$searchPicklistImplCopyWithImpl<$Res>;
+abstract class _$$SearchPicklistImplCopyWith<$Res> {
+  factory _$$SearchPicklistImplCopyWith(_$SearchPicklistImpl value,
+          $Res Function(_$SearchPicklistImpl) then) =
+      __$$SearchPicklistImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<Picklist> picklist});
 }
 
 /// @nodoc
-class __$$searchPicklistImplCopyWithImpl<$Res>
-    extends _$PicklistEventCopyWithImpl<$Res, _$searchPicklistImpl>
-    implements _$$searchPicklistImplCopyWith<$Res> {
-  __$$searchPicklistImplCopyWithImpl(
-      _$searchPicklistImpl _value, $Res Function(_$searchPicklistImpl) _then)
+class __$$SearchPicklistImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$SearchPicklistImpl>
+    implements _$$SearchPicklistImplCopyWith<$Res> {
+  __$$SearchPicklistImplCopyWithImpl(
+      _$SearchPicklistImpl _value, $Res Function(_$SearchPicklistImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of PicklistEvent
@@ -780,7 +781,7 @@ class __$$searchPicklistImplCopyWithImpl<$Res>
   $Res call({
     Object? picklist = null,
   }) {
-    return _then(_$searchPicklistImpl(
+    return _then(_$SearchPicklistImpl(
       null == picklist
           ? _value._picklist
           : picklist // ignore: cast_nullable_to_non_nullable
@@ -791,8 +792,8 @@ class __$$searchPicklistImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$searchPicklistImpl implements searchPicklist {
-  const _$searchPicklistImpl(final List<Picklist> picklist)
+class _$SearchPicklistImpl implements SearchPicklist {
+  const _$SearchPicklistImpl(final List<Picklist> picklist)
       : _picklist = picklist;
 
   final List<Picklist> _picklist;
@@ -812,7 +813,7 @@ class _$searchPicklistImpl implements searchPicklist {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$searchPicklistImpl &&
+            other is _$SearchPicklistImpl &&
             const DeepCollectionEquality().equals(other._picklist, _picklist));
   }
 
@@ -825,15 +826,15 @@ class _$searchPicklistImpl implements searchPicklist {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$searchPicklistImplCopyWith<_$searchPicklistImpl> get copyWith =>
-      __$$searchPicklistImplCopyWithImpl<_$searchPicklistImpl>(
+  _$$SearchPicklistImplCopyWith<_$SearchPicklistImpl> get copyWith =>
+      __$$SearchPicklistImplCopyWithImpl<_$SearchPicklistImpl>(
           this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String? status) setup,
-    required TResult Function(String id) selectPickList,
+    required TResult Function(String picklistId) selectPickList,
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
@@ -846,7 +847,7 @@ class _$searchPicklistImpl implements searchPicklist {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String? status)? setup,
-    TResult? Function(String id)? selectPickList,
+    TResult? Function(String picklistId)? selectPickList,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
@@ -858,7 +859,7 @@ class _$searchPicklistImpl implements searchPicklist {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String? status)? setup,
-    TResult Function(String id)? selectPickList,
+    TResult Function(String picklistId)? selectPickList,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
@@ -875,9 +876,9 @@ class _$searchPicklistImpl implements searchPicklist {
   TResult map<TResult extends Object?>({
     required TResult Function(Setup value) setup,
     required TResult Function(SelectPickList value) selectPickList,
-    required TResult Function(loadPickList value) loadPickList,
-    required TResult Function(loadPickListDetails value) loadPickListDetails,
-    required TResult Function(searchPicklist value) searchPicklist,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
   }) {
     return searchPicklist(this);
   }
@@ -887,9 +888,9 @@ class _$searchPicklistImpl implements searchPicklist {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(Setup value)? setup,
     TResult? Function(SelectPickList value)? selectPickList,
-    TResult? Function(loadPickList value)? loadPickList,
-    TResult? Function(loadPickListDetails value)? loadPickListDetails,
-    TResult? Function(searchPicklist value)? searchPicklist,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
   }) {
     return searchPicklist?.call(this);
   }
@@ -899,9 +900,9 @@ class _$searchPicklistImpl implements searchPicklist {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(Setup value)? setup,
     TResult Function(SelectPickList value)? selectPickList,
-    TResult Function(loadPickList value)? loadPickList,
-    TResult Function(loadPickListDetails value)? loadPickListDetails,
-    TResult Function(searchPicklist value)? searchPicklist,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
     required TResult orElse(),
   }) {
     if (searchPicklist != null) {
@@ -911,15 +912,15 @@ class _$searchPicklistImpl implements searchPicklist {
   }
 }
 
-abstract class searchPicklist implements PicklistEvent {
-  const factory searchPicklist(final List<Picklist> picklist) =
-      _$searchPicklistImpl;
+abstract class SearchPicklist implements PicklistEvent {
+  const factory SearchPicklist(final List<Picklist> picklist) =
+      _$SearchPicklistImpl;
 
   List<Picklist> get picklist;
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$searchPicklistImplCopyWith<_$searchPicklistImpl> get copyWith =>
+  _$$SearchPicklistImplCopyWith<_$SearchPicklistImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
