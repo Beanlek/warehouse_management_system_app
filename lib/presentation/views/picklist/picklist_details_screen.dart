@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist.dart';
 import 'package:warehouse/presentation/widgets/global_breadcrumb.dart';
+import 'package:warehouse/presentation/widgets/global_button.dart';
 import 'package:warehouse/presentation/widgets/global_details_card.dart';
 import 'package:warehouse/presentation/widgets/picklist/picklist_batch_card.dart';
 import 'package:warehouse/presentation/widgets/picklist/picklist_packing_card.dart';
@@ -23,6 +24,8 @@ class PicklistDetailsScreen extends StatefulWidget {
 }
 
 class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
+  final ScrollController mainScrollController = ScrollController();
+  
   late final PicklistBloc _picklistBloc;
   late final String picklistId;
 
@@ -71,46 +74,86 @@ class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
                 Column(
                   children: [
                     Breadcrumb(paths: ['Picklist Allotment', picklistId]),
-
-                    DetailsCard(
-                      dataMap: Map.fromEntries(
-                        state.picklistDetails.picklist.toJson().entries.where((e) {
-                          final _keys = ['id', 'site_id', 'created_date'];
-
-                          return _keys.contains(e.key);
-                        })
-                      )
+                    Expanded(
+                      child: RawScrollbar(
+                        radius: Radius.circular(12),
+                        thickness: 8,
+                        thumbColor: biruImran2,
+                        thumbVisibility: true,
+                        controller: mainScrollController,
+                        child: SingleChildScrollView(
+                          controller: mainScrollController,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * .98,
+                            child: Column(
+                              children: [
+                            
+                                DetailsCard(
+                                  dataMap: Map.fromEntries(
+                                    state.picklistDetails.picklist.toJson().entries.where((e) {
+                                      final _keys = ['id', 'site_id', 'created_date'];
+                            
+                                      return _keys.contains(e.key);
+                                    })
+                                  )
+                                ),
+                            
+                                SizedBox(height: 12,),
+                            
+                                PicklistStatusHistoryCard(
+                                  dataMap: Map.fromEntries(
+                                    state.picklistDetails.picklist.toJson().entries.where((e) {
+                                      final _keys = [
+                                        'sent_for_picking_at',
+                                        'started_packing_at',
+                                        'done_packing_at',
+                                        'created_date'
+                                      ];
+                            
+                                      return _keys.contains(e.key) && (e.value != null || e.value != '');
+                                    })
+                                  )
+                                ),
+                            
+                                SizedBox(height: 12,),
+                            
+                                PicklistBatchCard(
+                                  dataList: state.picklistDetails.batch
+                                ),
+                                
+                                SizedBox(height: 12,),
+                            
+                                PicklistPackingCard(
+                                  dataList: state.picklistDetails.packing
+                                ),
+                                                    
+                                SizedBox(height: 180,),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
 
-                    SizedBox(height: 12,),
-
-                    PicklistStatusHistoryCard(
-                      dataMap: Map.fromEntries(
-                        state.picklistDetails.picklist.toJson().entries.where((e) {
-                          final _keys = [
-                            'sent_for_picking_at',
-                            'started_packing_at',
-                            'done_packing_at',
-                            'created_date'
-                          ];
-
-                          return _keys.contains(e.key) && (e.value != null || e.value != '');
-                        })
-                      )
-                    ),
-
-                    SizedBox(height: 12,),
-
-                    PicklistBatchCard(
-                      dataList: state.picklistDetails.batch
-                    ),
-                    
-                    SizedBox(height: 12,),
-
-                    PicklistPackingCard(
-                      dataList: state.picklistDetails.packing
-                    )
                   ],
+                ),
+
+                Positioned( bottom: 24, left: 24, right: 24,
+                  child: Column(
+                    children: state.picklistDetails.picklist.status == 'opened' ? [
+                      Button(onPressed: () {
+                        // TODO api/picklist/android/sendForPicking
+                      }, title: 'Send for Picking',),
+                      SizedBox(height: 12,),
+                      Button(onPressed: () {
+                        // TODO api/picklist/android/delete
+                      }, title: 'Delete Picklist'),
+                    ] : state.picklistDetails.picklist.status == 'sent for picking' ? [
+                      Button(onPressed: () {
+                        // TODO api/picklist/android/packAll
+                      }, title: 'Pack'),
+                    ] : [],
+                  )
                 ),
 
                 if (state.isLoading)
