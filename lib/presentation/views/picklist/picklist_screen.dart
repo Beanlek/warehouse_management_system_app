@@ -1,16 +1,12 @@
 import 'dart:core';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:warehouse/domain/entities/picklist/picklist.dart';
-import 'package:warehouse/domain/entities/sites/site.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_bloc.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_event.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_state.dart';
-import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
-import 'package:warehouse/presentation/blocs/warehouse/warehouse_event.dart';
+import 'package:warehouse/presentation/widgets/global_breadcrumb.dart';
 import 'package:warehouse/presentation/widgets/picklist/picklist_card.dart';
 import 'package:warehouse/utils/utils.dart';
 
@@ -47,18 +43,18 @@ class _PicklistScreenState extends State<PicklistScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
             appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              'Picklist Allotment',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24.0,
-                fontWeight: FontWeight.w500,
+              centerTitle: true,
+              title: Text(
+                'Picklist Allotment',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              backgroundColor: biruImran,
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
-            backgroundColor: biruImran,
-            iconTheme: const IconThemeData(color: Colors.white),
-          ),
             body: BlocBuilder<PicklistBloc, PicklistState>(
               bloc: _picklistBloc,
               builder: (context, state) {
@@ -68,27 +64,7 @@ class _PicklistScreenState extends State<PicklistScreen> {
                       margin: const EdgeInsets.only(top: 16),
                       child: Column(
                         children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: RichText(
-                                text: TextSpan(
-                                    text: 'Home ',
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Poppins',
-                                      color: textColorTertiary,
-                                    ),
-                                    children: [TextSpan(text: '> Picklist Allotment')]),
-                              ),
-                            ),
-                          ),
+                          Breadcrumb(paths: ['Picklist Allotment']),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(

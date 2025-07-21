@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_this, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -111,6 +112,41 @@ String titleCheck(String _recordType) {
     }
 
 extension StringExtension on String {
+  String clean() {
+    String _string = '';
+
+    _string = replaceAll(RegExp(r'_'), ' ');
+    // Api.Log("string extension _string", _string);
+
+    final _strings = _string.split(' ');
+    List<String> temp = [];
+    // Api.Log("string extension clean", _strings.toString());
+
+    for (var path in _strings) {
+      // Api.Log("string extension", path);
+
+      if (path == path.toUpperCase()) {
+        temp.add(path);
+      } else if (path != '') {
+        temp.add(path.capitalize());
+      }
+    }
+
+    _string = temp.map((word) => word).join(' ');
+
+    return _string;
+  }
+
+  String formatDateTime(String format) {
+
+    DateTime utcDate = DateTime.parse(this);
+    DateTime localDate = utcDate.add(Duration(hours: 8));
+
+    String formattedDate = DateFormat(format).format(localDate);
+
+    return formattedDate;
+  }
+  
   String capitalize() {
     return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
