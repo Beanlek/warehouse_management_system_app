@@ -24,6 +24,13 @@ mixin _$PicklistEvent {
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -33,6 +40,13 @@ mixin _$PicklistEvent {
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -42,6 +56,13 @@ mixin _$PicklistEvent {
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -52,6 +73,17 @@ mixin _$PicklistEvent {
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
     required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -61,6 +93,16 @@ mixin _$PicklistEvent {
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
     TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -70,6 +112,16 @@ mixin _$PicklistEvent {
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
     TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -170,6 +222,13 @@ class _$SetupImpl implements Setup {
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
   }) {
     return setup(status);
   }
@@ -182,6 +241,13 @@ class _$SetupImpl implements Setup {
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
   }) {
     return setup?.call(status);
   }
@@ -194,6 +260,13 @@ class _$SetupImpl implements Setup {
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
     required TResult orElse(),
   }) {
     if (setup != null) {
@@ -210,6 +283,17 @@ class _$SetupImpl implements Setup {
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
     required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
   }) {
     return setup(this);
   }
@@ -222,6 +306,16 @@ class _$SetupImpl implements Setup {
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
     TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
   }) {
     return setup?.call(this);
   }
@@ -234,6 +328,16 @@ class _$SetupImpl implements Setup {
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
     TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
     required TResult orElse(),
   }) {
     if (setup != null) {
@@ -331,6 +435,13 @@ class _$SelectPickListImpl implements SelectPickList {
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
   }) {
     return selectPickList(picklistId);
   }
@@ -343,6 +454,13 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
   }) {
     return selectPickList?.call(picklistId);
   }
@@ -355,6 +473,13 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
     required TResult orElse(),
   }) {
     if (selectPickList != null) {
@@ -371,6 +496,17 @@ class _$SelectPickListImpl implements SelectPickList {
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
     required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
   }) {
     return selectPickList(this);
   }
@@ -383,6 +519,16 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
     TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
   }) {
     return selectPickList?.call(this);
   }
@@ -395,6 +541,16 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
     TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
     required TResult orElse(),
   }) {
     if (selectPickList != null) {
@@ -497,6 +653,13 @@ class _$LoadPickListImpl implements LoadPickList {
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
   }) {
     return loadPickList(picklist);
   }
@@ -509,6 +672,13 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
   }) {
     return loadPickList?.call(picklist);
   }
@@ -521,6 +691,13 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
     required TResult orElse(),
   }) {
     if (loadPickList != null) {
@@ -537,6 +714,17 @@ class _$LoadPickListImpl implements LoadPickList {
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
     required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
   }) {
     return loadPickList(this);
   }
@@ -549,6 +737,16 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
     TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
   }) {
     return loadPickList?.call(this);
   }
@@ -561,6 +759,16 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
     TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
     required TResult orElse(),
   }) {
     if (loadPickList != null) {
@@ -671,6 +879,13 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
   }) {
     return loadPickListDetails(picklistDetails);
   }
@@ -683,6 +898,13 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
   }) {
     return loadPickListDetails?.call(picklistDetails);
   }
@@ -695,6 +917,13 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
     required TResult orElse(),
   }) {
     if (loadPickListDetails != null) {
@@ -711,6 +940,17 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
     required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
   }) {
     return loadPickListDetails(this);
   }
@@ -723,6 +963,16 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
     TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
   }) {
     return loadPickListDetails?.call(this);
   }
@@ -735,6 +985,16 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
     TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
     required TResult orElse(),
   }) {
     if (loadPickListDetails != null) {
@@ -839,6 +1099,13 @@ class _$SearchPicklistImpl implements SearchPicklist {
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
     required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
   }) {
     return searchPicklist(picklist);
   }
@@ -851,6 +1118,13 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
   }) {
     return searchPicklist?.call(picklist);
   }
@@ -863,6 +1137,13 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
     TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
     required TResult orElse(),
   }) {
     if (searchPicklist != null) {
@@ -879,6 +1160,17 @@ class _$SearchPicklistImpl implements SearchPicklist {
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
     required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
   }) {
     return searchPicklist(this);
   }
@@ -891,6 +1183,16 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
     TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
   }) {
     return searchPicklist?.call(this);
   }
@@ -903,6 +1205,16 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
     TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
     required TResult orElse(),
   }) {
     if (searchPicklist != null) {
@@ -922,5 +1234,1404 @@ abstract class SearchPicklist implements PicklistEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SearchPicklistImplCopyWith<_$SearchPicklistImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DeletePicklistImplCopyWith<$Res> {
+  factory _$$DeletePicklistImplCopyWith(_$DeletePicklistImpl value,
+          $Res Function(_$DeletePicklistImpl) then) =
+      __$$DeletePicklistImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String picklistId});
+}
+
+/// @nodoc
+class __$$DeletePicklistImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$DeletePicklistImpl>
+    implements _$$DeletePicklistImplCopyWith<$Res> {
+  __$$DeletePicklistImplCopyWithImpl(
+      _$DeletePicklistImpl _value, $Res Function(_$DeletePicklistImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? picklistId = null,
+  }) {
+    return _then(_$DeletePicklistImpl(
+      picklistId: null == picklistId
+          ? _value.picklistId
+          : picklistId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DeletePicklistImpl implements DeletePicklist {
+  const _$DeletePicklistImpl({required this.picklistId});
+
+  @override
+  final String picklistId;
+
+  @override
+  String toString() {
+    return 'PicklistEvent.deletePicklist(picklistId: $picklistId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeletePicklistImpl &&
+            (identical(other.picklistId, picklistId) ||
+                other.picklistId == picklistId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, picklistId);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeletePicklistImplCopyWith<_$DeletePicklistImpl> get copyWith =>
+      __$$DeletePicklistImplCopyWithImpl<_$DeletePicklistImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return deletePicklist(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return deletePicklist?.call(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (deletePicklist != null) {
+      return deletePicklist(picklistId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return deletePicklist(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return deletePicklist?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (deletePicklist != null) {
+      return deletePicklist(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DeletePicklist implements PicklistEvent {
+  const factory DeletePicklist({required final String picklistId}) =
+      _$DeletePicklistImpl;
+
+  String get picklistId;
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeletePicklistImplCopyWith<_$DeletePicklistImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DeletePicklistSucceededImplCopyWith<$Res> {
+  factory _$$DeletePicklistSucceededImplCopyWith(
+          _$DeletePicklistSucceededImpl value,
+          $Res Function(_$DeletePicklistSucceededImpl) then) =
+      __$$DeletePicklistSucceededImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$DeletePicklistSucceededImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$DeletePicklistSucceededImpl>
+    implements _$$DeletePicklistSucceededImplCopyWith<$Res> {
+  __$$DeletePicklistSucceededImplCopyWithImpl(
+      _$DeletePicklistSucceededImpl _value,
+      $Res Function(_$DeletePicklistSucceededImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
+  const _$DeletePicklistSucceededImpl();
+
+  @override
+  String toString() {
+    return 'PicklistEvent.deletePicklistSucceeded()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeletePicklistSucceededImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return deletePicklistSucceeded();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return deletePicklistSucceeded?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (deletePicklistSucceeded != null) {
+      return deletePicklistSucceeded();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return deletePicklistSucceeded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return deletePicklistSucceeded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (deletePicklistSucceeded != null) {
+      return deletePicklistSucceeded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DeletePicklistSucceeded implements PicklistEvent {
+  const factory DeletePicklistSucceeded() = _$DeletePicklistSucceededImpl;
+}
+
+/// @nodoc
+abstract class _$$SetPicklistSendForPickingImplCopyWith<$Res> {
+  factory _$$SetPicklistSendForPickingImplCopyWith(
+          _$SetPicklistSendForPickingImpl value,
+          $Res Function(_$SetPicklistSendForPickingImpl) then) =
+      __$$SetPicklistSendForPickingImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String picklistId});
+}
+
+/// @nodoc
+class __$$SetPicklistSendForPickingImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$SetPicklistSendForPickingImpl>
+    implements _$$SetPicklistSendForPickingImplCopyWith<$Res> {
+  __$$SetPicklistSendForPickingImplCopyWithImpl(
+      _$SetPicklistSendForPickingImpl _value,
+      $Res Function(_$SetPicklistSendForPickingImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? picklistId = null,
+  }) {
+    return _then(_$SetPicklistSendForPickingImpl(
+      picklistId: null == picklistId
+          ? _value.picklistId
+          : picklistId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
+  const _$SetPicklistSendForPickingImpl({required this.picklistId});
+
+  @override
+  final String picklistId;
+
+  @override
+  String toString() {
+    return 'PicklistEvent.setPicklistSendForPicking(picklistId: $picklistId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SetPicklistSendForPickingImpl &&
+            (identical(other.picklistId, picklistId) ||
+                other.picklistId == picklistId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, picklistId);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SetPicklistSendForPickingImplCopyWith<_$SetPicklistSendForPickingImpl>
+      get copyWith => __$$SetPicklistSendForPickingImplCopyWithImpl<
+          _$SetPicklistSendForPickingImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return setPicklistSendForPicking(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return setPicklistSendForPicking?.call(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistSendForPicking != null) {
+      return setPicklistSendForPicking(picklistId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return setPicklistSendForPicking(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return setPicklistSendForPicking?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistSendForPicking != null) {
+      return setPicklistSendForPicking(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SetPicklistSendForPicking implements PicklistEvent {
+  const factory SetPicklistSendForPicking({required final String picklistId}) =
+      _$SetPicklistSendForPickingImpl;
+
+  String get picklistId;
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SetPicklistSendForPickingImplCopyWith<_$SetPicklistSendForPickingImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SetPicklistSendForPickingSucceededImplCopyWith<$Res> {
+  factory _$$SetPicklistSendForPickingSucceededImplCopyWith(
+          _$SetPicklistSendForPickingSucceededImpl value,
+          $Res Function(_$SetPicklistSendForPickingSucceededImpl) then) =
+      __$$SetPicklistSendForPickingSucceededImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$SetPicklistSendForPickingSucceededImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res,
+        _$SetPicklistSendForPickingSucceededImpl>
+    implements _$$SetPicklistSendForPickingSucceededImplCopyWith<$Res> {
+  __$$SetPicklistSendForPickingSucceededImplCopyWithImpl(
+      _$SetPicklistSendForPickingSucceededImpl _value,
+      $Res Function(_$SetPicklistSendForPickingSucceededImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$SetPicklistSendForPickingSucceededImpl
+    implements SetPicklistSendForPickingSucceeded {
+  const _$SetPicklistSendForPickingSucceededImpl();
+
+  @override
+  String toString() {
+    return 'PicklistEvent.setPicklistSendForPickingSucceeded()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SetPicklistSendForPickingSucceededImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return setPicklistSendForPickingSucceeded();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return setPicklistSendForPickingSucceeded?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistSendForPickingSucceeded != null) {
+      return setPicklistSendForPickingSucceeded();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return setPicklistSendForPickingSucceeded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return setPicklistSendForPickingSucceeded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistSendForPickingSucceeded != null) {
+      return setPicklistSendForPickingSucceeded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SetPicklistSendForPickingSucceeded implements PicklistEvent {
+  const factory SetPicklistSendForPickingSucceeded() =
+      _$SetPicklistSendForPickingSucceededImpl;
+}
+
+/// @nodoc
+abstract class _$$SetPicklistPackAllImplCopyWith<$Res> {
+  factory _$$SetPicklistPackAllImplCopyWith(_$SetPicklistPackAllImpl value,
+          $Res Function(_$SetPicklistPackAllImpl) then) =
+      __$$SetPicklistPackAllImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String picklistId});
+}
+
+/// @nodoc
+class __$$SetPicklistPackAllImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$SetPicklistPackAllImpl>
+    implements _$$SetPicklistPackAllImplCopyWith<$Res> {
+  __$$SetPicklistPackAllImplCopyWithImpl(_$SetPicklistPackAllImpl _value,
+      $Res Function(_$SetPicklistPackAllImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? picklistId = null,
+  }) {
+    return _then(_$SetPicklistPackAllImpl(
+      picklistId: null == picklistId
+          ? _value.picklistId
+          : picklistId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
+  const _$SetPicklistPackAllImpl({required this.picklistId});
+
+  @override
+  final String picklistId;
+
+  @override
+  String toString() {
+    return 'PicklistEvent.setPicklistPackAll(picklistId: $picklistId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SetPicklistPackAllImpl &&
+            (identical(other.picklistId, picklistId) ||
+                other.picklistId == picklistId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, picklistId);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SetPicklistPackAllImplCopyWith<_$SetPicklistPackAllImpl> get copyWith =>
+      __$$SetPicklistPackAllImplCopyWithImpl<_$SetPicklistPackAllImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return setPicklistPackAll(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return setPicklistPackAll?.call(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistPackAll != null) {
+      return setPicklistPackAll(picklistId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return setPicklistPackAll(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return setPicklistPackAll?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistPackAll != null) {
+      return setPicklistPackAll(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SetPicklistPackAll implements PicklistEvent {
+  const factory SetPicklistPackAll({required final String picklistId}) =
+      _$SetPicklistPackAllImpl;
+
+  String get picklistId;
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SetPicklistPackAllImplCopyWith<_$SetPicklistPackAllImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SetPicklistPackAllSucceededImplCopyWith<$Res> {
+  factory _$$SetPicklistPackAllSucceededImplCopyWith(
+          _$SetPicklistPackAllSucceededImpl value,
+          $Res Function(_$SetPicklistPackAllSucceededImpl) then) =
+      __$$SetPicklistPackAllSucceededImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$SetPicklistPackAllSucceededImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$SetPicklistPackAllSucceededImpl>
+    implements _$$SetPicklistPackAllSucceededImplCopyWith<$Res> {
+  __$$SetPicklistPackAllSucceededImplCopyWithImpl(
+      _$SetPicklistPackAllSucceededImpl _value,
+      $Res Function(_$SetPicklistPackAllSucceededImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
+  const _$SetPicklistPackAllSucceededImpl();
+
+  @override
+  String toString() {
+    return 'PicklistEvent.setPicklistPackAllSucceeded()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SetPicklistPackAllSucceededImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return setPicklistPackAllSucceeded();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return setPicklistPackAllSucceeded?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistPackAllSucceeded != null) {
+      return setPicklistPackAllSucceeded();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return setPicklistPackAllSucceeded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return setPicklistPackAllSucceeded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (setPicklistPackAllSucceeded != null) {
+      return setPicklistPackAllSucceeded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SetPicklistPackAllSucceeded implements PicklistEvent {
+  const factory SetPicklistPackAllSucceeded() =
+      _$SetPicklistPackAllSucceededImpl;
+}
+
+/// @nodoc
+abstract class _$$ShowPicklistErrorImplCopyWith<$Res> {
+  factory _$$ShowPicklistErrorImplCopyWith(_$ShowPicklistErrorImpl value,
+          $Res Function(_$ShowPicklistErrorImpl) then) =
+      __$$ShowPicklistErrorImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String errorMessage});
+}
+
+/// @nodoc
+class __$$ShowPicklistErrorImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$ShowPicklistErrorImpl>
+    implements _$$ShowPicklistErrorImplCopyWith<$Res> {
+  __$$ShowPicklistErrorImplCopyWithImpl(_$ShowPicklistErrorImpl _value,
+      $Res Function(_$ShowPicklistErrorImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? errorMessage = null,
+  }) {
+    return _then(_$ShowPicklistErrorImpl(
+      null == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ShowPicklistErrorImpl implements ShowPicklistError {
+  const _$ShowPicklistErrorImpl(this.errorMessage);
+
+  @override
+  final String errorMessage;
+
+  @override
+  String toString() {
+    return 'PicklistEvent.showPicklistError(errorMessage: $errorMessage)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ShowPicklistErrorImpl &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, errorMessage);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ShowPicklistErrorImplCopyWith<_$ShowPicklistErrorImpl> get copyWith =>
+      __$$ShowPicklistErrorImplCopyWithImpl<_$ShowPicklistErrorImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? status) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return showPicklistError(errorMessage);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? status)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return showPicklistError?.call(errorMessage);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? status)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (showPicklistError != null) {
+      return showPicklistError(errorMessage);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return showPicklistError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return showPicklistError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (showPicklistError != null) {
+      return showPicklistError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ShowPicklistError implements PicklistEvent {
+  const factory ShowPicklistError(final String errorMessage) =
+      _$ShowPicklistErrorImpl;
+
+  String get errorMessage;
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ShowPicklistErrorImplCopyWith<_$ShowPicklistErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

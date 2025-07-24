@@ -1,13 +1,11 @@
 // ignore_for_file: must_be_immutable, avoid_print, unnecessary_brace_in_string_interps, no_leading_underscores_for_local_identifiers
 
-import 'package:bloc/bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:warehouse/data/models/warehouse.dart';
 import 'package:warehouse/injection.dart';
 import 'package:warehouse/presentation/blocs/warehouse/warehouse_bloc.dart';
 import 'package:warehouse/routes/routes.dart';

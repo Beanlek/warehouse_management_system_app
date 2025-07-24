@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:warehouse/utils/utils.dart';
 
@@ -95,7 +94,7 @@ class PicklistStatusHistoryCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(e.key.toString().clean(), style: Theme.of(context).textTheme.labelLarge,),
-                              Text(e.value.toString().formatDateTime('yyyy-MM-dd (EEE) hh:mm a') ?? '-'),
+                              Text(e.value.toString().formatDateTime('yyyy-MM-dd (EEE) hh:mm a')),
                             ],
                           ),
                         ),

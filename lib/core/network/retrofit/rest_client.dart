@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import 'package:warehouse/config/globals.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_delete_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_details_response_dto.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_pack_all_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_response_dto.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_send_for_picking_response_dto.dart';
 import 'package:warehouse/data/models/responses/sites/site_list_response_dto.dart';
 import 'package:warehouse/data/models/responses/warehouse/inventory_list_response_dto.dart';
 
@@ -34,5 +37,23 @@ abstract class RestClient {
   Future<PicklistDetailsResponseDto> getPicklistDetails(
     @Header('Authorization') String token,
     @Path('picklist_id') String picklistId,
+  );
+
+  @POST('/api/picklist/android/delete')
+  Future<PicklistDeleteResponseDto> deletePicklist(
+    @Header('Authorization') String token,
+    @Body() Map<String, dynamic> picklistData
+  );
+
+  @POST('/api/picklist/android/sendForPicking')
+  Future<PicklistSendForPickingResponseDto> setPicklistSendForPicking(
+    @Header('Authorization') String token,
+    @Body() Map<String, dynamic> picklistData
+  );
+  
+  @POST('/api/picklist/android/packAll')
+  Future<PicklistPackAllResponseDto> setPicklistPackAll(
+    @Header('Authorization') String token,
+    @Body() Map<String, dynamic> picklistData
   );
 }

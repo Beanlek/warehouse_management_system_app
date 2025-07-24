@@ -269,6 +269,7 @@ class _WarehousePageState extends State<WarehousePage> with StockTakeComponents 
   }
 
   Future<void> deleteDraft() async {
+    // ignore: unnecessary_null_comparison
     if (token == null) {
       Navigator.pushNamed(context, AppRoutes.login);
       FloatingSnackBar(

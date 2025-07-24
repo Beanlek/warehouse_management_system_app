@@ -1,16 +1,18 @@
-import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:warehouse/core/freezed/network_error.dart';
 import 'package:warehouse/core/freezed/result.dart';
 import 'package:warehouse/core/network/network_bound_item.dart';
 import 'package:warehouse/core/network/retrofit/api_client.dart';
 import 'package:warehouse/core/network/retrofit/rest_api_executor.dart';
 import 'package:warehouse/core/shared/app_error.dart';
-import 'package:warehouse/data/models/batch/batch_dto.dart';
-import 'package:warehouse/data/models/packing/packing_dto.dart';
-import 'package:warehouse/data/models/picklist/picklist_details_dto.dart';
 import 'package:warehouse/data/models/picklist/picklist_dto.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_delete_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_details_response_dto.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_pack_all_response_dto.dart';
 import 'package:warehouse/data/models/responses/picklist/picklist_response_dto.dart';
+import 'package:warehouse/data/models/responses/picklist/picklist_send_for_picking_response_dto.dart';
 import 'package:warehouse/domain/entities/batch/batch.dart';
 import 'package:warehouse/domain/entities/packing/packing.dart';
 import 'package:warehouse/domain/entities/picklist/picklist.dart';
@@ -25,7 +27,7 @@ class PicklistRepositoryImpl extends PicklistRepository{
   PicklistRepositoryImpl(this._apiClient);
   
   @override
-  Future fetchPickList(String token, String status) {
+  Future fetchPickList(String token, String status) async {
     return networkInBoundItem(
       apiRequest: () => RestApiExecutor.executeGeneric<PicklistResponseDto>(
         requestCall: () async {
@@ -41,7 +43,7 @@ class PicklistRepositoryImpl extends PicklistRepository{
   }
 
   @override
-  Future fetchPickListDetails(String token, String picklistId) {
+  Future fetchPickListDetails(String token, String picklistId) async {
     return networkInBoundItem(
       apiRequest: () => RestApiExecutor.executeGeneric<PicklistDetailsResponseDto>(
         requestCall: () async {
@@ -62,5 +64,89 @@ class PicklistRepositoryImpl extends PicklistRepository{
       getErrorState: (AppError errorApiResult) =>
           Result.failure(errorApiResult),
     );
+  }
+
+  @override
+  Future deletePickList(String token, Map<String, dynamic> picklistData) async {
+    var restClient = await _apiClient.getRestClient();
+
+    return await restClient.deletePicklist('Bearer $token', picklistData)
+      .then((value) => Future<Result<PicklistDeleteResponseDto, NetworkError>>.value(
+        Result.success(value))
+      )
+      .catchError((error) {
+        if (error is DioException) {
+          debugPrint('Dio error: ${error.message}');
+
+          if (error.response?.statusCode == 422) {
+
+            return Future<Result<PicklistDeleteResponseDto, NetworkError>>.value(
+                Result.failure(NetworkError.request(error: error)));
+
+          }
+        }
+
+        return Future<Result<PicklistDeleteResponseDto, NetworkError>>.value(
+          const Result.failure(
+              NetworkError.connectivity(message: 'No Internet Connection'))
+        );
+
+      });
+  }
+
+  @override
+  Future setPicklistSendForPicking(String token, Map<String, dynamic> picklistData) async {
+    var restClient = await _apiClient.getRestClient();
+
+    return await restClient.setPicklistSendForPicking('Bearer $token', picklistData)
+      .then((value) => Future<Result<PicklistSendForPickingResponseDto, NetworkError>>.value(
+        Result.success(value))
+      )
+      .catchError((error) {
+        if (error is DioException) {
+          debugPrint('Dio error: ${error.message}');
+
+          if (error.response?.statusCode == 422) {
+
+            return Future<Result<PicklistSendForPickingResponseDto, NetworkError>>.value(
+                Result.failure(NetworkError.request(error: error)));
+
+          }
+        }
+
+        return Future<Result<PicklistSendForPickingResponseDto, NetworkError>>.value(
+          const Result.failure(
+              NetworkError.connectivity(message: 'No Internet Connection'))
+        );
+
+      });
+  }
+
+  @override
+  Future setPicklistPackAll(String token, Map<String, dynamic> picklistData) async {
+    var restClient = await _apiClient.getRestClient();
+
+    return await restClient.setPicklistPackAll('Bearer $token', picklistData)
+      .then((value) => Future<Result<PicklistPackAllResponseDto, NetworkError>>.value(
+        Result.success(value))
+      )
+      .catchError((error) {
+        if (error is DioException) {
+          debugPrint('Dio error: ${error.message}');
+
+          if (error.response?.statusCode == 422) {
+
+            return Future<Result<PicklistPackAllResponseDto, NetworkError>>.value(
+                Result.failure(NetworkError.request(error: error)));
+
+          }
+        }
+
+        return Future<Result<PicklistPackAllResponseDto, NetworkError>>.value(
+          const Result.failure(
+              NetworkError.connectivity(message: 'No Internet Connection'))
+        );
+
+      });
   }
 }

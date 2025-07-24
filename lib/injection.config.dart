@@ -21,10 +21,16 @@ import 'package:warehouse/domain/repositories/picklist_repository.dart'
     as _i623;
 import 'package:warehouse/domain/repositories/warehouse_inventory_repository.dart'
     as _i186;
+import 'package:warehouse/domain/usecases/picklist/delete_picklist_usecase.dart'
+    as _i60;
 import 'package:warehouse/domain/usecases/picklist/fetch_picklist_details_usecase.dart'
     as _i734;
 import 'package:warehouse/domain/usecases/picklist/fetch_picklist_usecase.dart'
     as _i934;
+import 'package:warehouse/domain/usecases/picklist/set_picklist_pack_all_usecase.dart'
+    as _i887;
+import 'package:warehouse/domain/usecases/picklist/set_picklist_send_for_picking_usecase.dart'
+    as _i622;
 import 'package:warehouse/domain/usecases/warehouse_inventory/fetch_sites_list_use_case.dart'
     as _i428;
 import 'package:warehouse/domain/usecases/warehouse_inventory/fetch_warehouse_inventory_list_use_case.dart'
@@ -58,6 +64,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i934.FetchPickListUseCase(gh<_i623.PicklistRepository>()));
     gh.factory<_i734.FetchPickListDetailsUseCase>(() =>
         _i734.FetchPickListDetailsUseCase(gh<_i623.PicklistRepository>()));
+    gh.factory<_i60.DeletePicklistUsecase>(
+        () => _i60.DeletePicklistUsecase(gh<_i623.PicklistRepository>()));
+    gh.factory<_i887.SetPicklistPackAllUsecase>(
+        () => _i887.SetPicklistPackAllUsecase(gh<_i623.PicklistRepository>()));
+    gh.factory<_i622.SetPicklistSendForPickingUsecase>(() =>
+        _i622.SetPicklistSendForPickingUsecase(gh<_i623.PicklistRepository>()));
     return this;
   }
 }

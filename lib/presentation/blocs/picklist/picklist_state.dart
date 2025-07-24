@@ -10,8 +10,21 @@ class PicklistState with _$PicklistState {
   
   const factory PicklistState({
     @Default(false) bool isLoading,
+
+    @Default(false) bool deletePicklistSucceeded,
+    @Default(false) bool deletePicklistProgress,
+
+    @Default(false) bool setPicklistSendForPickingSucceeded,
+    @Default(false) bool setPicklistSendForPickingProgress,
+
+    @Default(false) bool setPicklistPackAllSucceeded,
+    @Default(false) bool setPicklistPackAllProgress,
+
     @Default([]) List<Picklist> picklist,
     @Default(PicklistDetails.empty) PicklistDetails picklistDetails,
+
+    @Default(null) String? error,
+
   }) = _PicklistState;
 
 }

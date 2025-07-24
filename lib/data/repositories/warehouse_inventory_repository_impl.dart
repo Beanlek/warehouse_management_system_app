@@ -18,7 +18,7 @@ class WarehouseInventoryRepositoryImpl extends WarehouseInventoryRepository{
   WarehouseInventoryRepositoryImpl(this._apiClient);
   
   @override
-  Future<Result<List<WarehouseInventory>, AppError>> fetchWarehouseInventory(String token, String siteId) {
+  Future<Result<List<WarehouseInventory>, AppError>> fetchWarehouseInventory(String token, String siteId) async {
     debugPrint('Fetching warehouse inventory for site: $siteId with token: $token');
     return networkInBoundItem(
       apiRequest: () => RestApiExecutor.executeGeneric<InventoryListResponseDto>(
@@ -35,7 +35,7 @@ class WarehouseInventoryRepositoryImpl extends WarehouseInventoryRepository{
   }
   
   @override
-  Future <Result<List<Site>, AppError>> fetchSiteList(String token) {
+  Future <Result<List<Site>, AppError>> fetchSiteList(String token) async {
     debugPrint('(repo) Fetching sites with token: $token');
     return networkInBoundItem(
       apiRequest: () => RestApiExecutor.executeGeneric<SiteListResponseDto>(
