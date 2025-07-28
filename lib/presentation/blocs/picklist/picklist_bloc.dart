@@ -87,6 +87,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
     await _setPicklistSendForPickingUsecase.execute(_setPicklistSendForPickingParams).then((response) {
       if (response.result) {
         process(PicklistEvent.setPicklistSendForPickingSucceeded());
+        process(PicklistEvent.selectPickList(picklistId));
       } else {
         process(PicklistEvent.showPicklistError(
           response.errorMessage ?? 'Password reset failed')
@@ -102,6 +103,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
     await _setPicklistPackAllUsecase.execute(_setPicklistPackAllParams).then((response) {
       if (response.result) {
         process(PicklistEvent.setPicklistPackAllSucceeded());
+        process(PicklistEvent.selectPickList(picklistId));
       } else {
         process(PicklistEvent.showPicklistError(
           response.errorMessage ?? 'Password reset failed')

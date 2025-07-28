@@ -22,6 +22,8 @@ class _PicklistScreenState extends State<PicklistScreen> {
   late List<Picklist> _picklist;
   final TextEditingController _searchController = TextEditingController();
 
+  String currentStatus = '';
+
   @override
   void initState() {
     super.initState();
@@ -58,105 +60,116 @@ class _PicklistScreenState extends State<PicklistScreen> {
             body: BlocBuilder<PicklistBloc, PicklistState>(
               bloc: _picklistBloc,
               builder: (context, state) {
-                return Stack(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        children: [
-                          Breadcrumb(paths: ['Picklist Allotment']),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: TextField(
-                                      controller: _searchController,
-                                      decoration: InputDecoration(
-                                        labelText: 'Search',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    _picklistBloc.add(PicklistEvent.setup(''));
+                    setState(() {
+                      currentStatus = '';
+                    });
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          children: [
+                            Breadcrumb(paths: ['Picklist Allotment']),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextField(
+                                        controller: _searchController,
+                                        decoration: InputDecoration(
+                                          labelText: 'Search',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
                                         ),
-                                      ),
-                                      onChanged: (value) {
-                                        filterPicklist(value, state.picklist);
-                                      },
-                                  ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: DropdownButtonFormField(
-                                      value: '',
-                                      decoration: InputDecoration(
-                                        labelText: 'Status',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: '',
-                                        child: Text('All'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'opened',
-                                        child: Text('Opened'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'sent for picking',
-                                        child: Text('Sent for Picking'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'done packing',
-                                        child: Text('Done Packing'),
-                                      ),
-                                    ], 
-                                    onChanged: (value) {
-                                      _picklistBloc.process(PicklistEvent.setup(value));
-                                    },
+                                        onChanged: (value) {
+                                          filterPicklist(value, state.picklist);
+                                        },
+                                    ),
                                     ),
                                   ),
-                                )
-                            ]),
-                          ),
-                          BlocBuilder<PicklistBloc, PicklistState>(
-                            builder: (context, state) {
-                              if (state.picklist.isEmpty) {
-                                return const Center(
-                                  child: Text('No picklist data available.'),
-                                );
-                              }
-                              return Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ListView.builder(
-                                    itemCount: _picklist.length,
-                                    itemBuilder: (context, index) {
-                                      final picklistItem = _picklist[index];
-                                      return PicklistCard(picklistItem: picklistItem);
-                                    },
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: DropdownButtonFormField(
+                                        value: currentStatus,
+                                        decoration: InputDecoration(
+                                          labelText: 'Status',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      items: [
+                                        DropdownMenuItem(
+                                          value: '',
+                                          child: Text('All'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'opened',
+                                          child: Text('Opened'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'sent for picking',
+                                          child: Text('Sent for Picking'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'done packing',
+                                          child: Text('Done Packing'),
+                                        ),
+                                      ], 
+                                      onChanged: (value) {
+                                        setState(() {
+                                          currentStatus = value!;
+                                        });
+                                        _picklistBloc.process(PicklistEvent.setup(value));
+                                      },
+                                      ),
+                                    ),
+                                  )
+                              ]),
+                            ),
+                            BlocBuilder<PicklistBloc, PicklistState>(
+                              builder: (context, state) {
+                                if (state.picklist.isEmpty) {
+                                  return const Center(
+                                    child: Text('No picklist data available.'),
+                                  );
+                                }
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ListView.builder(
+                                      itemCount: _picklist.length,
+                                      itemBuilder: (context, index) {
+                                        final picklistItem = _picklist[index];
+                                        return PicklistCard(picklistItem: picklistItem);
+                                      },
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (state.isLoading)
-                      Container(
-                        color: Colors.black.withOpacity(0.3), // <-- tint here
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // optional: white spinner
-                          ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                  ],
+                      if (state.isLoading)
+                        Container(
+                          color: Colors.black.withOpacity(0.3), // <-- tint here
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // optional: white spinner
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 );
               }
             )),

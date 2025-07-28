@@ -1,9 +1,11 @@
+import 'package:floating_snackbar/floating_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist.dart';
 import 'package:warehouse/presentation/widgets/global_breadcrumb.dart';
 import 'package:warehouse/presentation/widgets/global_button.dart';
 import 'package:warehouse/presentation/widgets/global_details_card.dart';
+import 'package:warehouse/presentation/widgets/global_dialog.dart';
 import 'package:warehouse/presentation/widgets/picklist/picklist_batch_card.dart';
 import 'package:warehouse/presentation/widgets/picklist/picklist_packing_card.dart';
 import 'package:warehouse/presentation/widgets/picklist/picklist_status_history_card.dart';
@@ -25,7 +27,7 @@ class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
   final ScrollController mainScrollController = ScrollController();
   
   late final PicklistBloc _picklistBloc;
-  late final String picklistId;
+  late String picklistId;
 
   @override
   void initState() {
@@ -132,26 +134,93 @@ class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
                         ),
                       ),
                     ),
-
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: state.picklistDetails.picklist.status == 'opened' ? [
+                          Button(onPressed: () async {
+                            showDialog(context: context, builder: (context) {
+                              return DialogActionConfirmation(
+                                title: 'Send $picklistId for Picking',
+                                notice: 'This will update $picklistId status from ${state.picklistDetails.picklist.status} to SendForPicking.'
+                              );
+                            }).then((v) async {
+                              if (v) {
+                                await _picklistBloc.process(PicklistEvent.setPicklistSendForPicking(picklistId: picklistId));
+                      
+                                if (state.setPicklistSendForPickingSucceeded) {
+                                  FloatingSnackBar(message: 'Successfully send for picking.', context: context);
+                                } else {
+                                  final error = state.error!;
+                                  debugPrint("Error: $error");
+                                  FloatingSnackBar(message: 'Error: $error', context: context);
+                      
+                                }
+                      
+                              }
+                            });
+                          }, title: 'Send for Picking',),
+                      
+                          SizedBox(height: 12,),
+                      
+                          Button(onPressed: () {
+                            showDialog(context: context, builder: (context) {
+                              return DialogActionConfirmation(
+                                title: 'Delete $picklistId',
+                                notice: 'This will remove $picklistId and this action is irreversable.',
+                                buttonConfirmText: 'Delete',
+                                warning: true,
+                              );
+                            }).then((v) async {
+                              if (v) {
+                                await _picklistBloc.process(PicklistEvent.deletePicklist(picklistId: picklistId)).whenComplete(() {
+                      
+                                  if (state.deletePicklistSucceeded) {
+                                    Navigator.pop(context, true);
+                                    FloatingSnackBar(message: 'Successfully deleted.', context: context);
+                      
+                                  } else {
+                                    final error = state.error!;
+                                    debugPrint("Error: $error");
+                                    FloatingSnackBar(message: 'Error: $error', context: context);
+                      
+                                  }
+                                });
+                      
+                              }
+                            });
+                          }, title: 'Delete Picklist', warning: true,),
+                      
+                        ] : state.picklistDetails.picklist.status == 'sent for picking' ? [
+                      
+                          Button(onPressed: () {
+                            showDialog(context: context, builder: (context) {
+                              return DialogActionConfirmation(
+                                title: 'Pack $picklistId',
+                                notice: 'This will update $picklistId status from ${state.picklistDetails.picklist.status} to DonePacking.'
+                              );
+                            }).then((v) async {
+                              if (v) {
+                                await _picklistBloc.process(PicklistEvent.setPicklistPackAll(picklistId: picklistId));
+                                
+                                if (state.setPicklistPackAllSucceeded) {
+                                  FloatingSnackBar(message: 'Successfully packed.', context: context);
+                                  
+                                } else {
+                                  final error = state.error!;
+                                  debugPrint("Error: $error");
+                                  FloatingSnackBar(message: 'Error: $error', context: context);
+                      
+                                }
+                      
+                              }
+                            });
+                          }, title: 'Pack'),
+                      
+                        ] : [],
+                      ),
+                    )
                   ],
-                ),
-
-                Positioned( bottom: 24, left: 24, right: 24,
-                  child: Column(
-                    children: state.picklistDetails.picklist.status == 'opened' ? [
-                      Button(onPressed: () {
-                        // TODO api/picklist/android/sendForPicking
-                      }, title: 'Send for Picking',),
-                      SizedBox(height: 12,),
-                      Button(onPressed: () {
-                        // TODO api/picklist/android/delete
-                      }, title: 'Delete Picklist'),
-                    ] : state.picklistDetails.picklist.status == 'sent for picking' ? [
-                      Button(onPressed: () {
-                        // TODO api/picklist/android/packAll
-                      }, title: 'Pack'),
-                    ] : [],
-                  )
                 ),
 
                 if (state.isLoading)

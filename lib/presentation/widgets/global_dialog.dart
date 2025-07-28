@@ -193,83 +193,67 @@ class DialogNotice extends StatelessWidget {
 }
 
 class DialogActionConfirmation extends StatelessWidget {
-  DialogActionConfirmation({
+  const DialogActionConfirmation({
     super.key,
-    required this.title,
-    required this.notice,
+    this.title = 'Confirmation',
+    this.notice = 'Are you sure? You will lose any unsave progress.',
     this.buttonConfirmText = 'Confirm',
     this.buttonCancelText = 'Cancel',
+    this.warning = false,
   });
 
   final String title;
   final String notice;
-  String buttonConfirmText;
-  String buttonCancelText;
+  final String buttonConfirmText;
+  final String buttonCancelText;
+  final bool warning;
 
   @override
   Widget build(BuildContext context) {
 
     return AlertDialog(
       content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
+          Text('${title}',
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
               fontWeight: FontWeight.bold,
               color: biruImran,
-              fontSize: 22.0,
             ),
           ),
-          SizedBox(height: 16.0),
-          Text(
-            notice,
-            style: const TextStyle(
-              fontWeight: FontWeight.normal,
-              color: black,
-              fontSize: 18.0,
-            ),
-          ),
+          SizedBox(height: 12.0),
+          
+          Text(notice),
+
+          SizedBox(height: 24.0),
         ],
       ),
 
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: SizedBox(
-            width: 150,
-            child: TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: colorMerah,
-              ),
-              child: Text(
-                buttonCancelText,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context, false);
+          },
+          child: Text(
+            buttonCancelText,
+            style: Theme.of(context).textTheme.labelMedium
           ),
         ),
-        SizedBox(
-          width: 150,
+
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: !warning ? hijauImran : Colors.red[800]
+          ),
           child: TextButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
-            style: TextButton.styleFrom(
-              backgroundColor: hijauImran,
-            ),
             child: Text(
               buttonConfirmText,
-              style: TextStyle(
-                color: Colors.white,
-              ),
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                color: Colors.white
+              )
             ),
           ),
         ),

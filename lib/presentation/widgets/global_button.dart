@@ -4,11 +4,13 @@ import 'package:warehouse/utils/utils.dart';
 class Button extends StatefulWidget {
   final Function()? onPressed;
   final String title;
+  final bool warning;
   
   const Button({
     super.key,
     required this.onPressed,
-    this.title = 'Confirm'
+    this.title = 'Confirm',
+    this.warning = false
   });
 
   @override
@@ -25,9 +27,20 @@ class _ButtonState extends State<Button> {
         color: biruImran
       ),
       child: TextButton(onPressed: widget.onPressed,
-        child: Text(widget.title, style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          color: Colors.white
-        ))
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if(widget.warning)
+              Padding( padding: const EdgeInsets.only(right: 8.0),
+                child: Icon(Icons.warning_rounded, color: Colors.red,),
+              ),
+
+            Text(widget.title, style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: Colors.white
+            )),
+
+          ],
+        )
       ),
     );
   }

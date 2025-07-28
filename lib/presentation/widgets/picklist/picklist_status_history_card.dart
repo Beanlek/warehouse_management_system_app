@@ -36,7 +36,7 @@ class PicklistStatusHistoryCard extends StatelessWidget {
 
     for (var i = 0; i < statusFlow.length; i++) {
       for (var _key in renamedDataMap.keys) {
-        if (statusFlow[i] == _key) {
+        if (statusFlow[i] == _key && renamedDataMap[_key] != '-') {
           currentStatusFlow.add(_key);
         }
       }
@@ -81,7 +81,7 @@ class PicklistStatusHistoryCard extends StatelessWidget {
                           return Icon(Icons.circle_outlined, color: textColorTertiary, size: 20,);
                         }
                       }
-                    
+
                       return TableRow(children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -99,6 +99,7 @@ class PicklistStatusHistoryCard extends StatelessWidget {
                           ),
                         ),
                       ]);
+                    
                     }).toList(),
                 ),
               ),
