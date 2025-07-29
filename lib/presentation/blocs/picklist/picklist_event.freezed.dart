@@ -26,6 +26,7 @@ mixin _$PicklistEvent {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -45,6 +46,7 @@ mixin _$PicklistEvent {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -64,6 +66,7 @@ mixin _$PicklistEvent {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -84,6 +87,7 @@ mixin _$PicklistEvent {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -107,6 +111,7 @@ mixin _$PicklistEvent {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -129,6 +134,7 @@ mixin _$PicklistEvent {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -243,6 +249,7 @@ class _$SetupImpl implements Setup {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -265,6 +272,7 @@ class _$SetupImpl implements Setup {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -287,6 +295,7 @@ class _$SetupImpl implements Setup {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -313,6 +322,7 @@ class _$SetupImpl implements Setup {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -339,6 +349,7 @@ class _$SetupImpl implements Setup {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -364,6 +375,7 @@ class _$SetupImpl implements Setup {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -474,6 +486,7 @@ class _$SelectPickListImpl implements SelectPickList {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -496,6 +509,7 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -518,6 +532,7 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -544,6 +559,7 @@ class _$SelectPickListImpl implements SelectPickList {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -570,6 +586,7 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -595,6 +612,7 @@ class _$SelectPickListImpl implements SelectPickList {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -703,6 +721,7 @@ class _$SelectStatusImpl implements SelectStatus {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -725,6 +744,7 @@ class _$SelectStatusImpl implements SelectStatus {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -747,6 +767,7 @@ class _$SelectStatusImpl implements SelectStatus {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -773,6 +794,7 @@ class _$SelectStatusImpl implements SelectStatus {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -799,6 +821,7 @@ class _$SelectStatusImpl implements SelectStatus {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -824,6 +847,7 @@ class _$SelectStatusImpl implements SelectStatus {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -933,6 +957,7 @@ class _$UpdatePageImpl implements UpdatePage {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -955,6 +980,7 @@ class _$UpdatePageImpl implements UpdatePage {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -977,6 +1003,7 @@ class _$UpdatePageImpl implements UpdatePage {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -1003,6 +1030,7 @@ class _$UpdatePageImpl implements UpdatePage {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -1029,6 +1057,7 @@ class _$UpdatePageImpl implements UpdatePage {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1054,6 +1083,7 @@ class _$UpdatePageImpl implements UpdatePage {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1162,6 +1192,7 @@ class _$LoadCountImpl implements LoadCount {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -1184,6 +1215,7 @@ class _$LoadCountImpl implements LoadCount {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -1206,6 +1238,7 @@ class _$LoadCountImpl implements LoadCount {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -1232,6 +1265,7 @@ class _$LoadCountImpl implements LoadCount {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -1258,6 +1292,7 @@ class _$LoadCountImpl implements LoadCount {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1283,6 +1318,7 @@ class _$LoadCountImpl implements LoadCount {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1398,6 +1434,7 @@ class _$LoadPickListImpl implements LoadPickList {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -1420,6 +1457,7 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -1442,6 +1480,7 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -1468,6 +1507,7 @@ class _$LoadPickListImpl implements LoadPickList {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -1494,6 +1534,7 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1519,6 +1560,7 @@ class _$LoadPickListImpl implements LoadPickList {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1642,6 +1684,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -1664,6 +1707,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -1686,6 +1730,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -1712,6 +1757,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -1738,6 +1784,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1763,6 +1810,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -1793,6 +1841,244 @@ abstract class LoadPickListDetails implements PicklistEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadPickListDetailsImplCopyWith<_$LoadPickListDetailsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SearchPicklistByIdImplCopyWith<$Res> {
+  factory _$$SearchPicklistByIdImplCopyWith(_$SearchPicklistByIdImpl value,
+          $Res Function(_$SearchPicklistByIdImpl) then) =
+      __$$SearchPicklistByIdImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String picklistId});
+}
+
+/// @nodoc
+class __$$SearchPicklistByIdImplCopyWithImpl<$Res>
+    extends _$PicklistEventCopyWithImpl<$Res, _$SearchPicklistByIdImpl>
+    implements _$$SearchPicklistByIdImplCopyWith<$Res> {
+  __$$SearchPicklistByIdImplCopyWithImpl(_$SearchPicklistByIdImpl _value,
+      $Res Function(_$SearchPicklistByIdImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? picklistId = null,
+  }) {
+    return _then(_$SearchPicklistByIdImpl(
+      null == picklistId
+          ? _value.picklistId
+          : picklistId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SearchPicklistByIdImpl implements SearchPicklistById {
+  const _$SearchPicklistByIdImpl(this.picklistId);
+
+  @override
+  final String picklistId;
+
+  @override
+  String toString() {
+    return 'PicklistEvent.searchPicklistById(picklistId: $picklistId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SearchPicklistByIdImpl &&
+            (identical(other.picklistId, picklistId) ||
+                other.picklistId == picklistId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, picklistId);
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchPicklistByIdImplCopyWith<_$SearchPicklistByIdImpl> get copyWith =>
+      __$$SearchPicklistByIdImplCopyWithImpl<_$SearchPicklistByIdImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String? picklistId) setup,
+    required TResult Function(String picklistId) selectPickList,
+    required TResult Function(String status) selectStatus,
+    required TResult Function(int currentPage) updatePage,
+    required TResult Function(int count) loadCount,
+    required TResult Function(List<Picklist> picklist) loadPickList,
+    required TResult Function(PicklistDetails picklistDetails)
+        loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
+    required TResult Function(List<Picklist> picklist) searchPicklist,
+    required TResult Function(String picklistId) deletePicklist,
+    required TResult Function() deletePicklistSucceeded,
+    required TResult Function(String picklistId) setPicklistSendForPicking,
+    required TResult Function() setPicklistSendForPickingSucceeded,
+    required TResult Function(String picklistId) setPicklistPackAll,
+    required TResult Function() setPicklistPackAllSucceeded,
+    required TResult Function(String errorMessage) showPicklistError,
+  }) {
+    return searchPicklistById(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String? picklistId)? setup,
+    TResult? Function(String picklistId)? selectPickList,
+    TResult? Function(String status)? selectStatus,
+    TResult? Function(int currentPage)? updatePage,
+    TResult? Function(int count)? loadCount,
+    TResult? Function(List<Picklist> picklist)? loadPickList,
+    TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
+    TResult? Function(List<Picklist> picklist)? searchPicklist,
+    TResult? Function(String picklistId)? deletePicklist,
+    TResult? Function()? deletePicklistSucceeded,
+    TResult? Function(String picklistId)? setPicklistSendForPicking,
+    TResult? Function()? setPicklistSendForPickingSucceeded,
+    TResult? Function(String picklistId)? setPicklistPackAll,
+    TResult? Function()? setPicklistPackAllSucceeded,
+    TResult? Function(String errorMessage)? showPicklistError,
+  }) {
+    return searchPicklistById?.call(picklistId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String? picklistId)? setup,
+    TResult Function(String picklistId)? selectPickList,
+    TResult Function(String status)? selectStatus,
+    TResult Function(int currentPage)? updatePage,
+    TResult Function(int count)? loadCount,
+    TResult Function(List<Picklist> picklist)? loadPickList,
+    TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
+    TResult Function(List<Picklist> picklist)? searchPicklist,
+    TResult Function(String picklistId)? deletePicklist,
+    TResult Function()? deletePicklistSucceeded,
+    TResult Function(String picklistId)? setPicklistSendForPicking,
+    TResult Function()? setPicklistSendForPickingSucceeded,
+    TResult Function(String picklistId)? setPicklistPackAll,
+    TResult Function()? setPicklistPackAllSucceeded,
+    TResult Function(String errorMessage)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (searchPicklistById != null) {
+      return searchPicklistById(picklistId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectPickList value) selectPickList,
+    required TResult Function(SelectStatus value) selectStatus,
+    required TResult Function(UpdatePage value) updatePage,
+    required TResult Function(LoadCount value) loadCount,
+    required TResult Function(LoadPickList value) loadPickList,
+    required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
+    required TResult Function(SearchPicklist value) searchPicklist,
+    required TResult Function(DeletePicklist value) deletePicklist,
+    required TResult Function(DeletePicklistSucceeded value)
+        deletePicklistSucceeded,
+    required TResult Function(SetPicklistSendForPicking value)
+        setPicklistSendForPicking,
+    required TResult Function(SetPicklistSendForPickingSucceeded value)
+        setPicklistSendForPickingSucceeded,
+    required TResult Function(SetPicklistPackAll value) setPicklistPackAll,
+    required TResult Function(SetPicklistPackAllSucceeded value)
+        setPicklistPackAllSucceeded,
+    required TResult Function(ShowPicklistError value) showPicklistError,
+  }) {
+    return searchPicklistById(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectPickList value)? selectPickList,
+    TResult? Function(SelectStatus value)? selectStatus,
+    TResult? Function(UpdatePage value)? updatePage,
+    TResult? Function(LoadCount value)? loadCount,
+    TResult? Function(LoadPickList value)? loadPickList,
+    TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
+    TResult? Function(SearchPicklist value)? searchPicklist,
+    TResult? Function(DeletePicklist value)? deletePicklist,
+    TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult? Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult? Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult? Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult? Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult? Function(ShowPicklistError value)? showPicklistError,
+  }) {
+    return searchPicklistById?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectPickList value)? selectPickList,
+    TResult Function(SelectStatus value)? selectStatus,
+    TResult Function(UpdatePage value)? updatePage,
+    TResult Function(LoadCount value)? loadCount,
+    TResult Function(LoadPickList value)? loadPickList,
+    TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
+    TResult Function(SearchPicklist value)? searchPicklist,
+    TResult Function(DeletePicklist value)? deletePicklist,
+    TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
+    TResult Function(SetPicklistSendForPicking value)?
+        setPicklistSendForPicking,
+    TResult Function(SetPicklistSendForPickingSucceeded value)?
+        setPicklistSendForPickingSucceeded,
+    TResult Function(SetPicklistPackAll value)? setPicklistPackAll,
+    TResult Function(SetPicklistPackAllSucceeded value)?
+        setPicklistPackAllSucceeded,
+    TResult Function(ShowPicklistError value)? showPicklistError,
+    required TResult orElse(),
+  }) {
+    if (searchPicklistById != null) {
+      return searchPicklistById(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SearchPicklistById implements PicklistEvent {
+  const factory SearchPicklistById(final String picklistId) =
+      _$SearchPicklistByIdImpl;
+
+  String get picklistId;
+
+  /// Create a copy of PicklistEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SearchPicklistByIdImplCopyWith<_$SearchPicklistByIdImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1880,6 +2166,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -1902,6 +2189,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -1924,6 +2212,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -1950,6 +2239,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -1976,6 +2266,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2001,6 +2292,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2112,6 +2404,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -2134,6 +2427,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -2156,6 +2450,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -2182,6 +2477,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -2208,6 +2504,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2233,6 +2530,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2318,6 +2616,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -2340,6 +2639,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -2362,6 +2662,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -2388,6 +2689,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -2414,6 +2716,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2439,6 +2742,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2543,6 +2847,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -2565,6 +2870,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -2587,6 +2893,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -2613,6 +2920,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -2639,6 +2947,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2664,6 +2973,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2751,6 +3061,7 @@ class _$SetPicklistSendForPickingSucceededImpl
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -2773,6 +3084,7 @@ class _$SetPicklistSendForPickingSucceededImpl
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -2795,6 +3107,7 @@ class _$SetPicklistSendForPickingSucceededImpl
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -2821,6 +3134,7 @@ class _$SetPicklistSendForPickingSucceededImpl
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -2847,6 +3161,7 @@ class _$SetPicklistSendForPickingSucceededImpl
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2872,6 +3187,7 @@ class _$SetPicklistSendForPickingSucceededImpl
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -2975,6 +3291,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -2997,6 +3314,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -3019,6 +3337,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -3045,6 +3364,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -3071,6 +3391,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -3096,6 +3417,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -3181,6 +3503,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -3203,6 +3526,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -3225,6 +3549,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -3251,6 +3576,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -3277,6 +3603,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -3302,6 +3629,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -3405,6 +3733,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
     required TResult Function(List<Picklist> picklist) loadPickList,
     required TResult Function(PicklistDetails picklistDetails)
         loadPickListDetails,
+    required TResult Function(String picklistId) searchPicklistById,
     required TResult Function(List<Picklist> picklist) searchPicklist,
     required TResult Function(String picklistId) deletePicklist,
     required TResult Function() deletePicklistSucceeded,
@@ -3427,6 +3756,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
     TResult? Function(int count)? loadCount,
     TResult? Function(List<Picklist> picklist)? loadPickList,
     TResult? Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult? Function(String picklistId)? searchPicklistById,
     TResult? Function(List<Picklist> picklist)? searchPicklist,
     TResult? Function(String picklistId)? deletePicklist,
     TResult? Function()? deletePicklistSucceeded,
@@ -3449,6 +3779,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
     TResult Function(int count)? loadCount,
     TResult Function(List<Picklist> picklist)? loadPickList,
     TResult Function(PicklistDetails picklistDetails)? loadPickListDetails,
+    TResult Function(String picklistId)? searchPicklistById,
     TResult Function(List<Picklist> picklist)? searchPicklist,
     TResult Function(String picklistId)? deletePicklist,
     TResult Function()? deletePicklistSucceeded,
@@ -3475,6 +3806,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
     required TResult Function(LoadCount value) loadCount,
     required TResult Function(LoadPickList value) loadPickList,
     required TResult Function(LoadPickListDetails value) loadPickListDetails,
+    required TResult Function(SearchPicklistById value) searchPicklistById,
     required TResult Function(SearchPicklist value) searchPicklist,
     required TResult Function(DeletePicklist value) deletePicklist,
     required TResult Function(DeletePicklistSucceeded value)
@@ -3501,6 +3833,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
     TResult? Function(LoadCount value)? loadCount,
     TResult? Function(LoadPickList value)? loadPickList,
     TResult? Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult? Function(SearchPicklistById value)? searchPicklistById,
     TResult? Function(SearchPicklist value)? searchPicklist,
     TResult? Function(DeletePicklist value)? deletePicklist,
     TResult? Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,
@@ -3526,6 +3859,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
     TResult Function(LoadCount value)? loadCount,
     TResult Function(LoadPickList value)? loadPickList,
     TResult Function(LoadPickListDetails value)? loadPickListDetails,
+    TResult Function(SearchPicklistById value)? searchPicklistById,
     TResult Function(SearchPicklist value)? searchPicklist,
     TResult Function(DeletePicklist value)? deletePicklist,
     TResult Function(DeletePicklistSucceeded value)? deletePicklistSucceeded,

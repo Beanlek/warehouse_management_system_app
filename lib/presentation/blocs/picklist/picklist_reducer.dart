@@ -31,6 +31,11 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
         orElse: () => currentState.isLoading,
       ),
 
+      searchId: newEvent.maybeWhen(
+        searchPicklistById: (searchId) => searchId,
+        orElse: () => currentState.searchId,
+      ),
+
       status: newEvent.maybeWhen(
         selectStatus: (status) => status,
         orElse: () => currentState.status,
@@ -44,6 +49,7 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
 
       currentPage: newEvent.maybeWhen(
         updatePage: (currentPage) => currentPage,
+        searchPicklistById: (_) => 1,
         orElse: () => currentState.currentPage),
 
       count: newEvent.maybeWhen(

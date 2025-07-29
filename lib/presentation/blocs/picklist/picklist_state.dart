@@ -11,6 +11,7 @@ class PicklistState with _$PicklistState {
   const factory PicklistState({
     @Default(false) bool isLoading,
     @Default(1) int currentPage,
+    @Default('') String searchId,
 
     @Default(false) bool deletePicklistSucceeded,
     @Default(false) bool deletePicklistProgress,

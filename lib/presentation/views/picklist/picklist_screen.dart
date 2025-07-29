@@ -98,7 +98,7 @@ class _PicklistScreenState extends State<PicklistScreen> {
                                         },
                                         onSubmitted: (value) => {
                                           debugPrint('Submitted!'),
-                                          _picklistBloc.process(PicklistEvent.setup(value))
+                                          _picklistBloc.process(PicklistEvent.searchPicklistById(value))
                                         },
                                     ),
                                     ),

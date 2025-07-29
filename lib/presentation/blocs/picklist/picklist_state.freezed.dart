@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PicklistState {
   bool get isLoading => throw _privateConstructorUsedError;
   int get currentPage => throw _privateConstructorUsedError;
+  String get searchId => throw _privateConstructorUsedError;
   bool get deletePicklistSucceeded => throw _privateConstructorUsedError;
   bool get deletePicklistProgress => throw _privateConstructorUsedError;
   bool get setPicklistSendForPickingSucceeded =>
@@ -48,6 +49,7 @@ abstract class $PicklistStateCopyWith<$Res> {
   $Res call(
       {bool isLoading,
       int currentPage,
+      String searchId,
       bool deletePicklistSucceeded,
       bool deletePicklistProgress,
       bool setPicklistSendForPickingSucceeded,
@@ -80,6 +82,7 @@ class _$PicklistStateCopyWithImpl<$Res, $Val extends PicklistState>
   $Res call({
     Object? isLoading = null,
     Object? currentPage = null,
+    Object? searchId = null,
     Object? deletePicklistSucceeded = null,
     Object? deletePicklistProgress = null,
     Object? setPicklistSendForPickingSucceeded = null,
@@ -101,6 +104,10 @@ class _$PicklistStateCopyWithImpl<$Res, $Val extends PicklistState>
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
+      searchId: null == searchId
+          ? _value.searchId
+          : searchId // ignore: cast_nullable_to_non_nullable
+              as String,
       deletePicklistSucceeded: null == deletePicklistSucceeded
           ? _value.deletePicklistSucceeded
           : deletePicklistSucceeded // ignore: cast_nullable_to_non_nullable
@@ -172,6 +179,7 @@ abstract class _$$PicklistStateImplCopyWith<$Res>
   $Res call(
       {bool isLoading,
       int currentPage,
+      String searchId,
       bool deletePicklistSucceeded,
       bool deletePicklistProgress,
       bool setPicklistSendForPickingSucceeded,
@@ -203,6 +211,7 @@ class __$$PicklistStateImplCopyWithImpl<$Res>
   $Res call({
     Object? isLoading = null,
     Object? currentPage = null,
+    Object? searchId = null,
     Object? deletePicklistSucceeded = null,
     Object? deletePicklistProgress = null,
     Object? setPicklistSendForPickingSucceeded = null,
@@ -224,6 +233,10 @@ class __$$PicklistStateImplCopyWithImpl<$Res>
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
+      searchId: null == searchId
+          ? _value.searchId
+          : searchId // ignore: cast_nullable_to_non_nullable
+              as String,
       deletePicklistSucceeded: null == deletePicklistSucceeded
           ? _value.deletePicklistSucceeded
           : deletePicklistSucceeded // ignore: cast_nullable_to_non_nullable
@@ -280,6 +293,7 @@ class _$PicklistStateImpl extends _PicklistState {
   const _$PicklistStateImpl(
       {this.isLoading = false,
       this.currentPage = 1,
+      this.searchId = '',
       this.deletePicklistSucceeded = false,
       this.deletePicklistProgress = false,
       this.setPicklistSendForPickingSucceeded = false,
@@ -300,6 +314,9 @@ class _$PicklistStateImpl extends _PicklistState {
   @override
   @JsonKey()
   final int currentPage;
+  @override
+  @JsonKey()
+  final String searchId;
   @override
   @JsonKey()
   final bool deletePicklistSucceeded;
@@ -342,7 +359,7 @@ class _$PicklistStateImpl extends _PicklistState {
 
   @override
   String toString() {
-    return 'PicklistState(isLoading: $isLoading, currentPage: $currentPage, deletePicklistSucceeded: $deletePicklistSucceeded, deletePicklistProgress: $deletePicklistProgress, setPicklistSendForPickingSucceeded: $setPicklistSendForPickingSucceeded, setPicklistSendForPickingProgress: $setPicklistSendForPickingProgress, setPicklistPackAllSucceeded: $setPicklistPackAllSucceeded, setPicklistPackAllProgress: $setPicklistPackAllProgress, count: $count, status: $status, picklist: $picklist, picklistDetails: $picklistDetails, error: $error)';
+    return 'PicklistState(isLoading: $isLoading, currentPage: $currentPage, searchId: $searchId, deletePicklistSucceeded: $deletePicklistSucceeded, deletePicklistProgress: $deletePicklistProgress, setPicklistSendForPickingSucceeded: $setPicklistSendForPickingSucceeded, setPicklistSendForPickingProgress: $setPicklistSendForPickingProgress, setPicklistPackAllSucceeded: $setPicklistPackAllSucceeded, setPicklistPackAllProgress: $setPicklistPackAllProgress, count: $count, status: $status, picklist: $picklist, picklistDetails: $picklistDetails, error: $error)';
   }
 
   @override
@@ -354,6 +371,8 @@ class _$PicklistStateImpl extends _PicklistState {
                 other.isLoading == isLoading) &&
             (identical(other.currentPage, currentPage) ||
                 other.currentPage == currentPage) &&
+            (identical(other.searchId, searchId) ||
+                other.searchId == searchId) &&
             (identical(
                     other.deletePicklistSucceeded, deletePicklistSucceeded) ||
                 other.deletePicklistSucceeded == deletePicklistSucceeded) &&
@@ -388,6 +407,7 @@ class _$PicklistStateImpl extends _PicklistState {
       runtimeType,
       isLoading,
       currentPage,
+      searchId,
       deletePicklistSucceeded,
       deletePicklistProgress,
       setPicklistSendForPickingSucceeded,
@@ -413,6 +433,7 @@ abstract class _PicklistState extends PicklistState {
   const factory _PicklistState(
       {final bool isLoading,
       final int currentPage,
+      final String searchId,
       final bool deletePicklistSucceeded,
       final bool deletePicklistProgress,
       final bool setPicklistSendForPickingSucceeded,
@@ -430,6 +451,8 @@ abstract class _PicklistState extends PicklistState {
   bool get isLoading;
   @override
   int get currentPage;
+  @override
+  String get searchId;
   @override
   bool get deletePicklistSucceeded;
   @override

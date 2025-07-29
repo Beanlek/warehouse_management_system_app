@@ -14,6 +14,7 @@ class PicklistEvent with _$PicklistEvent {
   const factory PicklistEvent.loadCount(int count) = LoadCount;
   const factory PicklistEvent.loadPickList(List<Picklist> picklist) = LoadPickList;
   const factory PicklistEvent.loadPickListDetails(PicklistDetails picklistDetails) = LoadPickListDetails;
+  const factory PicklistEvent.searchPicklistById(String picklistId) = SearchPicklistById;
   const factory PicklistEvent.searchPicklist(List<Picklist> picklist) = SearchPicklist; 
 
   const factory PicklistEvent.deletePicklist({

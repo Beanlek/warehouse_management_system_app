@@ -38,11 +38,13 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
   @override
   void processFeedback(PicklistEvent event, PicklistState state) async {
     event.maybeWhen(
-        setup: (picklistId) => _fetchPicklist(picklistId: picklistId),
+        setup: (picklistId) => _fetchPicklist(),
         selectPickList: (picklistId) => _fetchPicklistDetails(picklistId),
         deletePicklist: (picklistId) => _deletePicklist(picklistId),
         setPicklistSendForPicking: (picklistId) => _setPicklistSendForPicking(picklistId),
         setPicklistPackAll: (picklistId) => _setPicklistPackAll(picklistId),
+
+        searchPicklistById: (picklistId) => _fetchPicklist(),
 
         selectStatus: (status) => _fetchPicklist(),
         updatePage: (currentPage) => _fetchPicklist(),
@@ -50,11 +52,11 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
         orElse: () {});
   }
 
-  _fetchPicklist({String? picklistId = ''}) async {
+  _fetchPicklist() async {
     String status = state.status;
     int currentPage = state.currentPage;
     debugPrint('fetch picklist currentpage: $currentPage');
-    await _fetchPicklistUseCase.execute(status, currentPage, picklistId: picklistId ?? '').then((value) {
+    await _fetchPicklistUseCase.execute(status, currentPage, picklistId: state.searchId).then((value) {
       value.maybeWhen(
           success: (result) {
             process(PicklistEvent.loadCount(result.count ?? 0));
