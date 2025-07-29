@@ -18,7 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PicklistEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -38,7 +38,7 @@ mixin _$PicklistEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -57,7 +57,7 @@ mixin _$PicklistEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -172,7 +172,7 @@ abstract class _$$SetupImplCopyWith<$Res> {
           _$SetupImpl value, $Res Function(_$SetupImpl) then) =
       __$$SetupImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? status});
+  $Res call({String? picklistId});
 }
 
 /// @nodoc
@@ -188,12 +188,12 @@ class __$$SetupImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = freezed,
+    Object? picklistId = freezed,
   }) {
     return _then(_$SetupImpl(
-      freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
+      freezed == picklistId
+          ? _value.picklistId
+          : picklistId // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -202,14 +202,14 @@ class __$$SetupImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$SetupImpl implements Setup {
-  const _$SetupImpl(this.status);
+  const _$SetupImpl(this.picklistId);
 
   @override
-  final String? status;
+  final String? picklistId;
 
   @override
   String toString() {
-    return 'PicklistEvent.setup(status: $status)';
+    return 'PicklistEvent.setup(picklistId: $picklistId)';
   }
 
   @override
@@ -217,11 +217,12 @@ class _$SetupImpl implements Setup {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SetupImpl &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.picklistId, picklistId) ||
+                other.picklistId == picklistId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status);
+  int get hashCode => Object.hash(runtimeType, picklistId);
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -234,7 +235,7 @@ class _$SetupImpl implements Setup {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -251,13 +252,13 @@ class _$SetupImpl implements Setup {
     required TResult Function() setPicklistPackAllSucceeded,
     required TResult Function(String errorMessage) showPicklistError,
   }) {
-    return setup(status);
+    return setup(picklistId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -273,13 +274,13 @@ class _$SetupImpl implements Setup {
     TResult? Function()? setPicklistPackAllSucceeded,
     TResult? Function(String errorMessage)? showPicklistError,
   }) {
-    return setup?.call(status);
+    return setup?.call(picklistId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -297,7 +298,7 @@ class _$SetupImpl implements Setup {
     required TResult orElse(),
   }) {
     if (setup != null) {
-      return setup(status);
+      return setup(picklistId);
     }
     return orElse();
   }
@@ -384,9 +385,9 @@ class _$SetupImpl implements Setup {
 }
 
 abstract class Setup implements PicklistEvent {
-  const factory Setup(final String? status) = _$SetupImpl;
+  const factory Setup(final String? picklistId) = _$SetupImpl;
 
-  String? get status;
+  String? get picklistId;
 
   /// Create a copy of PicklistEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -465,7 +466,7 @@ class _$SelectPickListImpl implements SelectPickList {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -488,7 +489,7 @@ class _$SelectPickListImpl implements SelectPickList {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -510,7 +511,7 @@ class _$SelectPickListImpl implements SelectPickList {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -694,7 +695,7 @@ class _$SelectStatusImpl implements SelectStatus {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -717,7 +718,7 @@ class _$SelectStatusImpl implements SelectStatus {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -739,7 +740,7 @@ class _$SelectStatusImpl implements SelectStatus {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -924,7 +925,7 @@ class _$UpdatePageImpl implements UpdatePage {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -947,7 +948,7 @@ class _$UpdatePageImpl implements UpdatePage {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -969,7 +970,7 @@ class _$UpdatePageImpl implements UpdatePage {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -1153,7 +1154,7 @@ class _$LoadCountImpl implements LoadCount {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -1176,7 +1177,7 @@ class _$LoadCountImpl implements LoadCount {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -1198,7 +1199,7 @@ class _$LoadCountImpl implements LoadCount {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -1389,7 +1390,7 @@ class _$LoadPickListImpl implements LoadPickList {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -1412,7 +1413,7 @@ class _$LoadPickListImpl implements LoadPickList {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -1434,7 +1435,7 @@ class _$LoadPickListImpl implements LoadPickList {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -1633,7 +1634,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -1656,7 +1657,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -1678,7 +1679,7 @@ class _$LoadPickListDetailsImpl implements LoadPickListDetails {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -1871,7 +1872,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -1894,7 +1895,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -1916,7 +1917,7 @@ class _$SearchPicklistImpl implements SearchPicklist {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -2103,7 +2104,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -2126,7 +2127,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -2148,7 +2149,7 @@ class _$DeletePicklistImpl implements DeletePicklist {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -2309,7 +2310,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -2332,7 +2333,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -2354,7 +2355,7 @@ class _$DeletePicklistSucceededImpl implements DeletePicklistSucceeded {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -2534,7 +2535,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -2557,7 +2558,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -2579,7 +2580,7 @@ class _$SetPicklistSendForPickingImpl implements SetPicklistSendForPicking {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -2742,7 +2743,7 @@ class _$SetPicklistSendForPickingSucceededImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -2765,7 +2766,7 @@ class _$SetPicklistSendForPickingSucceededImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -2787,7 +2788,7 @@ class _$SetPicklistSendForPickingSucceededImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -2966,7 +2967,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -2989,7 +2990,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -3011,7 +3012,7 @@ class _$SetPicklistPackAllImpl implements SetPicklistPackAll {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -3172,7 +3173,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -3195,7 +3196,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -3217,7 +3218,7 @@ class _$SetPicklistPackAllSucceededImpl implements SetPicklistPackAllSucceeded {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,
@@ -3396,7 +3397,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? status) setup,
+    required TResult Function(String? picklistId) setup,
     required TResult Function(String picklistId) selectPickList,
     required TResult Function(String status) selectStatus,
     required TResult Function(int currentPage) updatePage,
@@ -3419,7 +3420,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? status)? setup,
+    TResult? Function(String? picklistId)? setup,
     TResult? Function(String picklistId)? selectPickList,
     TResult? Function(String status)? selectStatus,
     TResult? Function(int currentPage)? updatePage,
@@ -3441,7 +3442,7 @@ class _$ShowPicklistErrorImpl implements ShowPicklistError {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? status)? setup,
+    TResult Function(String? picklistId)? setup,
     TResult Function(String picklistId)? selectPickList,
     TResult Function(String status)? selectStatus,
     TResult Function(int currentPage)? updatePage,

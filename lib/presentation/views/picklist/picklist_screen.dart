@@ -96,6 +96,10 @@ class _PicklistScreenState extends State<PicklistScreen> {
                                         onChanged: (value) {
                                           filterPicklist(value, state.picklist);
                                         },
+                                        onSubmitted: (value) => {
+                                          debugPrint('Submitted!'),
+                                          _picklistBloc.process(PicklistEvent.setup(value))
+                                        },
                                     ),
                                     ),
                                   ),
@@ -174,13 +178,17 @@ class _PicklistScreenState extends State<PicklistScreen> {
                                 return Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: ListView.builder(
+                                    child: 
+                                    (_picklist.isNotEmpty)?
+                                    ListView.builder(
                                       itemCount: _picklist.length,
                                       itemBuilder: (context, index) {
                                         final picklistItem = _picklist[index];
                                         return PicklistCard(picklistItem: picklistItem);
                                       },
-                                    ),
+                                    ):
+                                    Center(
+                                      child: Text('Enter full Picklist ID and press enter to search by ID'))//help with this
                                   ),
                                 );
                               },

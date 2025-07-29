@@ -38,7 +38,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
   @override
   void processFeedback(PicklistEvent event, PicklistState state) async {
     event.maybeWhen(
-        setup: (status) => _fetchPicklist(),
+        setup: (picklistId) => _fetchPicklist(picklistId: picklistId),
         selectPickList: (picklistId) => _fetchPicklistDetails(picklistId),
         deletePicklist: (picklistId) => _deletePicklist(picklistId),
         setPicklistSendForPicking: (picklistId) => _setPicklistSendForPicking(picklistId),
@@ -50,11 +50,11 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
         orElse: () {});
   }
 
-  _fetchPicklist() async {
+  _fetchPicklist({String? picklistId = ''}) async {
     String status = state.status;
     int currentPage = state.currentPage;
     debugPrint('fetch picklist currentpage: $currentPage');
-    await _fetchPicklistUseCase.execute(status, currentPage).then((value) {
+    await _fetchPicklistUseCase.execute(status, currentPage, picklistId: picklistId ?? '').then((value) {
       value.maybeWhen(
           success: (result) {
             process(PicklistEvent.loadCount(result.count ?? 0));

@@ -98,12 +98,14 @@ class _RestClient implements RestClient {
   @override
   Future<PicklistResponseDto> getPicklist(
     String token,
+    String picklistId,
     String status,
     int page,
     int limitRows,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
+      r'picklist_id': picklistId,
       r'status': status,
       r'page': page,
       r'limit_rows': limitRows,

@@ -12,9 +12,9 @@ class FetchPickListUseCase {
 
   FetchPickListUseCase(this._picklistRepository);
   
-  Future<Result<PicklistWrapper, AppError>> execute(String? status, int page) async {
+  Future<Result<PicklistWrapper, AppError>> execute(String? status, int page, {String picklistId = ''}) async {
     final String? token = await TokenUtil.getToken();
     debugPrint('Fetching site list with token: $token');
-    return await _picklistRepository.fetchPickList(token ?? '', status ?? '', page);
+    return await _picklistRepository.fetchPickList(token ?? '', picklistId, status ?? '', page);
   }
 }
