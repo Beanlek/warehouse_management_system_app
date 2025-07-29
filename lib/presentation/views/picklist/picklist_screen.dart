@@ -2,6 +2,8 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:number_paginator/number_paginator.dart';
 import 'package:warehouse/domain/entities/picklist/picklist.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_bloc.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_event.dart';
@@ -20,7 +22,9 @@ class PicklistScreen extends StatefulWidget {
 class _PicklistScreenState extends State<PicklistScreen> {
   late final PicklistBloc _picklistBloc;
   late List<Picklist> _picklist;
+  int numPages = 10;
   final TextEditingController _searchController = TextEditingController();
+  final NumberPaginatorController paginatorController = NumberPaginatorController();
 
   String currentStatus = '';
 
@@ -128,13 +132,38 @@ class _PicklistScreenState extends State<PicklistScreen> {
                                         setState(() {
                                           currentStatus = value!;
                                         });
-                                        _picklistBloc.process(PicklistEvent.setup(value));
+                                        _picklistBloc.process(PicklistEvent.selectStatus(currentStatus));
                                       },
                                       ),
                                     ),
                                   )
                               ]),
                             ),
+                            BlocBuilder<PicklistBloc, PicklistState>(
+                            bloc: context.read<PicklistBloc>(),
+                            builder: (context, state) {
+                              return SizedBox(
+                                width: (MediaQuery.of(context).size.width / 7) * 4,
+                                child: NumberPaginator(
+                                    controller: paginatorController,
+                                    numberPages: (state.count / 20).ceil().clamp(1, double.infinity).toInt(),
+                                    onPageChange: (index) async {
+                                      setState(() {
+                                        
+                                      });
+                                      _picklistBloc.process(PicklistEvent.updatePage(index+1));
+                                    },
+                                    config: NumberPaginatorUIConfig(
+                                      buttonSelectedForegroundColor: white,
+                                      buttonUnselectedForegroundColor: textColorTertiary,
+                                      buttonSelectedBackgroundColor: biruImran,
+                                    ),
+                                    showNextButton: numPages == 1 ? false : true,
+                                    showPrevButton: numPages == 1 ? false : true,
+                                  ),
+                              );
+                            }
+                          ),
                             BlocBuilder<PicklistBloc, PicklistState>(
                               builder: (context, state) {
                                 if (state.picklist.isEmpty) {

@@ -99,9 +99,15 @@ class _RestClient implements RestClient {
   Future<PicklistResponseDto> getPicklist(
     String token,
     String status,
+    int page,
+    int limitRows,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'status': status};
+    final queryParameters = <String, dynamic>{
+      r'status': status,
+      r'page': page,
+      r'limit_rows': limitRows,
+    };
     final _headers = <String, dynamic>{r'Authorization': token};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
@@ -112,7 +118,7 @@ class _RestClient implements RestClient {
     )
         .compose(
           _dio.options,
-          '/api/picklist/android/van_allotment/list?page=1&limit_rows=20',
+          '/api/picklist/android/van_allotment/list',
           queryParameters: queryParameters,
           data: _data,
         )

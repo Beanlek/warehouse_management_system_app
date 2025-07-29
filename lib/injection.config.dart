@@ -60,10 +60,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i633.FetchWarehouseInventoryListUseCase>(() =>
         _i633.FetchWarehouseInventoryListUseCase(
             gh<_i186.WarehouseInventoryRepository>()));
-    gh.factory<_i934.FetchPickListUseCase>(
-        () => _i934.FetchPickListUseCase(gh<_i623.PicklistRepository>()));
     gh.factory<_i734.FetchPickListDetailsUseCase>(() =>
         _i734.FetchPickListDetailsUseCase(gh<_i623.PicklistRepository>()));
+    gh.factory<_i934.FetchPickListUseCase>(
+        () => _i934.FetchPickListUseCase(gh<_i623.PicklistRepository>()));
     gh.factory<_i60.DeletePicklistUsecase>(
         () => _i60.DeletePicklistUsecase(gh<_i623.PicklistRepository>()));
     gh.factory<_i887.SetPicklistPackAllUsecase>(

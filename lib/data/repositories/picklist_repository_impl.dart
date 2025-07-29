@@ -27,16 +27,17 @@ class PicklistRepositoryImpl extends PicklistRepository{
   PicklistRepositoryImpl(this._apiClient);
   
   @override
-  Future fetchPickList(String token, String status) async {
+  Future fetchPickList(String token, String status, int page) async {
     return networkInBoundItem(
       apiRequest: () => RestApiExecutor.executeGeneric<PicklistResponseDto>(
         requestCall: () async {
           var restClient = await _apiClient.getRestClient();
-          return restClient.getPicklist('Bearer $token', status);
+          return restClient.getPicklist('Bearer $token', status, page, 20);
         }),
       saveToDb: (_) => {},
       getSuccessState: (PicklistResponseDto dto) =>
-          Result.success(dto.picklists.rows.map((e) => e.map()).toList()),
+          Result.success(dto.picklists.map()),
+          //Result.success(dto.picklists.rows.map((e) => e.map()).toList()),
       getErrorState: (AppError errorApiResult) =>
           Result.failure(errorApiResult),
     );

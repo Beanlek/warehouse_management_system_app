@@ -27,10 +27,12 @@ abstract class RestClient {
     @Header('Authorization') String token,
   );
 
-  @GET('/api/picklist/android/van_allotment/list?page=1&limit_rows=20')
+  @GET('/api/picklist/android/van_allotment/list')
   Future<PicklistResponseDto> getPicklist(
     @Header('Authorization') String token,
     @Query('status') String status,
+    @Query('page') int page,
+    @Query('limit_rows') int limitRows,
   );
 
   @GET('/api/picklist/android/van_allotment/o/{picklist_id}')

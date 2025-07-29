@@ -10,6 +10,7 @@ class PicklistState with _$PicklistState {
   
   const factory PicklistState({
     @Default(false) bool isLoading,
+    @Default(1) int currentPage,
 
     @Default(false) bool deletePicklistSucceeded,
     @Default(false) bool deletePicklistProgress,
@@ -20,6 +21,8 @@ class PicklistState with _$PicklistState {
     @Default(false) bool setPicklistPackAllSucceeded,
     @Default(false) bool setPicklistPackAllProgress,
 
+    @Default(0) int count,
+    @Default('') String status,
     @Default([]) List<Picklist> picklist,
     @Default(PicklistDetails.empty) PicklistDetails picklistDetails,
 

@@ -26,12 +26,29 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
 
         showPicklistError: (_) => false,
 
+        selectStatus: (_) => true,
+
         orElse: () => currentState.isLoading,
+      ),
+
+      status: newEvent.maybeWhen(
+        selectStatus: (status) => status,
+        orElse: () => currentState.status,
+        
       ),
 
       picklist: newEvent.maybeWhen(
         loadPickList: (picklist) => picklist,
         orElse: () => currentState.picklist,
+      ),
+
+      currentPage: newEvent.maybeWhen(
+        updatePage: (currentPage) => currentPage,
+        orElse: () => currentState.currentPage),
+
+      count: newEvent.maybeWhen(
+        loadCount : (count) => count,
+        orElse: () => currentState.count,
       ),
 
       picklistDetails: newEvent.maybeWhen(
@@ -68,7 +85,6 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
       ),
       setPicklistPackAllSucceeded: newEvent.maybeWhen(
         setPicklistPackAllSucceeded: () => true,
-        
         orElse: () => false
       ),
     );

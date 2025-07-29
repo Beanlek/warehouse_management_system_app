@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:warehouse/domain/entities/picklist/picklist.dart';
 import 'package:warehouse/domain/usecases/picklist/delete_picklist_usecase.dart';
 import 'package:warehouse/domain/usecases/picklist/fetch_picklist_details_usecase.dart';
@@ -37,20 +38,27 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
   @override
   void processFeedback(PicklistEvent event, PicklistState state) async {
     event.maybeWhen(
-        setup: (status) => _fetchPicklist(status ?? ''),
+        setup: (status) => _fetchPicklist(),
         selectPickList: (picklistId) => _fetchPicklistDetails(picklistId),
         deletePicklist: (picklistId) => _deletePicklist(picklistId),
         setPicklistSendForPicking: (picklistId) => _setPicklistSendForPicking(picklistId),
         setPicklistPackAll: (picklistId) => _setPicklistPackAll(picklistId),
+
+        selectStatus: (status) => _fetchPicklist(),
+        updatePage: (currentPage) => _fetchPicklist(),
         
         orElse: () {});
   }
 
-  _fetchPicklist(String status) async {
-    await _fetchPicklistUseCase.execute(status).then((value) {
+  _fetchPicklist() async {
+    String status = state.status;
+    int currentPage = state.currentPage;
+    debugPrint('fetch picklist currentpage: $currentPage');
+    await _fetchPicklistUseCase.execute(status, currentPage).then((value) {
       value.maybeWhen(
           success: (result) {
-            process(PicklistEvent.loadPickList(result));
+            process(PicklistEvent.loadCount(result.count ?? 0));
+            process(PicklistEvent.loadPickList(result.rows));
           },
           orElse: () {});
     });

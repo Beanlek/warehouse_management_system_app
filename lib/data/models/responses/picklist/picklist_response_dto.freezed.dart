@@ -301,11 +301,12 @@ class __$$PicklistWrapperDtoImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PicklistWrapperDtoImpl implements _PicklistWrapperDto {
+class _$PicklistWrapperDtoImpl extends _PicklistWrapperDto {
   const _$PicklistWrapperDtoImpl(
       {this.count,
       @JsonKey(name: 'rows') required final List<PicklistDto> rows})
-      : _rows = rows;
+      : _rows = rows,
+        super._();
 
   factory _$PicklistWrapperDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$PicklistWrapperDtoImplFromJson(json);
@@ -357,11 +358,12 @@ class _$PicklistWrapperDtoImpl implements _PicklistWrapperDto {
   }
 }
 
-abstract class _PicklistWrapperDto implements PicklistWrapperDto {
+abstract class _PicklistWrapperDto extends PicklistWrapperDto {
   const factory _PicklistWrapperDto(
           {final int? count,
           @JsonKey(name: 'rows') required final List<PicklistDto> rows}) =
       _$PicklistWrapperDtoImpl;
+  const _PicklistWrapperDto._() : super._();
 
   factory _PicklistWrapperDto.fromJson(Map<String, dynamic> json) =
       _$PicklistWrapperDtoImpl.fromJson;
