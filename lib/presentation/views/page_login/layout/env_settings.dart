@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:warehouse/core/network/retrofit/api_client.dart';
+import 'package:warehouse/core/services/storage_service.dart';
+import 'package:warehouse/injection.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warehouse/routes/routes.dart';
 import 'package:warehouse/shared_preference/token.dart';
@@ -14,16 +17,24 @@ class EnvSettings extends StatefulWidget {
   State<EnvSettings> createState() => _EnvSettingsState();
 }
 
-class _EnvSettingsState extends State<EnvSettings> {
+class _EnvSettingsState extends State<EnvSettings>{
   String? _env;
   String? _domainName;
   bool? _isPROD;
   bool _successGetDomainName = false;
+  final ApiClient _apiClient = getIt<ApiClient>();
+  final StorageService _storageService = getIt();
+  final String _baseUrl = StorageService.keyBaseUrl;
+
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     _getDomainName();
+    
+    _storageService.retrieve(StorageService.keyBaseUrl).then((value){
+      debugPrint('Storage service URL: $value');
+    });
 
     if (_successGetDomainName == true) {
       debugPrint('_isPROD : $_isPROD');
@@ -183,8 +194,9 @@ class _EnvSettingsState extends State<EnvSettings> {
                         onPressed: () async {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('domainName', _domainName!);
-                          debugPrint(
-                              'env_settings.dart domainName changed: $_domainName');
+                          await _storageService.save(_baseUrl, _domainName);
+                          _apiClient.updateUrl(_domainName ?? '');
+                          debugPrint('env_settings.dart domainName changed: $_domainName');
                           // setState(() async {
                           //   await prefs.setString('domainName', _domainName!);
                           // });

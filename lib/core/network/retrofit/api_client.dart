@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../config/globals.dart';
@@ -16,6 +17,7 @@ class ApiClient {
   Future<RestClient> getRestClient() async {
     _createRestClient();
     final String url = await getIt<StorageService>().retrieve(StorageService.keyBaseUrl) ?? Globals.debugURL;
+    debugPrint('storage service: ${await getIt<StorageService>().retrieve(StorageService.keyBaseUrl)}\ndefaultURL: ${Globals.debugURL}');
     if (_dioClient.dio.options.baseUrl != url) updateUrl(url);
     print('Header : ${_dioClient.dio.options.headers}');  
     return _restClientInstance!;
