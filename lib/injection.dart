@@ -7,8 +7,8 @@ import 'injection.config.dart';
 final getIt = GetIt.instance;
 
 @InjectableInit()
-Future<void> configureDependencies() async {
-  getIt.init();
+Future<void> configureDependencies(String env) async {
+  getIt.init(environment: env);
   getIt.registerLazySingleton<WarehouseBloc>(() => WarehouseBloc());
   //getIt.registerLazySingleton<StorageService>(() => StorageService());
 }

@@ -35,6 +35,12 @@ import 'package:warehouse/domain/usecases/warehouse_inventory/fetch_sites_list_u
     as _i428;
 import 'package:warehouse/domain/usecases/warehouse_inventory/fetch_warehouse_inventory_list_use_case.dart'
     as _i633;
+import 'package:warehouse/test/mock/repository/mock_picklist_repository.dart'
+    as _i488;
+
+const String _mock = 'mock';
+const String _prod = 'prod';
+const String _dev = 'dev';
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -49,17 +55,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i231.DioClient>(() => _i231.DioClient());
     gh.factory<_i833.StorageService>(() => _i833.StorageService());
+    gh.factory<_i623.PicklistRepository>(
+      () => _i488.MockPicklistRepository(),
+      registerFor: {_mock},
+    );
     gh.lazySingleton<_i1041.ApiClient>(
         () => _i1041.ApiClient(gh<_i231.DioClient>()));
-    gh.factory<_i623.PicklistRepository>(
-        () => _i707.PicklistRepositoryImpl(gh<_i1041.ApiClient>()));
-    gh.factory<_i186.WarehouseInventoryRepository>(
-        () => _i351.WarehouseInventoryRepositoryImpl(gh<_i1041.ApiClient>()));
-    gh.factory<_i428.FetchSitesListUseCase>(() =>
-        _i428.FetchSitesListUseCase(gh<_i186.WarehouseInventoryRepository>()));
-    gh.factory<_i633.FetchWarehouseInventoryListUseCase>(() =>
-        _i633.FetchWarehouseInventoryListUseCase(
-            gh<_i186.WarehouseInventoryRepository>()));
     gh.factory<_i734.FetchPickListDetailsUseCase>(() =>
         _i734.FetchPickListDetailsUseCase(gh<_i623.PicklistRepository>()));
     gh.factory<_i934.FetchPickListUseCase>(
@@ -70,6 +71,20 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i887.SetPicklistPackAllUsecase(gh<_i623.PicklistRepository>()));
     gh.factory<_i622.SetPicklistSendForPickingUsecase>(() =>
         _i622.SetPicklistSendForPickingUsecase(gh<_i623.PicklistRepository>()));
+    gh.factory<_i186.WarehouseInventoryRepository>(
+        () => _i351.WarehouseInventoryRepositoryImpl(gh<_i1041.ApiClient>()));
+    gh.factory<_i623.PicklistRepository>(
+      () => _i707.PicklistRepositoryImpl(gh<_i1041.ApiClient>()),
+      registerFor: {
+        _prod,
+        _dev,
+      },
+    );
+    gh.factory<_i428.FetchSitesListUseCase>(() =>
+        _i428.FetchSitesListUseCase(gh<_i186.WarehouseInventoryRepository>()));
+    gh.factory<_i633.FetchWarehouseInventoryListUseCase>(() =>
+        _i633.FetchWarehouseInventoryListUseCase(
+            gh<_i186.WarehouseInventoryRepository>()));
     return this;
   }
 }

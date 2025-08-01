@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:warehouse/domain/entities/picklist/picklist.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:warehouse/presentation/blocs/picklist/picklist.dart';
+import 'package:warehouse/presentation/blocs/picklist/picklist_bloc.dart';
 import 'package:warehouse/presentation/views/picklist/picklist_details_screen.dart';
 import 'package:warehouse/utils/utils.dart';
 
@@ -21,15 +24,21 @@ class PicklistCard extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
+          final picklistBloc = BlocProvider.of<PicklistBloc>(context);
+
+          picklistBloc.add(PicklistEvent.selectPickList(picklistItem.id));
 
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  PicklistDetailsScreen(picklistId: picklistItem.id),
+              builder: (context) => BlocProvider.value(
+                value: picklistBloc,
+                child: PicklistDetailsScreen(picklistId: picklistItem.id),
+              ),
             ),
           );
         },
+
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(

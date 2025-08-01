@@ -26,7 +26,7 @@ class PicklistDetailsScreen extends StatefulWidget {
 class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
   final ScrollController mainScrollController = ScrollController();
   
-  late final PicklistBloc _picklistBloc;
+  //late final PicklistBloc _picklistBloc;
   late String picklistId;
 
   @override
@@ -35,19 +35,32 @@ class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
 
     picklistId = widget.picklistId;
     
-    _picklistBloc = BlocProvider.of<PicklistBloc>(context);
-    _picklistBloc.add(PicklistEvent.selectPickList(picklistId));
+    //_picklistBloc = BlocProvider.of<PicklistBloc>(context);
+    //_picklistBloc.add(PicklistEvent.selectPickList(picklistId));
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return BlocListener<PicklistBloc, PicklistState>(
-      listener: (context, state) {
+      listener: (context, state) async {
+        if (state.deletePicklistSucceeded) {
+          FloatingSnackBar(message: 'Successfully deleted.', context: context);
+          
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
         if (state.picklistDetails.picklist.id != '') {
           debugPrint('PicklistDetails loaded: ${state.picklistDetails.picklist.id}');
         }
         if(state.isLoading){
-          
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
       },
       child: Scaffold(
@@ -66,9 +79,8 @@ class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
         ),
         
         body: BlocBuilder<PicklistBloc, PicklistState>(
-          bloc: _picklistBloc,
           builder: (context, state) {
-            
+            final _picklistBloc = BlocProvider.of<PicklistBloc>(context);
             return Stack(
               children: [
                 Column(
@@ -163,33 +175,30 @@ class _PicklistDetailsScreenState extends State<PicklistDetailsScreen> {
                       
                           SizedBox(height: 12,),
                       
-                          Button(onPressed: () {
-                            showDialog(context: context, builder: (context) {
-                              return DialogActionConfirmation(
-                                title: 'Delete $picklistId',
-                                notice: 'This will remove $picklistId and this action is irreversable.',
-                                buttonConfirmText: 'Delete',
-                                warning: true,
-                              );
-                            }).then((v) async {
-                              if (v) {
-                                await _picklistBloc.process(PicklistEvent.deletePicklist(picklistId: picklistId)).whenComplete(() {
-                      
-                                  if (state.deletePicklistSucceeded) {
-                                    Navigator.pop(context, true);
-                                    FloatingSnackBar(message: 'Successfully deleted.', context: context);
-                      
-                                  } else {
-                                    final error = state.error!;
-                                    debugPrint("Error: $error");
-                                    FloatingSnackBar(message: 'Error: $error', context: context);
-                      
-                                  }
-                                });
-                      
-                              }
-                            });
-                          }, title: 'Delete Picklist', warning: true,),
+                          Button(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return DialogActionConfirmation(
+                                    title: 'Delete $picklistId',
+                                    notice: 'This will remove $picklistId and this action is irreversible.',
+                                    buttonConfirmText: 'Delete',
+                                    warning: true,
+                                  );
+                                },
+                              ).then((confirmed) {
+                                if (confirmed == true) {
+                                  context.read<PicklistBloc>().add(
+                                    PicklistEvent.deletePicklist(picklistId: picklistId),
+                                  );
+                                }
+                              });
+                            },
+                            title: 'Delete Picklist',
+                            warning: true,
+                          )
+
                       
                         ] : state.picklistDetails.picklist.status == 'sent for picking' ? [
                       

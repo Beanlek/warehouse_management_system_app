@@ -1338,11 +1338,8 @@ class _HomepageV2State extends State<HomepageV2> with HomepageComponents {
                                                 Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => BlocProvider(
-                                                    create: (_) => PicklistBloc(),
-                                                    child: const PicklistScreen(),
+                                                  builder: (context) => const PicklistScreen(),
                                                   ),
-                                                ),
                                               );
                                               });
                                         } else {

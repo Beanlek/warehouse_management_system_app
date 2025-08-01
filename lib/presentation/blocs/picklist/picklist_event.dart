@@ -8,6 +8,7 @@ part 'picklist_event.freezed.dart';
 @freezed
 class PicklistEvent with _$PicklistEvent {
   const factory PicklistEvent.setup(String? picklistId) = Setup;
+  const factory PicklistEvent.refresh() = Refresh;
   const factory PicklistEvent.selectPickList(String picklistId) = SelectPickList;
   const factory PicklistEvent.selectStatus(String status) = SelectStatus;
   const factory PicklistEvent.updatePage(int currentPage) = UpdatePage;

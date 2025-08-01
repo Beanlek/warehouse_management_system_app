@@ -20,7 +20,7 @@ import 'package:warehouse/domain/entities/picklist/picklist_details.dart';
 import 'package:warehouse/domain/repositories/picklist_repository.dart';
 
 
-@Injectable(as: PicklistRepository)
+@Injectable(as: PicklistRepository, env: ['prod','dev'])
 class PicklistRepositoryImpl extends PicklistRepository{
   final ApiClient _apiClient;
 
@@ -42,6 +42,7 @@ class PicklistRepositoryImpl extends PicklistRepository{
           Result.failure(errorApiResult),
     );
   }
+
 
   @override
   Future fetchPickListDetails(String token, String picklistId) async {

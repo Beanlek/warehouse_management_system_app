@@ -1,4 +1,5 @@
 
+import 'package:flutter/material.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_event.dart';
 import 'package:warehouse/presentation/blocs/picklist/picklist_state.dart';
 
@@ -10,7 +11,7 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
     return currentState.copyWith(
       isLoading: newEvent.maybeWhen(
         setup: (_) => true,
-        
+        refresh: () => true,
         selectPickList: (_) => true,
         loadPickList: (_) => false,
         loadPickListDetails: (_) => false,
@@ -33,17 +34,20 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
 
       searchId: newEvent.maybeWhen(
         searchPicklistById: (searchId) => searchId,
+        refresh: () => '',
         orElse: () => currentState.searchId,
       ),
 
       status: newEvent.maybeWhen(
         selectStatus: (status) => status,
+        refresh: () => '',
         orElse: () => currentState.status,
         
       ),
 
       picklist: newEvent.maybeWhen(
         loadPickList: (picklist) => picklist,
+        refresh: () => [],
         orElse: () => currentState.picklist,
       ),
 
@@ -54,6 +58,7 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
 
       count: newEvent.maybeWhen(
         loadCount : (count) => count,
+        refresh: () => 1,
         orElse: () => currentState.count,
       ),
 
@@ -68,8 +73,10 @@ class PicklistReducer extends Reducer<PicklistEvent, PicklistState> {
         orElse: () => false
       ),
       deletePicklistSucceeded: newEvent.maybeWhen(
-        deletePicklistSucceeded: () => true,
-        
+        deletePicklistSucceeded: () {
+          debugPrint('REDUCER DELETE TRUEEEEEE');
+          return true;
+          },  
         orElse: () => false
       ),
 

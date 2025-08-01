@@ -33,7 +33,7 @@ class AppBlocObserver extends BlocObserver {
 void main() async {
 
   Bloc.observer = AppBlocObserver();
-  await configureDependencies();
+  await configureDependencies('dev');
 
   WidgetsFlutterBinding.ensureInitialized();
   String _initRoute;

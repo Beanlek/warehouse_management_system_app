@@ -39,6 +39,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
   void processFeedback(PicklistEvent event, PicklistState state) async {
     event.maybeWhen(
         setup: (picklistId) => _fetchPicklist(),
+        refresh: () => _fetchPicklist(),
         selectPickList: (picklistId) => _fetchPicklistDetails(picklistId),
         deletePicklist: (picklistId) => _deletePicklist(picklistId),
         setPicklistSendForPicking: (picklistId) => _setPicklistSendForPicking(picklistId),
@@ -77,15 +78,19 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
   }
 
   _deletePicklist(String picklistId) async {
+    debugPrint('delete Picklist called');
     final _deletePicklistParams = DeletePicklistParams(picklistId: picklistId);
-    
+
     await _deletePicklistUsecase.execute(_deletePicklistParams).then((response) {
-      if (response.result) {
+      process(PicklistEvent.setup(''));
+      if (response.errorMessage == null) {
         process(PicklistEvent.deletePicklistSucceeded());
+        debugPrint('SUCCCEWDODHOAHOHDOH');
       } else {
         process(PicklistEvent.showPicklistError(
-          response.errorMessage ?? 'Password reset failed')
+          response.errorMessage ?? 'Delete picklist failed')
         );
+        debugPrint('ERORORORORROROROORO');
       }
       
     });
@@ -97,6 +102,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
     await _setPicklistSendForPickingUsecase.execute(_setPicklistSendForPickingParams).then((response) {
       if (response.result) {
         process(PicklistEvent.setPicklistSendForPickingSucceeded());
+        process(PicklistEvent.setup(''));
         process(PicklistEvent.selectPickList(picklistId));
       } else {
         process(PicklistEvent.showPicklistError(
@@ -113,6 +119,7 @@ class PicklistBloc extends BaseBloc<PicklistEvent, PicklistState> {
     await _setPicklistPackAllUsecase.execute(_setPicklistPackAllParams).then((response) {
       if (response.result) {
         process(PicklistEvent.setPicklistPackAllSucceeded());
+        process(PicklistEvent.setup(''));
         process(PicklistEvent.selectPickList(picklistId));
       } else {
         process(PicklistEvent.showPicklistError(
