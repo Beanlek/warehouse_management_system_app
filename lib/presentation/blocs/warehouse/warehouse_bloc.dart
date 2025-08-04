@@ -25,6 +25,7 @@ class WarehouseBloc extends BaseBloc<WarehouseEvent, WarehouseState> {
 
   @override
   void init() {
+    debugPrint('SETUPPP!!!');
     process(Setup());
   }
 
@@ -32,7 +33,8 @@ class WarehouseBloc extends BaseBloc<WarehouseEvent, WarehouseState> {
   void processFeedback(WarehouseEvent event, WarehouseState state) async {
     event.maybeWhen(
         setup: () => _fetchSites(),
-        selectSite: (siteId) => _processListsSetup(siteId),
+        selectSite: (siteId) => _processListsSetup(),
+        selectActive: (active) => _processListsSetup(),
         loadWarehouseInventory: (warehouseInventoryList) => _sortBrandInventoryList(warehouseInventoryList),
         orElse: () {});
   }
@@ -48,9 +50,12 @@ class WarehouseBloc extends BaseBloc<WarehouseEvent, WarehouseState> {
     });
   }
 
-  _processListsSetup(String siteId) async {
+  _processListsSetup() async {
+    String siteId = state.siteId ?? '';
+    String active = state.active;
     debugPrint('WarehouseBloc: Processing lists setup for siteId: $siteId');
-    await _fetchWarehouseInventoryListUseCase.execute(siteId).then((value) {
+
+    await _fetchWarehouseInventoryListUseCase.execute(siteId,active).then((value) {
       value.maybeWhen(
           success: (result) {
             warehouseInventoryList = result;

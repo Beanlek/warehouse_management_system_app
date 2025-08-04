@@ -27,7 +27,7 @@ class _RestClient implements RestClient {
   Future<InventoryListResponseDto> getWarehouseInventory(
     String token,
     String siteId,
-    bool active,
+    String active,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'active': active};

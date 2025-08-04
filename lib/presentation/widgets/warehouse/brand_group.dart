@@ -51,71 +51,83 @@ class BrandGroup extends StatelessWidget {
           ],
         ),
       ),
-      collapsed: Column(
+      collapsed: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Column(
         children: [
           Container(
-            width: double.infinity,
-          color: biruImran,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Table(
-            columnWidths: const {
-              0: FixedColumnWidth(80),  // Category
-              1: FixedColumnWidth(100),  // Subcategory
-              2: FixedColumnWidth(80),  // SKU ID
-              3: FixedColumnWidth(100), // SKU Name
-              4: FixedColumnWidth(40),  // Seq
-              5: FixedColumnWidth(50),  // UOM
-              6: FixedColumnWidth(60),  // Fresh
-              7: FixedColumnWidth(60),  // Damage
-              8: FixedColumnWidth(60),  // Old
-              9: FixedColumnWidth(60),  // Recalled
-            },
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            children: [
-              TableRow(
-                children: [
-                  _header('Category'),
-                  _header('Subcategory'),
-                  _header('SKU ID'),
-                  _header('SKU Name'),
-                  _header('Seq'),
-                  _header('UOM'),
-                  _header('Fresh'),
-                  _header('Damage'),
-                  _header('Old'),
-                  _header('Recalled'),
-                ],
-              ),
-            ],
+            width: 1500, // Total of all column widths
+            color: biruImran,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Table(
+              columnWidths: const {
+                0: FixedColumnWidth(100),  // Category
+                1: FixedColumnWidth(120),  // Subcategory
+                2: FixedColumnWidth(80),   // SKU ID
+                3: FixedColumnWidth(140),  // SKU Name
+                4: FixedColumnWidth(60),   // Seq
+                5: FixedColumnWidth(70),   // UOM
+                6: FixedColumnWidth(80),   // Fresh
+                7: FixedColumnWidth(90),   // Damaged
+                8: FixedColumnWidth(70),   // Old
+                9: FixedColumnWidth(90),   // Recalled
+                10: FixedColumnWidth(100), // New Order
+                11: FixedColumnWidth(150), // Available to Order
+                12: FixedColumnWidth(160), // Available to Allocate
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: [
+                TableRow(
+                  children: [
+                    _header('Category'),
+                    _header('Subcategory'),
+                    _header('SKU ID'),
+                    _header('SKU Name'),
+                    _header('Seq'),
+                    _header('UOM'),
+                    _header('Fresh'),
+                    _header('Damage'),
+                    _header('Old'),
+                    _header('Recalled'),
+                    _header('New Order'),
+                    _header('Available to Order'),
+                    _header('Available to Allocate'),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
           BlocBuilder<WarehouseBloc, WarehouseState>(
             builder: (context, state) {
               final products = state.brandInventoryMap[brand];
-      
+
               if (products == null || products.isEmpty) {
                 return const Center(
                   child: Text('No products available for this brand'),
                 );
               }
-      
-              return ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return CellInventory(
-                    hasEvenIndex: index.isEven,
-                    product: product,
-                  );
-                },
+
+              return Container(
+                width: 1500, // Same width to align with the header
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return CellInventory(
+                      hasEvenIndex: index.isEven,
+                      product: product,
+                    );
+                  },
+                ),
               );
-      
             },
           ),
         ],
       ),
+    ),
+
       expanded: Container(),
     );
   }

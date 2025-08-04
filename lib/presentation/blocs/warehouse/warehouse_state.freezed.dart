@@ -21,6 +21,7 @@ mixin _$WarehouseState {
   List<Site> get siteList => throw _privateConstructorUsedError;
   String? get selectedBrand => throw _privateConstructorUsedError;
   List<String> get brands => throw _privateConstructorUsedError;
+  String get active => throw _privateConstructorUsedError;
   List<WarehouseInventory> get warehouseInventoryList =>
       throw _privateConstructorUsedError;
   Map<String, List<WarehouseInventory>> get brandInventoryMap =>
@@ -45,6 +46,7 @@ abstract class $WarehouseStateCopyWith<$Res> {
       List<Site> siteList,
       String? selectedBrand,
       List<String> brands,
+      String active,
       List<WarehouseInventory> warehouseInventoryList,
       Map<String, List<WarehouseInventory>> brandInventoryMap});
 }
@@ -69,6 +71,7 @@ class _$WarehouseStateCopyWithImpl<$Res, $Val extends WarehouseState>
     Object? siteList = null,
     Object? selectedBrand = freezed,
     Object? brands = null,
+    Object? active = null,
     Object? warehouseInventoryList = null,
     Object? brandInventoryMap = null,
   }) {
@@ -93,6 +96,10 @@ class _$WarehouseStateCopyWithImpl<$Res, $Val extends WarehouseState>
           ? _value.brands
           : brands // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as String,
       warehouseInventoryList: null == warehouseInventoryList
           ? _value.warehouseInventoryList
           : warehouseInventoryList // ignore: cast_nullable_to_non_nullable
@@ -119,6 +126,7 @@ abstract class _$$WarehouseStateImplCopyWith<$Res>
       List<Site> siteList,
       String? selectedBrand,
       List<String> brands,
+      String active,
       List<WarehouseInventory> warehouseInventoryList,
       Map<String, List<WarehouseInventory>> brandInventoryMap});
 }
@@ -141,6 +149,7 @@ class __$$WarehouseStateImplCopyWithImpl<$Res>
     Object? siteList = null,
     Object? selectedBrand = freezed,
     Object? brands = null,
+    Object? active = null,
     Object? warehouseInventoryList = null,
     Object? brandInventoryMap = null,
   }) {
@@ -165,6 +174,10 @@ class __$$WarehouseStateImplCopyWithImpl<$Res>
           ? _value._brands
           : brands // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as String,
       warehouseInventoryList: null == warehouseInventoryList
           ? _value._warehouseInventoryList
           : warehouseInventoryList // ignore: cast_nullable_to_non_nullable
@@ -186,6 +199,7 @@ class _$WarehouseStateImpl extends _WarehouseState {
       final List<Site> siteList = const [],
       this.selectedBrand = null,
       final List<String> brands = const [],
+      this.active = '',
       final List<WarehouseInventory> warehouseInventoryList = const [],
       final Map<String, List<WarehouseInventory>> brandInventoryMap = const {}})
       : _siteList = siteList,
@@ -221,6 +235,9 @@ class _$WarehouseStateImpl extends _WarehouseState {
     return EqualUnmodifiableListView(_brands);
   }
 
+  @override
+  @JsonKey()
+  final String active;
   final List<WarehouseInventory> _warehouseInventoryList;
   @override
   @JsonKey()
@@ -243,7 +260,7 @@ class _$WarehouseStateImpl extends _WarehouseState {
 
   @override
   String toString() {
-    return 'WarehouseState(isLoading: $isLoading, siteId: $siteId, siteList: $siteList, selectedBrand: $selectedBrand, brands: $brands, warehouseInventoryList: $warehouseInventoryList, brandInventoryMap: $brandInventoryMap)';
+    return 'WarehouseState(isLoading: $isLoading, siteId: $siteId, siteList: $siteList, selectedBrand: $selectedBrand, brands: $brands, active: $active, warehouseInventoryList: $warehouseInventoryList, brandInventoryMap: $brandInventoryMap)';
   }
 
   @override
@@ -258,6 +275,7 @@ class _$WarehouseStateImpl extends _WarehouseState {
             (identical(other.selectedBrand, selectedBrand) ||
                 other.selectedBrand == selectedBrand) &&
             const DeepCollectionEquality().equals(other._brands, _brands) &&
+            (identical(other.active, active) || other.active == active) &&
             const DeepCollectionEquality().equals(
                 other._warehouseInventoryList, _warehouseInventoryList) &&
             const DeepCollectionEquality()
@@ -272,6 +290,7 @@ class _$WarehouseStateImpl extends _WarehouseState {
       const DeepCollectionEquality().hash(_siteList),
       selectedBrand,
       const DeepCollectionEquality().hash(_brands),
+      active,
       const DeepCollectionEquality().hash(_warehouseInventoryList),
       const DeepCollectionEquality().hash(_brandInventoryMap));
 
@@ -292,6 +311,7 @@ abstract class _WarehouseState extends WarehouseState {
           final List<Site> siteList,
           final String? selectedBrand,
           final List<String> brands,
+          final String active,
           final List<WarehouseInventory> warehouseInventoryList,
           final Map<String, List<WarehouseInventory>> brandInventoryMap}) =
       _$WarehouseStateImpl;
@@ -307,6 +327,8 @@ abstract class _WarehouseState extends WarehouseState {
   String? get selectedBrand;
   @override
   List<String> get brands;
+  @override
+  String get active;
   @override
   List<WarehouseInventory> get warehouseInventoryList;
   @override

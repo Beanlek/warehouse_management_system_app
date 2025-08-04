@@ -12,6 +12,7 @@ class WarehouseEvent with _$WarehouseEvent {
   const factory WarehouseEvent.selectBrand(String? brand) = SelectBrand;
   const factory WarehouseEvent.setupSiteList(List<Site> siteList) = SetupSiteList;
   const factory WarehouseEvent.loadBrandList(List<String> brands) = LoadBrandList;
+  const factory WarehouseEvent.selectActive(String active) = SelectActive;
   const factory WarehouseEvent.loadWarehouseInventory(List<WarehouseInventory> warehouseInventoryList) = LoadWarehouseInventory;
   const factory WarehouseEvent.loadBrandInventoryList(Map<String, List<WarehouseInventory>> brandInventoryMap) = LoadBrandInventoryList;
 }

@@ -23,6 +23,7 @@ mixin _$WarehouseEvent {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -37,6 +38,7 @@ mixin _$WarehouseEvent {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -50,6 +52,7 @@ mixin _$WarehouseEvent {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -64,6 +67,7 @@ mixin _$WarehouseEvent {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -77,6 +81,7 @@ mixin _$WarehouseEvent {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) =>
@@ -88,6 +93,7 @@ mixin _$WarehouseEvent {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -162,6 +168,7 @@ class _$SetupImpl implements Setup {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -179,6 +186,7 @@ class _$SetupImpl implements Setup {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -195,6 +203,7 @@ class _$SetupImpl implements Setup {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -215,6 +224,7 @@ class _$SetupImpl implements Setup {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -231,6 +241,7 @@ class _$SetupImpl implements Setup {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -245,6 +256,7 @@ class _$SetupImpl implements Setup {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -333,6 +345,7 @@ class _$SelectSiteImpl implements SelectSite {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -350,6 +363,7 @@ class _$SelectSiteImpl implements SelectSite {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -366,6 +380,7 @@ class _$SelectSiteImpl implements SelectSite {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -386,6 +401,7 @@ class _$SelectSiteImpl implements SelectSite {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -402,6 +418,7 @@ class _$SelectSiteImpl implements SelectSite {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -416,6 +433,7 @@ class _$SelectSiteImpl implements SelectSite {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -512,6 +530,7 @@ class _$SelectBrandImpl implements SelectBrand {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -529,6 +548,7 @@ class _$SelectBrandImpl implements SelectBrand {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -545,6 +565,7 @@ class _$SelectBrandImpl implements SelectBrand {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -565,6 +586,7 @@ class _$SelectBrandImpl implements SelectBrand {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -581,6 +603,7 @@ class _$SelectBrandImpl implements SelectBrand {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -595,6 +618,7 @@ class _$SelectBrandImpl implements SelectBrand {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -697,6 +721,7 @@ class _$SetupSiteListImpl implements SetupSiteList {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -714,6 +739,7 @@ class _$SetupSiteListImpl implements SetupSiteList {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -730,6 +756,7 @@ class _$SetupSiteListImpl implements SetupSiteList {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -750,6 +777,7 @@ class _$SetupSiteListImpl implements SetupSiteList {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -766,6 +794,7 @@ class _$SetupSiteListImpl implements SetupSiteList {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -780,6 +809,7 @@ class _$SetupSiteListImpl implements SetupSiteList {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -882,6 +912,7 @@ class _$LoadBrandListImpl implements LoadBrandList {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -899,6 +930,7 @@ class _$LoadBrandListImpl implements LoadBrandList {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -915,6 +947,7 @@ class _$LoadBrandListImpl implements LoadBrandList {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -935,6 +968,7 @@ class _$LoadBrandListImpl implements LoadBrandList {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -951,6 +985,7 @@ class _$LoadBrandListImpl implements LoadBrandList {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -965,6 +1000,7 @@ class _$LoadBrandListImpl implements LoadBrandList {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -985,6 +1021,191 @@ abstract class LoadBrandList implements WarehouseEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadBrandListImplCopyWith<_$LoadBrandListImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SelectActiveImplCopyWith<$Res> {
+  factory _$$SelectActiveImplCopyWith(
+          _$SelectActiveImpl value, $Res Function(_$SelectActiveImpl) then) =
+      __$$SelectActiveImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String active});
+}
+
+/// @nodoc
+class __$$SelectActiveImplCopyWithImpl<$Res>
+    extends _$WarehouseEventCopyWithImpl<$Res, _$SelectActiveImpl>
+    implements _$$SelectActiveImplCopyWith<$Res> {
+  __$$SelectActiveImplCopyWithImpl(
+      _$SelectActiveImpl _value, $Res Function(_$SelectActiveImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of WarehouseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? active = null,
+  }) {
+    return _then(_$SelectActiveImpl(
+      null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SelectActiveImpl implements SelectActive {
+  const _$SelectActiveImpl(this.active);
+
+  @override
+  final String active;
+
+  @override
+  String toString() {
+    return 'WarehouseEvent.selectActive(active: $active)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SelectActiveImpl &&
+            (identical(other.active, active) || other.active == active));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, active);
+
+  /// Create a copy of WarehouseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SelectActiveImplCopyWith<_$SelectActiveImpl> get copyWith =>
+      __$$SelectActiveImplCopyWithImpl<_$SelectActiveImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() setup,
+    required TResult Function(String siteId) selectSite,
+    required TResult Function(String? brand) selectBrand,
+    required TResult Function(List<Site> siteList) setupSiteList,
+    required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
+    required TResult Function(List<WarehouseInventory> warehouseInventoryList)
+        loadWarehouseInventory,
+    required TResult Function(
+            Map<String, List<WarehouseInventory>> brandInventoryMap)
+        loadBrandInventoryList,
+  }) {
+    return selectActive(active);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? setup,
+    TResult? Function(String siteId)? selectSite,
+    TResult? Function(String? brand)? selectBrand,
+    TResult? Function(List<Site> siteList)? setupSiteList,
+    TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
+    TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
+        loadWarehouseInventory,
+    TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
+        loadBrandInventoryList,
+  }) {
+    return selectActive?.call(active);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? setup,
+    TResult Function(String siteId)? selectSite,
+    TResult Function(String? brand)? selectBrand,
+    TResult Function(List<Site> siteList)? setupSiteList,
+    TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
+    TResult Function(List<WarehouseInventory> warehouseInventoryList)?
+        loadWarehouseInventory,
+    TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
+        loadBrandInventoryList,
+    required TResult orElse(),
+  }) {
+    if (selectActive != null) {
+      return selectActive(active);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Setup value) setup,
+    required TResult Function(SelectSite value) selectSite,
+    required TResult Function(SelectBrand value) selectBrand,
+    required TResult Function(SetupSiteList value) setupSiteList,
+    required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
+    required TResult Function(LoadWarehouseInventory value)
+        loadWarehouseInventory,
+    required TResult Function(LoadBrandInventoryList value)
+        loadBrandInventoryList,
+  }) {
+    return selectActive(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Setup value)? setup,
+    TResult? Function(SelectSite value)? selectSite,
+    TResult? Function(SelectBrand value)? selectBrand,
+    TResult? Function(SetupSiteList value)? setupSiteList,
+    TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
+    TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
+    TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
+  }) {
+    return selectActive?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Setup value)? setup,
+    TResult Function(SelectSite value)? selectSite,
+    TResult Function(SelectBrand value)? selectBrand,
+    TResult Function(SetupSiteList value)? setupSiteList,
+    TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
+    TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
+    TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
+    required TResult orElse(),
+  }) {
+    if (selectActive != null) {
+      return selectActive(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SelectActive implements WarehouseEvent {
+  const factory SelectActive(final String active) = _$SelectActiveImpl;
+
+  String get active;
+
+  /// Create a copy of WarehouseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SelectActiveImplCopyWith<_$SelectActiveImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1074,6 +1295,7 @@ class _$LoadWarehouseInventoryImpl implements LoadWarehouseInventory {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -1091,6 +1313,7 @@ class _$LoadWarehouseInventoryImpl implements LoadWarehouseInventory {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -1107,6 +1330,7 @@ class _$LoadWarehouseInventoryImpl implements LoadWarehouseInventory {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -1127,6 +1351,7 @@ class _$LoadWarehouseInventoryImpl implements LoadWarehouseInventory {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -1143,6 +1368,7 @@ class _$LoadWarehouseInventoryImpl implements LoadWarehouseInventory {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -1157,6 +1383,7 @@ class _$LoadWarehouseInventoryImpl implements LoadWarehouseInventory {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),
@@ -1268,6 +1495,7 @@ class _$LoadBrandInventoryListImpl implements LoadBrandInventoryList {
     required TResult Function(String? brand) selectBrand,
     required TResult Function(List<Site> siteList) setupSiteList,
     required TResult Function(List<String> brands) loadBrandList,
+    required TResult Function(String active) selectActive,
     required TResult Function(List<WarehouseInventory> warehouseInventoryList)
         loadWarehouseInventory,
     required TResult Function(
@@ -1285,6 +1513,7 @@ class _$LoadBrandInventoryListImpl implements LoadBrandInventoryList {
     TResult? Function(String? brand)? selectBrand,
     TResult? Function(List<Site> siteList)? setupSiteList,
     TResult? Function(List<String> brands)? loadBrandList,
+    TResult? Function(String active)? selectActive,
     TResult? Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult? Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -1301,6 +1530,7 @@ class _$LoadBrandInventoryListImpl implements LoadBrandInventoryList {
     TResult Function(String? brand)? selectBrand,
     TResult Function(List<Site> siteList)? setupSiteList,
     TResult Function(List<String> brands)? loadBrandList,
+    TResult Function(String active)? selectActive,
     TResult Function(List<WarehouseInventory> warehouseInventoryList)?
         loadWarehouseInventory,
     TResult Function(Map<String, List<WarehouseInventory>> brandInventoryMap)?
@@ -1321,6 +1551,7 @@ class _$LoadBrandInventoryListImpl implements LoadBrandInventoryList {
     required TResult Function(SelectBrand value) selectBrand,
     required TResult Function(SetupSiteList value) setupSiteList,
     required TResult Function(LoadBrandList value) loadBrandList,
+    required TResult Function(SelectActive value) selectActive,
     required TResult Function(LoadWarehouseInventory value)
         loadWarehouseInventory,
     required TResult Function(LoadBrandInventoryList value)
@@ -1337,6 +1568,7 @@ class _$LoadBrandInventoryListImpl implements LoadBrandInventoryList {
     TResult? Function(SelectBrand value)? selectBrand,
     TResult? Function(SetupSiteList value)? setupSiteList,
     TResult? Function(LoadBrandList value)? loadBrandList,
+    TResult? Function(SelectActive value)? selectActive,
     TResult? Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult? Function(LoadBrandInventoryList value)? loadBrandInventoryList,
   }) {
@@ -1351,6 +1583,7 @@ class _$LoadBrandInventoryListImpl implements LoadBrandInventoryList {
     TResult Function(SelectBrand value)? selectBrand,
     TResult Function(SetupSiteList value)? setupSiteList,
     TResult Function(LoadBrandList value)? loadBrandList,
+    TResult Function(SelectActive value)? selectActive,
     TResult Function(LoadWarehouseInventory value)? loadWarehouseInventory,
     TResult Function(LoadBrandInventoryList value)? loadBrandInventoryList,
     required TResult orElse(),

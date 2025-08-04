@@ -18,13 +18,13 @@ class WarehouseInventoryRepositoryImpl extends WarehouseInventoryRepository{
   WarehouseInventoryRepositoryImpl(this._apiClient);
   
   @override
-  Future<Result<List<WarehouseInventory>, AppError>> fetchWarehouseInventory(String token, String siteId) async {
+  Future<Result<List<WarehouseInventory>, AppError>> fetchWarehouseInventory(String token, String siteId, String active) async {
     debugPrint('Fetching warehouse inventory for site: $siteId with token: $token');
     return networkInBoundItem(
       apiRequest: () => RestApiExecutor.executeGeneric<InventoryListResponseDto>(
         requestCall: () async {
           var restClient = await _apiClient.getRestClient();
-          return restClient.getWarehouseInventory('Bearer $token', siteId, true);
+          return restClient.getWarehouseInventory('Bearer $token', siteId, active);
         }),
       saveToDb: (InventoryListResponseDto _) => {},
       getSuccessState: (InventoryListResponseDto dto) =>

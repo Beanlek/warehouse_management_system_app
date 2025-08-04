@@ -11,8 +11,8 @@ class FetchWarehouseInventoryListUseCase {
 
   FetchWarehouseInventoryListUseCase(this._warehouseInventoryRepository);
 
-  Future<Result<List<WarehouseInventory>, AppError>> execute(String siteId) async {
+  Future<Result<List<WarehouseInventory>, AppError>> execute(String siteId, String active) async {
     final String? token = await TokenUtil.getToken();
-    return await _warehouseInventoryRepository.fetchWarehouseInventory(token ?? '', siteId);
+    return await _warehouseInventoryRepository.fetchWarehouseInventory(token ?? '', siteId, active);
   }
 }

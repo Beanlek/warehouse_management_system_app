@@ -17,7 +17,10 @@ class WarehouseStocksScreen extends StatefulWidget {
   State<WarehouseStocksScreen> createState() => _WarehouseStocksScreenState();
 }
 
+enum SkuFilter { all, active, inactive }
+
 class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
+  SkuFilter _selectedFilter = SkuFilter.all;
   late final WarehouseBloc _warehouseBloc;
 
   @override
@@ -74,58 +77,72 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child:
-                            BlocBuilder<WarehouseBloc, WarehouseState>(
-                            builder: (context, state) {
-                              return InkWell(
-                                  onTap: () {
-                                    _buildBottomSheet(state.siteList);
-                                  },
-                                  child: TextField(
-                                    enabled: false,
-                                    readOnly: true,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                                    controller: TextEditingController(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Left: Disabled TextField
+                            Expanded(
+                              flex: 2,
+                              child: BlocBuilder<WarehouseBloc, WarehouseState>(
+                                buildWhen: (previous, current) =>
+                                    previous.siteId != current.siteId,
+                                builder: (context, state) {
+                                  return InkWell(
+                                    onTap: () {
+                                      _buildBottomSheet(state.siteList);
+                                    },
+                                    child: TextField(
+                                      enabled: false,
+                                      readOnly: true,
+                                      controller: TextEditingController(
                                         text: state.siteId != null
-                                            ? '${state.siteList
-                                                .firstWhere(
-                                                    (site) => site.id == state.siteId)
-                                                .id} - ${state.siteList
-                                                .firstWhere(
-                                                    (site) => site.id == state.siteId)
-                                                .name}'
-                                            : ''),
-                                            decoration: InputDecoration(
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                focusColor: Colors.black,
-                                                border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                    color: Colors.blueGrey
-                                                  ),
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(8.0)),
-                                                ),
-                                                labelText: 'Select Site',
-                                                floatingLabelBehavior:
-                                                    FloatingLabelBehavior.always,
-                                                labelStyle: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: Colors.blueGrey,
-                                                )),
-                                  ));
-                            },
-                            buildWhen: (previous, current) =>
-                                previous.siteId !=
-                                current.siteId,
-                          ),
+                                            ? '${state.siteList.firstWhere((site) => site.id == state.siteId).id} - ${state.siteList.firstWhere((site) => site.id == state.siteId).name}'
+                                            : '',
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                      decoration: const InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        focusColor: Colors.black,
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.blueGrey),
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        ),
+                                        labelText: 'Select Site',
+                                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                                        labelStyle: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.blueGrey,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+
+                            const SizedBox(width: 16),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  _skuFilterRadio(SkuFilter.all, 'All'),
+                                  _skuFilterRadio(SkuFilter.active, 'Active'),
+                                  _skuFilterRadio(SkuFilter.inactive, 'Inactive'),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                      )
+                      ,
                         BlocBuilder<WarehouseBloc, WarehouseState>(
                           builder: (context, state) {
                             if (state.warehouseInventoryList.isEmpty) {
@@ -153,10 +170,10 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
                   ),
                   if (state.isLoading)
                     Container(
-                      color: Colors.black.withOpacity(0.3), // <-- tint here
+                      color: Colors.black.withOpacity(0.3),
                       child: const Center(
                         child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // optional: white spinner
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       ),
                     ),
@@ -165,6 +182,31 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
             }
           ));
   }
+
+    Widget _skuFilterRadio(SkuFilter value, String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio<SkuFilter>(
+          value: value,
+          fillColor: MaterialStateProperty.all(biruImran),
+          groupValue: _selectedFilter,
+          onChanged: (SkuFilter? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedFilter = newValue;
+              });
+              _warehouseBloc.process(WarehouseEvent.selectActive(_selectedFilter.name.toString()));
+            }
+          },
+          visualDensity: VisualDensity.compact,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
 
   void _buildBottomSheet(List<Site> sites) {
     showModalBottomSheet(
@@ -241,4 +283,5 @@ class _WarehouseStocksScreenState extends State<WarehouseStocksScreen> {
       },
     );
   }
+  
 }

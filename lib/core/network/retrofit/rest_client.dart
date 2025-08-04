@@ -19,7 +19,7 @@ abstract class RestClient {
   Future<InventoryListResponseDto> getWarehouseInventory(
     @Header('Authorization') String token,
     @Path('site_id') String siteId,
-    @Query('active') bool active,
+    @Query('active') String active,
   );
 
   @GET('/api/dataLookup/sites/list')

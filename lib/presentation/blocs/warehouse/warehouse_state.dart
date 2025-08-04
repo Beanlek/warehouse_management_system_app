@@ -14,6 +14,7 @@ class WarehouseState with _$WarehouseState {
     @Default([]) List<Site> siteList,
     @Default(null) String? selectedBrand,
     @Default([]) List<String> brands,
+    @Default('') String active,
     @Default([]) List<WarehouseInventory> warehouseInventoryList,
     @Default({}) Map<String, List<WarehouseInventory>> brandInventoryMap,
   }) = _WarehouseState;

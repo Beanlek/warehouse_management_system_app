@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -22,7 +23,7 @@ class DioClient {
     responseHeader: true,
     responseBody: true,
     error: true,
-    logPrint: (obj) => print(obj),
+    logPrint: (obj) => log(obj.toString()),
   ));
   }
 }
